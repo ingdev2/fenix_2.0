@@ -3,7 +3,7 @@ import styles from "./page.module.css";
 
 export default function Home() {
   return (
-    <div className={styles.page}>
+    <div className={styles.page} style={{ backgroundColor: "black" }}>
       <main className={styles.main}>
         <Image
           className={styles.logo}
@@ -13,7 +13,7 @@ export default function Home() {
           height={38}
           priority
         />
-        <ol>
+        <ol style={{ color: "white" }}>
           <li>
             Get started by editing <code>src/app/page.tsx</code>.
           </li>
@@ -23,6 +23,10 @@ export default function Home() {
         <div className={styles.ctas}>
           <a
             className={styles.primary}
+            style={{
+              backgroundColor: "blueviolet",
+              color: "white",
+            }}
             href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
             target="_blank"
             rel="noopener noreferrer"
@@ -39,6 +43,10 @@ export default function Home() {
           <a
             href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
             target="_blank"
+            style={{
+              backgroundColor: "Highlight",
+              color: "white",
+            }}
             rel="noopener noreferrer"
             className={styles.secondary}
           >
