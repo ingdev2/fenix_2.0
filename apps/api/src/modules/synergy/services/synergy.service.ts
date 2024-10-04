@@ -1,29 +1,27 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateSynergyDto } from '../dto/create-synergy.dto';
-import { UpdateSynergyDto } from '../dto/update-synergy.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Synergy as SynergyEntity } from '../entities/synergy.entity';
+import { Synergy } from '../entities/synergy.entity';
 import { In, Repository } from 'typeorm';
-import { CaseType as CaseTypeEntity } from 'src/modules/case-type/entities/case-type.entity';
-import { caseTypeReport } from 'src/utils/enums/caseType-report.enum';
+import { CaseType } from 'src/modules/case-type/entities/case-type.entity';
+import { CaseTypeReportEnum } from 'src/utils/enums/caseType-report.enum';
 import { LogService } from 'src/modules/log/services/log.service';
-import { logReports } from 'src/utils/enums/logs.enum';
-import { CaseReportValidate as CaseReportValidateEntity } from 'src/modules/case-report-validate/entities/case-report-validate.entity';
-import { movementReport } from 'src/utils/enums/movement-report.enum';
-import { MovementReport as MovementReportEntity } from 'src/modules/movement-report/entities/movement-report.entity';
-import { MovementReportService } from 'src/modules/movement-report/services/movement-report.service';
+import { LogReportsEnum } from 'src/utils/enums/logs.enum';
+import { CaseReportValidate } from 'src/modules/case-report-validate/entities/case-report-validate.entity';
+import { MovementReportEnum } from 'src/utils/enums/movement-report.enum';
+import { MovementReport } from 'src/modules/movement-report/entities/movement-report.entity';
 
 @Injectable()
 export class SynergyService {
   constructor(
-    @InjectRepository(SynergyEntity)
-    private readonly synergyRepository: Repository<SynergyEntity>,
-    @InjectRepository(CaseTypeEntity)
-    private readonly caseTypeRepository: Repository<CaseTypeEntity>,
-    @InjectRepository(CaseReportValidateEntity)
-    private readonly caseReportValidateRepository: Repository<CaseReportValidateEntity>,
-    @InjectRepository(MovementReportEntity)
-    private readonly movementReportRepository: Repository<MovementReportEntity>,
+    @InjectRepository(Synergy)
+    private readonly synergyRepository: Repository<Synergy>,
+    @InjectRepository(CaseType)
+    private readonly caseTypeRepository: Repository<CaseType>,
+    @InjectRepository(CaseReportValidate)
+    private readonly caseReportValidateRepository: Repository<CaseReportValidate>,
+    @InjectRepository(MovementReport)
+    private readonly movementReportRepository: Repository<MovementReport>,
 
     private readonly logService: LogService,
   ) {}
@@ -35,13 +33,13 @@ export class SynergyService {
   ) {
     const adverseEventType = await this.caseTypeRepository.findOne({
       where: {
-        cas_t_name: caseTypeReport.ADVERSE_EVENT,
+        cas_t_name: CaseTypeReportEnum.ADVERSE_EVENT,
       },
     });
 
     if (!adverseEventType) {
       throw new HttpException(
-        `Tipo de caso ${caseTypeReport.ADVERSE_EVENT} no encontrado`,
+        `Tipo de caso ${CaseTypeReportEnum.ADVERSE_EVENT} no encontrado`,
         HttpStatus.NOT_FOUND,
       );
     }
@@ -77,14 +75,9 @@ export class SynergyService {
       );
     }
 
-    // const movementReportFound =
-    //   await this.movementReportService.findOneMovementReportByName(
-    //     movementReport.CASE_RAISED_SYNERGY_COMMITTEE,
-    //   );
-
     const movementReportFound = await this.movementReportRepository.findOne({
       where: {
-        mov_r_name: movementReport.CASE_RAISED_SYNERGY_COMMITTEE,
+        mov_r_name: MovementReportEnum.CASE_RAISED_SYNERGY_COMMITTEE,
         mov_r_status: true,
       },
     });
@@ -105,7 +98,7 @@ export class SynergyService {
     if (invalidSynergyCodes.length > 0) {
       throw new HttpException(
         {
-          message: `Algunos reportes no coinciden con el tipo de caso ${caseTypeReport.ADVERSE_EVENT}`,
+          message: `Algunos reportes no coinciden con el tipo de caso ${CaseTypeReportEnum.ADVERSE_EVENT}`,
           data: invalidSynergyCodes,
         },
         HttpStatus.BAD_REQUEST,
@@ -115,7 +108,6 @@ export class SynergyService {
     const synergies = createSynergy.map((syn) => {
       return this.synergyRepository.create({
         ...syn,
-        // syn_programmingcounter: 0,
         syn_evaluationdate: new Date(),
       });
     });
@@ -127,7 +119,7 @@ export class SynergyService {
         synergy.syn_validatedcase_id_fk,
         idValidator,
         clientIp,
-        logReports.LOG_CASE_RAISED_SYNERGY_COMMITTEE,
+        LogReportsEnum.LOG_CASE_RAISED_SYNERGY_COMMITTEE,
       );
     }
 
@@ -280,14 +272,9 @@ export class SynergyService {
 
     const synergy = await this.findOneSynergy(id);
 
-    // const movementReportFound =
-    //   await this.movementReportService.findOneMovementReportByName(
-    //     movementReport.SOLUTION_CASE_SYNERGY,
-    //   );
-
     const movementReportFound = await this.movementReportRepository.findOne({
       where: {
-        mov_r_name: movementReport.SOLUTION_CASE_SYNERGY,
+        mov_r_name: MovementReportEnum.SOLUTION_CASE_SYNERGY,
         mov_r_status: true,
       },
     });
@@ -346,7 +333,7 @@ export class SynergyService {
       synergy.syn_validatedcase_id_fk,
       idValidator,
       clientIp,
-      logReports.LOG_SOLUTION_CASE_SYNERGY,
+      LogReportsEnum.LOG_SOLUTION_CASE_SYNERGY,
     );
 
     return new HttpException(

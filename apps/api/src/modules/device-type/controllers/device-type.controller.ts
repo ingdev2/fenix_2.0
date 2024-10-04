@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   UseGuards,
-  HttpException,
 } from '@nestjs/common';
 import { DeviceTypeService } from '../services/device-type.service';
 import { CreateDeviceTypeDto } from '../dto/create-device-type.dto';
@@ -15,8 +14,7 @@ import { UpdateDeviceTypeDto } from '../dto/update-device-type.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { PermissionGuard } from 'src/utils/guards/permission.guard';
 import { Permission } from 'src/utils/decorators/permission.decorator';
-import { permissions } from 'src/utils/enums/permissions.enum';
-import { DeviceType } from '../entities/device-type.entity';
+import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
 
 @ApiTags('device-type')
 @Controller('device-type')
@@ -25,10 +23,8 @@ export class DeviceTypeController {
   constructor(private readonly deviceTypeService: DeviceTypeService) {}
 
   @Post('/createDeviceType/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
-  createDeviceType(
-    @Body() createDeviceTypeDto: CreateDeviceTypeDto,
-  ) {
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  createDeviceType(@Body() createDeviceTypeDto: CreateDeviceTypeDto) {
     return this.deviceTypeService.createDeviceType(createDeviceTypeDto);
   }
 
@@ -43,7 +39,7 @@ export class DeviceTypeController {
   }
 
   @Patch('/updateDeviceType/:id/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
   updateDeviceType(
     @Param('id') id: number,
     @Body() updateDeviceTypeDto: UpdateDeviceTypeDto,
@@ -52,7 +48,7 @@ export class DeviceTypeController {
   }
 
   @Delete('/deleteDeviceType/:id/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
   deleteDeviceType(@Param('id') id: number) {
     return this.deviceTypeService.deleteDeviceType(id);
   }

@@ -1,8 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateClinicalResearchDto } from '../dto/create-clinical-research.dto';
-import { UpdateClinicalResearchDto } from '../dto/update-clinical-research.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ClinicalResearch as ClinicalResearchEntity } from '../entities/clinical-research.entity';
+import { ClinicalResearch } from '../entities/clinical-research.entity';
 import { DataSource, Repository } from 'typeorm';
 import { ResearchInstrumentService } from 'src/modules/research-instrument/services/research-instrument.service';
 import { DeviceTypeService } from 'src/modules/device-type/services/device-type.service';
@@ -19,8 +18,8 @@ import { ClinicalResearchCaseReportValidateService } from 'src/modules/clinical-
 @Injectable()
 export class ClinicalResearchService {
   constructor(
-    @InjectRepository(ClinicalResearchEntity)
-    private readonly clinicalResearchRepository: Repository<ClinicalResearchEntity>,
+    @InjectRepository(ClinicalResearch)
+    private readonly clinicalResearchRepository: Repository<ClinicalResearch>,
 
     private dataSource: DataSource,
     private readonly researchInstrumentService: ResearchInstrumentService,
@@ -88,10 +87,10 @@ export class ClinicalResearchService {
         }
       }
 
-      let progress: ClinicalResearchEntity;
+      let progress: ClinicalResearch;
 
       if (clinicalResearchId) {
-        progress = await queryRunner.manager.findOne(ClinicalResearchEntity, {
+        progress = await queryRunner.manager.findOne(ClinicalResearch, {
           where: { id: clinicalResearchId },
         });
 
@@ -109,14 +108,10 @@ export class ClinicalResearchService {
           ...updateFields
         } = createClinicalResearchDto;
 
-        queryRunner.manager.update(
-          ClinicalResearchEntity,
-          progress.id,
-          updateFields,
-        );
+        queryRunner.manager.update(ClinicalResearch, progress.id, updateFields);
       } else {
         progress = queryRunner.manager.create(
-          ClinicalResearchEntity,
+          ClinicalResearch,
           createClinicalResearchDto,
         );
 
@@ -220,10 +215,6 @@ export class ClinicalResearchService {
 
     return clinicalResearch;
   }
-
-  // update(id: string, updateClinicalResearchDto: UpdateClinicalResearchDto) {
-  //   return `This action updates a #${id} clinicalResearch`;
-  // }
 
   async deleteClinicalResearch(id: string) {
     const clinicalResearch = await this.findOneClinicalResearch(id);

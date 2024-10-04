@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   UseGuards,
-  HttpException,
 } from '@nestjs/common';
 import { UnsafeActionService } from '../services/unsafe-action.service';
 import { CreateUnsafeActionDto } from '../dto/create-unsafe-action.dto';
@@ -15,8 +14,7 @@ import { UpdateUnsafeActionDto } from '../dto/update-unsafe-action.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { PermissionGuard } from 'src/utils/guards/permission.guard';
 import { Permission } from 'src/utils/decorators/permission.decorator';
-import { permissions } from 'src/utils/enums/permissions.enum';
-import { UnsafeAction } from '../entities/unsafe-action.entity';
+import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
 
 @ApiTags('unsafe-action')
 @Controller('unsafe-action')
@@ -25,7 +23,7 @@ export class UnsafeActionController {
   constructor(private readonly unsafeActionService: UnsafeActionService) {}
 
   @Post('/createUnsafeAction/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
   createUnsafeAction(@Body() createUnsafeActionDto: CreateUnsafeActionDto) {
     return this.unsafeActionService.createUnsafeAction(createUnsafeActionDto);
   }
@@ -36,14 +34,12 @@ export class UnsafeActionController {
   }
 
   @Get('/findUnsafeAction/:id/')
-  findUnsafeAction(
-    @Param('id') id: number,
-  ) {
+  findUnsafeAction(@Param('id') id: number) {
     return this.unsafeActionService.findOneUnsafeActions(id);
   }
 
   @Patch('/updateUnsafeAction/:id/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
   updateUnsafeAction(
     @Param('id') id: number,
     @Body() updateUnsafeActionDto: UpdateUnsafeActionDto,
@@ -55,7 +51,7 @@ export class UnsafeActionController {
   }
 
   @Delete('/deleteUnsafeAction/:id/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
   deleteUnsafeAction(@Param('id') id: number) {
     return this.unsafeActionService.deleteUnsafeAction(id);
   }

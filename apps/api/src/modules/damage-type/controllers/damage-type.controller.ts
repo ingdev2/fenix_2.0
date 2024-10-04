@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   UseGuards,
-  HttpException,
 } from '@nestjs/common';
 import { DamageTypeService } from '../services/damage-type.service';
 import { CreateDamageTypeDto } from '../dto/create-damage-type.dto';
@@ -15,8 +14,7 @@ import { UpdateDamageTypeDto } from '../dto/update-damage-type.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { PermissionGuard } from 'src/utils/guards/permission.guard';
 import { Permission } from 'src/utils/decorators/permission.decorator';
-import { permissions } from 'src/utils/enums/permissions.enum';
-import { DamageType } from '../entities/damage-type.entity';
+import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
 
 @ApiTags('damage-type')
 @Controller('damage-type')
@@ -25,10 +23,8 @@ export class DamageTypeController {
   constructor(private readonly damageTypeService: DamageTypeService) {}
 
   @Post('/createDamageType/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
-  createDamageType(
-    @Body() createDamageTypeDto: CreateDamageTypeDto,
-  ) {
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  createDamageType(@Body() createDamageTypeDto: CreateDamageTypeDto) {
     return this.damageTypeService.createDamageType(createDamageTypeDto);
   }
 
@@ -43,7 +39,7 @@ export class DamageTypeController {
   }
 
   @Patch('/updateDamageType/:id/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
   updateDamageType(
     @Param('id') id: number,
     @Body() updateDamageTypeDto: UpdateDamageTypeDto,
@@ -52,7 +48,7 @@ export class DamageTypeController {
   }
 
   @Delete('/deleteDamageType/:id/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
   deleteDamageType(@Param('id') id: number) {
     return this.damageTypeService.deleteDamageType(id);
   }

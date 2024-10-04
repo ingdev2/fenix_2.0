@@ -1,15 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { CreateClinicalResearchInfluencingFactorDto } from '../dto/create-clinical-research-influencing-factor.dto';
-import { UpdateClinicalResearchInfluencingFactorDto } from '../dto/update-clinical-research-influencing-factor.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ClinicalResearchInfluencingFactor as ClinicalResearchInfluencingFactorEntity } from '../entities/clinical-research-influencing-factor.entity';
+import { ClinicalResearchInfluencingFactor } from '../entities/clinical-research-influencing-factor.entity';
 import { QueryRunner, Repository } from 'typeorm';
 
 @Injectable()
 export class ClinicalResearchInfluencingFactorService {
   constructor(
-    @InjectRepository(ClinicalResearchInfluencingFactorEntity)
-    private readonly clinicalResearchInfluencingFactorRepository: Repository<ClinicalResearchInfluencingFactorEntity>,
+    @InjectRepository(ClinicalResearchInfluencingFactor)
+    private readonly clinicalResearchInfluencingFactorRepository: Repository<ClinicalResearchInfluencingFactor>,
   ) {}
 
   async createClinicalResearchInfluencingFactorTransaction(
@@ -18,7 +17,7 @@ export class ClinicalResearchInfluencingFactorService {
     queryRunner: QueryRunner,
   ) {
     const existingClinicalResearchInfluencingFactor =
-      await queryRunner.manager.find(ClinicalResearchInfluencingFactorEntity, {
+      await queryRunner.manager.find(ClinicalResearchInfluencingFactor, {
         where: { inf_fcr_clinicalresearch_id_fk: clinicalResearchId },
       });
 
@@ -30,7 +29,7 @@ export class ClinicalResearchInfluencingFactorService {
 
     for (const clinicalResearchIF of clinicalResearchInfluencingFactor) {
       const data = queryRunner.manager.create(
-        ClinicalResearchInfluencingFactorEntity,
+        ClinicalResearchInfluencingFactor,
         {
           ...clinicalResearchIF,
           inf_fcr_clinicalresearch_id_fk: clinicalResearchId,

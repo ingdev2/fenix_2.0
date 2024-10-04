@@ -2,15 +2,15 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateEventTypeDto } from '../dto/create-event-type.dto';
 import { UpdateEventTypeDto } from '../dto/update-event-type.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EventType as EventTypeEntity } from '../entities/event-type.entity';
+import { EventType } from '../entities/event-type.entity';
 import { Repository } from 'typeorm';
 import { CaseTypeService } from 'src/modules/case-type/services/case-type.service';
 
 @Injectable()
 export class EventTypeService {
   constructor(
-    @InjectRepository(EventTypeEntity)
-    private readonly eventTypeRepository: Repository<EventTypeEntity>,
+    @InjectRepository(EventType)
+    private readonly eventTypeRepository: Repository<EventType>,
 
     private readonly caseTypeService: CaseTypeService,
   ) {}
@@ -54,7 +54,6 @@ export class EventTypeService {
     );
   }
 
-  // Solo se usa para parametrizar cargando datos masivos
   async createEventTypesArray(createEventTypeDto: CreateEventTypeDto[]) {
     const eventTypesToCreate = [];
 
@@ -97,6 +96,8 @@ export class EventTypeService {
       relations: {
         event: true,
         caseType: true,
+        oncologyCategory: true,
+        characterizationCase: true,
       },
       order: {
         eve_t_name: 'ASC',
@@ -203,8 +204,8 @@ export class EventTypeService {
     if (!eventTypeFound) {
       return new HttpException(
         `Estrategia no encontrada, favor recargar.`,
-        HttpStatus.NOT_FOUND
-      )
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     const result = await this.eventTypeRepository.softDelete(id);

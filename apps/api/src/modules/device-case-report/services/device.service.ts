@@ -1,8 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateDeviceDto } from '../dto/create-device.dto';
 import { UpdateDeviceDto } from '../dto/update-device.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Device as DeviceEntity } from '../entities/device.entity';
+import { Device } from '../entities/device.entity';
 import { QueryRunner, Repository } from 'typeorm';
 import { HttpException } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common';
@@ -10,8 +10,8 @@ import { HttpStatus } from '@nestjs/common';
 @Injectable()
 export class DeviceService {
   constructor(
-    @InjectRepository(DeviceEntity)
-    private readonly deviceRepository: Repository<DeviceEntity>,
+    @InjectRepository(Device)
+    private readonly deviceRepository: Repository<Device>,
   ) {}
 
   async createDeviceTransation(
@@ -123,7 +123,7 @@ export class DeviceService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    
+
     const findListDevices = await this.deviceRepository.find({
       where: {
         dev_case_id_fk: caseId,

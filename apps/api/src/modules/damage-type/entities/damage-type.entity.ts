@@ -32,6 +32,9 @@ export class DamageType {
   @DeleteDateColumn()
   deletedAt: Date;
 
-  @OneToMany(() => ClinicalResearch, (clinicalResearch) => clinicalResearch.damageType)
+  @OneToMany(
+    () => ClinicalResearch,
+    (clinicalResearch) => clinicalResearch.damageType,
+  )
   clinicalResearch: ClinicalResearch[];
 }

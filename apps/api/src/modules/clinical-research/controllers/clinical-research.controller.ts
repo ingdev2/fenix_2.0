@@ -1,16 +1,6 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Put,
-} from '@nestjs/common';
+import { Controller, Get, Body, Param, Delete, Put } from '@nestjs/common';
 import { ClinicalResearchService } from '../services/clinical-research.service';
 import { CreateClinicalResearchDto } from '../dto/create-clinical-research.dto';
-import { UpdateClinicalResearchDto } from '../dto/update-clinical-research.dto';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('clinical-research')
@@ -23,11 +13,11 @@ export class ClinicalResearchController {
   @Put('/saveProgressClinicalResearch/:id?')
   saveProgressClinicalResearch(
     @Body() createClinicalResearchDto: CreateClinicalResearchDto,
-    @Param('id') id?: string
+    @Param('id') id?: string,
   ) {
     return this.clinicalResearchService.saveProgressClinicalResearch(
       createClinicalResearchDto,
-      id
+      id,
     );
   }
 

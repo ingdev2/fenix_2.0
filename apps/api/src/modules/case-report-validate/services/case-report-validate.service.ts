@@ -5,9 +5,8 @@ import {
   Injectable,
   forwardRef,
 } from '@nestjs/common';
-import { UpdateCaseReportValidateDto } from '../dto/update-case-report-validate.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CaseReportValidate as CaseReportValidateEntity } from '../entities/case-report-validate.entity';
+import { CaseReportValidate } from '../entities/case-report-validate.entity';
 import {
   Between,
   DataSource,
@@ -20,20 +19,20 @@ import {
 import { CreateCaseReportOriginalDto } from 'src/modules/case-report-original/dto/create-case-report-original.dto';
 import { FindSimilarCaseReportValidateDto } from '../dto/find-similar-case-report-validate';
 import { ValDtoValidator } from '../helper/val-dto-validator.helper';
-import { CaseType as CaseTypeEntity } from 'src/modules/case-type/entities/case-type.entity';
+import { CaseType } from 'src/modules/case-type/entities/case-type.entity';
 import { MedicineService } from 'src/modules/medicine-case-report/services/medicine.service';
 import { DeviceService } from 'src/modules/device-case-report/services/device.service';
-import { MovementReport as MovementReportEntity } from 'src/modules/movement-report/entities/movement-report.entity';
-import { movementReport } from 'src/utils/enums/movement-report.enum';
+import { MovementReport } from 'src/modules/movement-report/entities/movement-report.entity';
+import { MovementReportEnum } from 'src/utils/enums/movement-report.enum';
 import { LogService } from 'src/modules/log/services/log.service';
-import { logReports } from 'src/utils/enums/logs.enum';
-import { ReportAnalystAssignment as ReportAnalystAssignmentEntity } from 'src/modules/report-analyst-assignment/entities/report-analyst-assignment.entity';
+import { LogReportsEnum } from 'src/utils/enums/logs.enum';
+import { ReportAnalystAssignment } from 'src/modules/report-analyst-assignment/entities/report-analyst-assignment.entity';
 import { ReportAnalystAssignmentService } from 'src/modules/report-analyst-assignment/services/report-analyst-assignment.service';
-import { Synergy as SynergyEntity } from 'src/modules/synergy/entities/synergy.entity';
+import { Synergy } from 'src/modules/synergy/entities/synergy.entity';
 import { SynergyService } from 'src/modules/synergy/services/synergy.service';
-import { ReportResearcherAssignment as ReportResearcherAssignmentEntity } from 'src/modules/report-researchers-assignment/entities/report-researchers-assignment.entity';
+import { ReportResearcherAssignment } from 'src/modules/report-researchers-assignment/entities/report-researchers-assignment.entity';
 import { ResearchersService } from 'src/modules/report-researchers-assignment/services/report-researchers-assignment.service';
-import { caseTypeReport } from 'src/utils/enums/caseType-report.enum';
+import { CaseTypeReportEnum } from 'src/utils/enums/caseType-report.enum';
 import { CreateValRiskReportDto } from '../dto/create-val-risk-report.dto';
 import { CreateValAdverseEventReportDto } from '../dto/create-val-adverse-event-report.dto';
 import { CreateValIncidentReportDto } from '../dto/create-val-incident-report.dto';
@@ -48,31 +47,27 @@ import { SeverityClasificationService } from 'src/modules/severity-clasification
 import { OriginService } from 'src/modules/origin/services/origin.service';
 import { SubOriginService } from 'src/modules/sub-origin/services/sub-origin.service';
 import { RiskLevelService } from 'src/modules/risk-level/services/risk-level.service';
-import { UnitService } from 'src/modules/unit/services/unit.service';
-import { Priority as PriorityEntity } from 'src/modules/priority/entities/priority.entity';
-import { ObservationReturnCase as ObservationReturnCaseEntity } from 'src/modules/observation-return-case/entities/observation-return-case.entity';
+import { Priority } from 'src/modules/priority/entities/priority.entity';
+import { ObservationReturnCase } from 'src/modules/observation-return-case/entities/observation-return-case.entity';
 import { ObservationReturnCaseService } from 'src/modules/observation-return-case/services/observation-return-case.service';
-import { MovementReportService } from 'src/modules/movement-report/services/movement-report.service';
 
 @Injectable()
 export class CaseReportValidateService {
   constructor(
-    @InjectRepository(CaseReportValidateEntity)
-    private readonly caseReportValidateRepository: Repository<CaseReportValidateEntity>,
-    @InjectRepository(CaseTypeEntity)
-    private readonly caseTypeRepository: Repository<CaseTypeEntity>,
-    @InjectRepository(MovementReportEntity)
-    private readonly movementReportRepository: Repository<MovementReportEntity>,
-    @InjectRepository(ReportAnalystAssignmentEntity)
-    private readonly reportAnalystAssignmentRepository: Repository<ReportAnalystAssignmentEntity>,
-    @InjectRepository(SynergyEntity)
-    private readonly synergyRepository: Repository<SynergyEntity>,
-    @InjectRepository(ReportResearcherAssignmentEntity)
-    private readonly researchRepository: Repository<ReportResearcherAssignmentEntity>,
-    // @InjectRepository(PriorityEntity)
-    // private readonly priorityRepository: Repository<PriorityEntity>,
-    @InjectRepository(ObservationReturnCaseEntity)
-    private readonly observationReturnCaseRepository: Repository<ObservationReturnCaseEntity>,
+    @InjectRepository(CaseReportValidate)
+    private readonly caseReportValidateRepository: Repository<CaseReportValidate>,
+    @InjectRepository(CaseType)
+    private readonly caseTypeRepository: Repository<CaseType>,
+    @InjectRepository(MovementReport)
+    private readonly movementReportRepository: Repository<MovementReport>,
+    @InjectRepository(ReportAnalystAssignment)
+    private readonly reportAnalystAssignmentRepository: Repository<ReportAnalystAssignment>,
+    @InjectRepository(Synergy)
+    private readonly synergyRepository: Repository<Synergy>,
+    @InjectRepository(ReportResearcherAssignment)
+    private readonly researchRepository: Repository<ReportResearcherAssignment>,
+    @InjectRepository(ObservationReturnCase)
+    private readonly observationReturnCaseRepository: Repository<ObservationReturnCase>,
 
     private dataSource: DataSource,
     private readonly medicineService: MedicineService,
@@ -88,7 +83,6 @@ export class CaseReportValidateService {
     private readonly originService: OriginService,
     private readonly subOriginService: SubOriginService,
     private readonly riskLevelService: RiskLevelService,
-    private readonly unitService: UnitService,
     @Inject(forwardRef(() => ObservationReturnCaseService))
     private readonly observationReturnCaseService: ObservationReturnCaseService,
     @Inject(forwardRef(() => ResearchersService))
@@ -106,7 +100,7 @@ export class CaseReportValidateService {
       !similarCaseReportValidate.val_cr_documentpatient ||
       !similarCaseReportValidate.val_cr_event_id_fk ||
       !similarCaseReportValidate.val_cr_eventtype_id_fk ||
-      !similarCaseReportValidate.val_cr_unit_id_fk
+      !similarCaseReportValidate.val_cr_reportingservice_id_fk
     ) {
       throw new HttpException(
         'Algunos datos del caso son requeridos.',
@@ -117,7 +111,8 @@ export class CaseReportValidateService {
     const similarReport = await this.caseReportValidateRepository.find({
       where: {
         val_cr_casetype_id_fk: similarCaseReportValidate.val_cr_casetype_id_fk,
-        val_cr_unit_id_fk: similarCaseReportValidate.val_cr_unit_id_fk,
+        val_cr_reportingservice_id_fk:
+          similarCaseReportValidate.val_cr_reportingservice_id_fk,
         val_cr_documentpatient:
           similarCaseReportValidate.val_cr_documentpatient,
         val_cr_event_id_fk: similarCaseReportValidate.val_cr_event_id_fk,
@@ -171,7 +166,10 @@ export class CaseReportValidateService {
         ),
         this.eventService.findOneEvent(createReportValDto.val_cr_event_id_fk),
         this.serviceService.findOneService(
-          createReportValDto.val_cr_service_id_fk,
+          createReportValDto.val_cr_originservice_id_fk,
+        ),
+        this.serviceService.findOneService(
+          createReportValDto.val_cr_reportingservice_id_fk,
         ),
         this.originService.findOneOrigin(
           createReportValDto.val_cr_origin_id_fk,
@@ -179,7 +177,6 @@ export class CaseReportValidateService {
         this.subOriginService.findOneSubOrigin(
           createReportValDto.val_cr_suborigin_id_fk,
         ),
-        this.unitService.findOneUnit(createReportValDto.val_cr_unit_id_fk),
         createReportValDto.val_cr_risktype_id_fk &&
           this.riskTypeService.findOneRiskType(
             createReportValDto.ori_cr_risktype_id_fk,
@@ -250,43 +247,44 @@ export class CaseReportValidateService {
       let caseReportValidate: any;
 
       switch (caseTypeFound.cas_t_name) {
-        case caseTypeReport.RISK:
+        case CaseTypeReportEnum.RISK:
           caseReportValidate = this.caseReportValidateRepository.create(
             createReportValDto as CreateValRiskReportDto,
           );
-          console.log(`Se creó reporte validado ${caseTypeReport.RISK}`);
+          console.log(`Se creó reporte validado ${CaseTypeReportEnum.RISK}`);
           break;
-        case caseTypeReport.ADVERSE_EVENT:
+        case CaseTypeReportEnum.ADVERSE_EVENT:
           caseReportValidate = this.caseReportValidateRepository.create(
             createReportValDto as CreateValAdverseEventReportDto,
           );
           console.log(
-            `Se creó reporte validado ${caseTypeReport.ADVERSE_EVENT}`,
+            `Se creó reporte validado ${CaseTypeReportEnum.ADVERSE_EVENT}`,
           );
           break;
-        case caseTypeReport.INCIDENT:
+        case CaseTypeReportEnum.INCIDENT:
           caseReportValidate = this.caseReportValidateRepository.create(
             createReportValDto as CreateValIncidentReportDto,
           );
-          console.log(`Se creó reporte validado ${caseTypeReport.INCIDENT}`);
+          console.log(
+            `Se creó reporte validado ${CaseTypeReportEnum.INCIDENT}`,
+          );
           break;
-        case caseTypeReport.INDICATING_UNSAFE_CARE:
+        case CaseTypeReportEnum.INDICATING_UNSAFE_CARE:
           caseReportValidate = this.caseReportValidateRepository.create(
             createReportValDto as CreateValIndicatingUnsafeCareReportDto,
           );
           console.log(
-            `Se creó reporte validado ${caseTypeReport.INDICATING_UNSAFE_CARE}`,
+            `Se creó reporte validado ${CaseTypeReportEnum.INDICATING_UNSAFE_CARE}`,
           );
           break;
-        case caseTypeReport.COMPLICATIONS:
+        case CaseTypeReportEnum.COMPLICATIONS:
           caseReportValidate = this.caseReportValidateRepository.create(
             createReportValDto as CreateValComplicationsReportDto,
           );
           console.log(
-            `Se creó reporte validado ${caseTypeReport.COMPLICATIONS}`,
+            `Se creó reporte validado ${CaseTypeReportEnum.COMPLICATIONS}`,
           );
           break;
-        // agregar un tipo de caso nuevo
         default:
           throw new HttpException(
             'Tipo de caso no reconocido.',
@@ -298,9 +296,12 @@ export class CaseReportValidateService {
       const previousId = previousReport.val_cr_previous_id + 1;
 
       const movementReportFound = await queryRunner.manager.findOne(
-        MovementReportEntity,
+        MovementReport,
         {
-          where: { mov_r_name: movementReport.VALIDATION, mov_r_status: true },
+          where: {
+            mov_r_name: MovementReportEnum.VALIDATION,
+            mov_r_status: true,
+          },
         },
       );
 
@@ -315,7 +316,7 @@ export class CaseReportValidateService {
         createReportValDto.val_cr_severityclasif_id_fk !== null &&
         createReportValDto.val_cr_severityclasif_id_fk !== undefined
       ) {
-        const priorityFind = await queryRunner.manager.findOne(PriorityEntity, {
+        const priorityFind = await queryRunner.manager.findOne(Priority, {
           where: {
             prior_severityclasif_id_fk:
               createReportValDto.val_cr_severityclasif_id_fk,
@@ -372,7 +373,7 @@ export class CaseReportValidateService {
         caseReportValidate.id,
         idValidator,
         clientIp,
-        logReports.LOG_VALIDATION,
+        LogReportsEnum.LOG_VALIDATION,
       );
 
       await queryRunner.commitTransaction();
@@ -399,6 +400,7 @@ export class CaseReportValidateService {
     caseReportOriginalId: string,
   ) {
     const caseReportValidate = this.caseReportValidateRepository.create({
+      val_cr_dateofcase: caseReportOriginal.ori_cr_dateofcase,
       val_cr_consecutive_id: 1,
       val_cr_previous_id: 0,
       val_cr_originalcase_id_fk: caseReportOriginalId,
@@ -417,9 +419,12 @@ export class CaseReportValidateService {
       val_cr_epspatient: caseReportOriginal.ori_cr_epspatient,
       val_cr_admconsecutivepatient:
         caseReportOriginal.ori_cr_admconsecutivepatient,
+      val_cr_anonymoususer: caseReportOriginal.ori_cr_anonymoususer,
       val_cr_reporter_id: caseReportOriginal.ori_cr_reporter_id,
       val_cr_eventtype_id_fk: caseReportOriginal.ori_cr_eventtype_id_fk,
-      val_cr_service_id_fk: caseReportOriginal.ori_cr_service_id_fk,
+      val_cr_originservice_id_fk: caseReportOriginal.ori_cr_originservice_id_fk,
+      val_cr_reportingservice_id_fk:
+        caseReportOriginal.ori_cr_reportingservice_id_fk,
       val_cr_event_id_fk: caseReportOriginal.ori_cr_event_id_fk,
       val_cr_risktype_id_fk: caseReportOriginal.ori_cr_risktype_id_fk,
       val_cr_severityclasif_id_fk:
@@ -427,7 +432,6 @@ export class CaseReportValidateService {
       val_cr_origin_id_fk: caseReportOriginal.ori_cr_origin_id_fk,
       val_cr_suborigin_id_fk: caseReportOriginal.ori_cr_suborigin_id_fk,
       val_cr_risklevel_id_fk: caseReportOriginal.ori_cr_risklevel_id_fk,
-      val_cr_unit_id_fk: caseReportOriginal.ori_cr_unit_id_fk,
       val_cr_priority_id_fk: caseReportOriginal.ori_cr_priority_id_fk,
       val_cr_statusmovement_id_fk:
         caseReportOriginal.ori_cr_statusmovement_id_fk,
@@ -447,10 +451,9 @@ export class CaseReportValidateService {
     caseTypeId?: number,
     eventTypeId?: number,
     priorityId?: number,
-    unitId?: number,
     severityClasificationId?: number,
   ) {
-    const where: FindOptionsWhere<CaseReportValidateEntity> = {};
+    const where: FindOptionsWhere<CaseReportValidate> = {};
 
     if (creationDate) {
       const nextDay = new Date(creationDate);
@@ -473,10 +476,6 @@ export class CaseReportValidateService {
 
     if (caseTypeId) {
       where.val_cr_casetype_id_fk = caseTypeId;
-    }
-
-    if (unitId) {
-      where.val_cr_unit_id_fk = unitId;
     }
 
     if (priorityId) {
@@ -500,11 +499,9 @@ export class CaseReportValidateService {
         caseType: true,
         severityClasification: true,
         event: true,
-        unit: true,
         priority: true,
         movementReport: true,
       },
-      // withDeleted: true,
       order: {
         createdAt: 'DESC',
       },
@@ -528,7 +525,7 @@ export class CaseReportValidateService {
     priorityId?: number,
     creationDate?: Date,
   ) {
-    const where: FindOptionsWhere<CaseReportValidateEntity> = {};
+    const where: FindOptionsWhere<CaseReportValidate> = {};
 
     if (creationDate) {
       const nextDay = new Date(creationDate);
@@ -568,7 +565,6 @@ export class CaseReportValidateService {
         priority: true,
         movementReport: true,
       },
-      // withDeleted: true,
       order: {
         createdAt: 'DESC',
       },
@@ -592,7 +588,7 @@ export class CaseReportValidateService {
     priorityId?: number,
     creationDate?: Date,
   ) {
-    const where: FindOptionsWhere<CaseReportValidateEntity> = {};
+    const where: FindOptionsWhere<CaseReportValidate> = {};
 
     if (creationDate) {
       const nextDay = new Date(creationDate);
@@ -621,8 +617,8 @@ export class CaseReportValidateService {
       where.val_cr_statusmovement_id_fk = statusMovementId;
     } else {
       const namesMovement = [
-        movementReport.ANULATION,
-        movementReport.RETURN_CASE_VALIDATOR,
+        MovementReportEnum.ANULATION,
+        MovementReportEnum.RETURN_CASE_VALIDATOR,
       ];
 
       const findMovementNames = await this.movementReportRepository.find({
@@ -679,8 +675,8 @@ export class CaseReportValidateService {
         riskLevel: true,
         eventType: true,
         event: true,
-        service: true,
-        unit: true,
+        originService: true,
+        reportingService: true,
         priority: true,
         characterizationCase: true,
       },
@@ -722,8 +718,8 @@ export class CaseReportValidateService {
         riskLevel: true,
         eventType: true,
         event: true,
-        service: true,
-        unit: true,
+        originService: true,
+        reportingService: true,
         priority: true,
         characterizationCase: true,
         caseReportOriginal: {
@@ -769,8 +765,8 @@ export class CaseReportValidateService {
         riskLevel: true,
         eventType: true,
         event: true,
-        service: true,
-        unit: true,
+        originService: true,
+        reportingService: true,
         priority: true,
         characterizationCase: true,
       },
@@ -814,7 +810,7 @@ export class CaseReportValidateService {
     const caseReportValidate = await this.findOneReportValidate(id);
 
     const movementReportFound = await this.movementReportRepository.findOne({
-      where: { mov_r_name: movementReport.ANULATION, mov_r_status: true },
+      where: { mov_r_name: MovementReportEnum.ANULATION, mov_r_status: true },
     });
 
     if (!movementReportFound) {
@@ -860,7 +856,7 @@ export class CaseReportValidateService {
       caseReportValidate.id,
       idUser,
       clientIp,
-      logReports.LOG_ANULATION,
+      LogReportsEnum.LOG_ANULATION,
     );
 
     const findReportAnalystAssygnment =
@@ -914,20 +910,6 @@ export class CaseReportValidateService {
         findObservationReturnCase.id,
       );
     }
-
-    // const actionPlanCRV =
-    //   await this.actionPlanCaseReportValidateRepository.findOne({
-    //     where: {
-    //       plan_av_validatedcase_id_fk: caseReportValidate.id,
-    //       plan_av_status: true,
-    //     },
-    //   });
-
-    // if (actionPlanCRV) {
-    //   await this.actionPlanCaseReportValidateService.deleteActionPlanCaseReportValidate(
-    //     actionPlanCRV.id,
-    //   );
-    // }
 
     return new HttpException(`¡Datos anulados correctamente!`, HttpStatus.OK);
   }

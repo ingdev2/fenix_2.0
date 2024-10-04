@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   UseGuards,
-  HttpException,
 } from '@nestjs/common';
 import { ResearchInstrumentService } from '../services/research-instrument.service';
 import { CreateResearchInstrumentDto } from '../dto/create-research-instrument.dto';
@@ -15,8 +14,7 @@ import { UpdateResearchInstrumentDto } from '../dto/update-research-instrument.d
 import { ApiTags } from '@nestjs/swagger';
 import { PermissionGuard } from 'src/utils/guards/permission.guard';
 import { Permission } from 'src/utils/decorators/permission.decorator';
-import { permissions } from 'src/utils/enums/permissions.enum';
-import { ResearchInstrument } from '../entities/research-instrument.entity';
+import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
 
 @ApiTags('research-instrument')
 @Controller('research-instrument')
@@ -27,7 +25,7 @@ export class ResearchInstrumentController {
   ) {}
 
   @Post('/createResearchInstrument/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
   createResearchInstrument(
     @Body() createResearchInstrumentDto: CreateResearchInstrumentDto,
   ) {
@@ -42,14 +40,12 @@ export class ResearchInstrumentController {
   }
 
   @Get('/findResearchInstrument/:id')
-  findResearchInstrument(
-    @Param('id') id: number,
-  ) {
+  findResearchInstrument(@Param('id') id: number) {
     return this.researchInstrumentService.findOneResearchInstrument(id);
   }
 
   @Patch('/updateResearchInstrument/:id/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
   updateResearchInstrument(
     @Param('id') id: number,
     @Body() updateResearchInstrumentDto: UpdateResearchInstrumentDto,
@@ -61,7 +57,7 @@ export class ResearchInstrumentController {
   }
 
   @Delete('/deleteResearchInstrument/:id/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
   deleteResearchInstrument(@Param('id') id: number) {
     return this.researchInstrumentService.deleteResearchInstrument(id);
   }

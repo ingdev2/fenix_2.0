@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   UseGuards,
-  HttpException,
 } from '@nestjs/common';
 import { InfluencingFactorService } from '../services/influencing-factor.service';
 import { CreateInfluencingFactorDto } from '../dto/create-influencing-factor.dto';
@@ -15,8 +14,7 @@ import { UpdateInfluencingFactorDto } from '../dto/update-influencing-factor.dto
 import { ApiTags } from '@nestjs/swagger';
 import { PermissionGuard } from 'src/utils/guards/permission.guard';
 import { Permission } from 'src/utils/decorators/permission.decorator';
-import { permissions } from 'src/utils/enums/permissions.enum';
-import { InfluencingFactor } from '../entities/influencing-factor.entity';
+import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
 
 @ApiTags('influencing-factor')
 @Controller('influencing-factor')
@@ -27,7 +25,7 @@ export class InfluencingFactorController {
   ) {}
 
   @Post('/createInfluencingFactor/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
   createInfluencingFactor(
     @Body() createInfluencingFactorDto: CreateInfluencingFactorDto,
   ) {
@@ -42,14 +40,12 @@ export class InfluencingFactorController {
   }
 
   @Get('/findInfluencingFactor/:id')
-  findInfluencingFactor(
-    @Param('id') id: number,
-  ) {
+  findInfluencingFactor(@Param('id') id: number) {
     return this.influencingFactorService.findOneInfluencingFactor(id);
   }
 
   @Patch('/updateInfluencingFactor/:id/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
   updateInfluencingFactor(
     @Param('id') id: number,
     @Body() updateInfluencingFactorDto: UpdateInfluencingFactorDto,
@@ -61,7 +57,7 @@ export class InfluencingFactorController {
   }
 
   @Delete('/deleteInfluencingFactor/:id/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
   deleteInfluencingFactor(@Param('id') id: number) {
     return this.influencingFactorService.deleteInfluencingFactor(id);
   }

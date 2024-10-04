@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   UseGuards,
-  HttpException,
 } from '@nestjs/common';
 import { FailedMeasuresService } from '../services/failed-measures.service';
 import { CreateFailedMeasureDto } from '../dto/create-failed-measure.dto';
@@ -15,8 +14,7 @@ import { UpdateFailedMeasureDto } from '../dto/update-failed-measure.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { PermissionGuard } from 'src/utils/guards/permission.guard';
 import { Permission } from 'src/utils/decorators/permission.decorator';
-import { permissions } from 'src/utils/enums/permissions.enum';
-import { FailedMeasure } from '../entities/failed-measure.entity';
+import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
 
 @ApiTags('failed-measures')
 @Controller('failed-measures')
@@ -25,7 +23,7 @@ export class FailedMeasuresController {
   constructor(private readonly failedMeasuresService: FailedMeasuresService) {}
 
   @Post('/createFailedMeasure/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
   createFailedMeasure(@Body() createFailedMeasureDto: CreateFailedMeasureDto) {
     return this.failedMeasuresService.createFailedMeasure(
       createFailedMeasureDto,
@@ -38,14 +36,12 @@ export class FailedMeasuresController {
   }
 
   @Get('/findFailedMeasure/:id/')
-  findFailedMeasure(
-    @Param('id') id: number,
-  ) {
+  findFailedMeasure(@Param('id') id: number) {
     return this.failedMeasuresService.findOneFailedMeasure(id);
   }
 
   @Patch('/updateFailedMeasure/:id/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
   updateFailedMeasure(
     @Param('id') id: number,
     @Body() updateFailedMeasureDto: UpdateFailedMeasureDto,
@@ -57,7 +53,7 @@ export class FailedMeasuresController {
   }
 
   @Delete('/deleteFailedMeasure/:id/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
   deleteFailedMeasure(@Param('id') id: number) {
     return this.failedMeasuresService.deleteFailedMeasure(id);
   }

@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   UseGuards,
-  HttpException,
 } from '@nestjs/common';
 import { RiskFactorService } from '../services/risk-factor.service';
 import { CreateRiskFactorDto } from '../dto/create-risk-factor.dto';
@@ -15,8 +14,7 @@ import { UpdateRiskFactorDto } from '../dto/update-risk-factor.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { PermissionGuard } from 'src/utils/guards/permission.guard';
 import { Permission } from 'src/utils/decorators/permission.decorator';
-import { permissions } from 'src/utils/enums/permissions.enum';
-import { RiskFactor } from '../entities/risk-factor.entity';
+import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
 
 @ApiTags('risk-factor')
 @Controller('risk-factor')
@@ -25,7 +23,7 @@ export class RiskFactorController {
   constructor(private readonly riskFactorService: RiskFactorService) {}
 
   @Post('/createRiskFactor/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
   createRiskFactor(@Body() createRiskFactorDto: CreateRiskFactorDto) {
     return this.riskFactorService.createRiskFactor(createRiskFactorDto);
   }
@@ -41,7 +39,7 @@ export class RiskFactorController {
   }
 
   @Patch('/updateRiskFactor/:id/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
   updateRiskFactor(
     @Param('id') id: number,
     @Body() updateRiskFactorDto: UpdateRiskFactorDto,
@@ -50,7 +48,7 @@ export class RiskFactorController {
   }
 
   @Delete('/deleteRiskFactor/:id/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
   deleteRiskFactor(@Param('id') id: number) {
     return this.riskFactorService.deleteRiskFactor(id);
   }

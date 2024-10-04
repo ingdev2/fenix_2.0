@@ -22,7 +22,6 @@ import { RiskLevel } from 'src/modules/risk-level/entities/risk-level.entity';
 import { EventType } from 'src/modules/event-type/entities/event-type.entity';
 import { Event } from 'src/modules/event/entities/event.entity';
 import { Service } from 'src/modules/service/entities/service.entity';
-import { Unit } from 'src/modules/unit/entities/unit.entity';
 import { ReportResearcherAssignment } from 'src/modules/report-researchers-assignment/entities/report-researchers-assignment.entity';
 import { Priority } from 'src/modules/priority/entities/priority.entity';
 import { MovementReport } from 'src/modules/movement-report/entities/movement-report.entity';
@@ -34,6 +33,9 @@ import { ClinicalResearchCaseReportValidate } from 'src/modules/clinical-researc
 export class CaseReportValidate {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({ type: 'date' })
+  val_cr_dateofcase: Date;
 
   @Column({ nullable: true })
   val_cr_consecutive_id: number;
@@ -77,25 +79,40 @@ export class CaseReportValidate {
   @Column({ nullable: true })
   val_cr_epspatient: string;
 
+  @Column({ type: 'varchar', nullable: true })
+  val_cr_diagnosticcode: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  val_cr_diagnosticdescription: string;
+
   @Column({ nullable: true })
   val_cr_admconsecutivepatient: number;
 
   @Column({ nullable: true })
-  val_cr_reporter_id: number;
+  val_cr_anonymoususer: boolean;
+
+  @Column({ nullable: true })
+  val_cr_reporter_id: string;
 
   @Column({ nullable: true })
   val_cr_eventtype_id_fk: number;
 
   @Column({ nullable: true })
-  val_cr_service_id_fk: number;
+  val_cr_originservice_id_fk: number;
+
+  @Column({ nullable: true })
+  val_cr_reportingservice_id_fk: number;
 
   @Column({ nullable: true })
   val_cr_event_id_fk: number;
 
-  @Column({ nullable: true }) //
+  @Column({ type: 'varchar', nullable: true })
+  val_cr_descriptionOthers: string;
+
+  @Column({ nullable: true })
   val_cr_risktype_id_fk: number;
 
-  @Column({ nullable: true }) //
+  @Column({ nullable: true })
   val_cr_severityclasif_id_fk: number;
 
   @Column({ nullable: true })
@@ -104,11 +121,8 @@ export class CaseReportValidate {
   @Column({ nullable: true })
   val_cr_suborigin_id_fk: number;
 
-  @Column({ nullable: true }) //
-  val_cr_risklevel_id_fk: number;
-
   @Column({ nullable: true })
-  val_cr_unit_id_fk: number;
+  val_cr_risklevel_id_fk: number;
 
   @Column({ nullable: true })
   val_cr_priority_id_fk: number;
@@ -128,16 +142,16 @@ export class CaseReportValidate {
   @Column({ type: 'varchar', nullable: true })
   val_cr_observationscharacterization: string;
 
-  @Column({ type: 'varchar', nullable: true }) //
+  @Column({ type: 'varchar', nullable: true })
   val_cr_description: string;
 
-  @Column({ type: 'varchar', nullable: true }) //
+  @Column({ type: 'varchar', nullable: true })
   val_cr_inmediateaction: string;
 
-  @Column({ nullable: true }) //
+  @Column({ nullable: true })
   val_cr_materializedrisk: boolean;
 
-  @Column({ default: true }) //
+  @Column({ default: true })
   val_cr_associatedpatient: boolean;
 
   @Column({ default: false })
@@ -198,12 +212,12 @@ export class CaseReportValidate {
   event: Event;
 
   @ManyToOne(() => Service, (service) => service.caseReportValidate)
-  @JoinColumn({ name: 'val_cr_service_id_fk' })
-  service: Service;
+  @JoinColumn({ name: 'val_cr_originservice_id_fk' })
+  originService: Service;
 
-  @ManyToOne(() => Unit, (unit) => unit.caseReportValidate)
-  @JoinColumn({ name: 'val_cr_unit_id_fk' })
-  unit: Unit;
+  @ManyToOne(() => Service, (service) => service.caseReportValidate)
+  @JoinColumn({ name: 'val_cr_reportingservice_id_fk' })
+  reportingService: Service;
 
   @ManyToOne(() => Priority, (priority) => priority.caseReportValidate)
   @JoinColumn({ name: 'val_cr_priority_id_fk' })

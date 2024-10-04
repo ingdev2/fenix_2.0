@@ -1,26 +1,21 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateEventDto } from '../dto/create-event.dto';
 import { UpdateEventDto } from '../dto/update-event.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Event as EventEntity } from '../entities/event.entity';
+import { Event } from '../entities/event.entity';
 import { Repository } from 'typeorm';
-import { EventType as EventTypeEntity } from 'src/modules/event-type/entities/event-type.entity';
-import { Unit as UnitEntity } from 'src/modules/unit/entities/unit.entity';
+import { EventType } from 'src/modules/event-type/entities/event-type.entity';
+import { Unit } from 'src/modules/unit/entities/unit.entity';
 
 @Injectable()
 export class EventService {
   constructor(
-    @InjectRepository(EventEntity)
-    private readonly eventRepository: Repository<EventEntity>,
-    @InjectRepository(EventTypeEntity)
-    private readonly eventTypeRepository: Repository<EventTypeEntity>,
-    @InjectRepository(UnitEntity)
-    private readonly unitRepository: Repository<UnitEntity>,
+    @InjectRepository(Event)
+    private readonly eventRepository: Repository<Event>,
+    @InjectRepository(EventType)
+    private readonly eventTypeRepository: Repository<EventType>,
+    @InjectRepository(Unit)
+    private readonly unitRepository: Repository<Unit>,
   ) {}
 
   async createEvent(createEventDto: CreateEventDto) {
@@ -80,7 +75,6 @@ export class EventService {
     );
   }
 
-  // Se usa para parametrizar datos masivos
   async createEventsArray(createEventDto: CreateEventDto[]) {
     const eventToCreate = [];
 
@@ -164,7 +158,7 @@ export class EventService {
   async findEventByEventTypeAndIdUnitId(eventTypeId: number, unitId?: number) {
     const where: any = { eve_eventtype_id_fk: eventTypeId };
 
-    if (unitId !== undefined) {
+    if (unitId !== undefined || unitId !== null) {
       where.eve_unit_id_fk = unitId;
     }
 
@@ -180,6 +174,34 @@ export class EventService {
     if (events.length === 0) {
       return new HttpException(
         'No se encontró la lista de sucesos relacionados con el tipo de suceso.',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return events;
+  }
+
+  async findEventByEventTypeId(eventTypeId: number) {
+    if (!eventTypeId) {
+      return new HttpException(
+        'El identificador de la estrategia es requerida.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const events = await this.eventRepository.find({
+      where: {
+        eve_eventtype_id_fk: eventTypeId,
+        eve_status: true,
+      },
+      order: {
+        eve_name: 'ASC',
+      },
+    });
+
+    if (events.length === 0) {
+      return new HttpException(
+        'No se encontró la lista de sucesos relacionados con la estrategia.',
         HttpStatus.NOT_FOUND,
       );
     }

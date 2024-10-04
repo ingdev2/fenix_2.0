@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   UseGuards,
-  HttpException,
 } from '@nestjs/common';
 import { SafetyBarriersService } from '../services/safety-barriers.service';
 import { CreateSafetyBarrierDto } from '../dto/create-safety-barrier.dto';
@@ -15,8 +14,7 @@ import { UpdateSafetyBarrierDto } from '../dto/update-safety-barrier.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { PermissionGuard } from 'src/utils/guards/permission.guard';
 import { Permission } from 'src/utils/decorators/permission.decorator';
-import { permissions } from 'src/utils/enums/permissions.enum';
-import { SafetyBarrier } from '../entities/safety-barrier.entity';
+import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
 
 @ApiTags('safety-barriers')
 @Controller('safety-barriers')
@@ -25,7 +23,7 @@ export class SafetyBarriersController {
   constructor(private readonly safetyBarriersService: SafetyBarriersService) {}
 
   @Post('/createSafetyBarrier/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
   createSafetyBarrier(@Body() createSafetyBarrierDto: CreateSafetyBarrierDto) {
     return this.safetyBarriersService.createSafetyBarrier(
       createSafetyBarrierDto,
@@ -38,14 +36,12 @@ export class SafetyBarriersController {
   }
 
   @Get('/findSafetyBarrier/:id')
-  findSafetyBarrier(
-    @Param('id') id: number,
-  ) {
+  findSafetyBarrier(@Param('id') id: number) {
     return this.safetyBarriersService.findOneSafetyBarrier(id);
   }
 
   @Patch('/updateSafetyBarrier/:id/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
   updateSafetyBarrier(
     @Param('id') id: number,
     @Body() updateSafetyBarrierDto: UpdateSafetyBarrierDto,
@@ -57,7 +53,7 @@ export class SafetyBarriersController {
   }
 
   @Delete('/deleteSafetyBarrier/:id/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
   deleteSafetyBarrier(@Param('id') id: number) {
     return this.safetyBarriersService.deleteSafetyBarrier(id);
   }

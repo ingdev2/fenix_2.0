@@ -6,17 +6,15 @@ import {
   Patch,
   Param,
   Delete,
-  HttpException,
   UseGuards,
 } from '@nestjs/common';
 import { ObservationReturnCaseService } from '../services/observation-return-case.service';
 import { CreateObservationReturnCaseDto } from '../dto/create-observation-return-case.dto';
 import { UpdateObservationReturnCaseDto } from '../dto/update-observation-return-case.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { ObservationReturnCase } from '../entities/observation-return-case.entity';
 import { PermissionGuard } from 'src/utils/guards/permission.guard';
 import { Permission } from 'src/utils/decorators/permission.decorator';
-import { permissions } from 'src/utils/enums/permissions.enum';
+import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
 
 @ApiTags('observation-return-case')
 @Controller('observation-return-case')
@@ -30,9 +28,9 @@ export class ObservationReturnCaseController {
     '/createObservationReturnCase/:idUser/:idCaseValidate/:userIdPermission',
   )
   @Permission(
-    permissions.SUPER_ADMIN,
-    permissions.ANALYST,
-    permissions.INVESTIGATOR,
+    PermissionsEnum.SUPER_ADMIN,
+    PermissionsEnum.ANALYST,
+    PermissionsEnum.INVESTIGATOR,
   )
   createObservationReturnCase(
     @Param('idUser') idUser: number,
@@ -52,14 +50,12 @@ export class ObservationReturnCaseController {
   }
 
   @Get('/findObservationReturnCase/:id')
-  findObservationReturnCase(
-    @Param('id') id: number,
-  ) {
+  findObservationReturnCase(@Param('id') id: number) {
     return this.observationReturnCaseService.findOneObservationReturnCase(id);
   }
 
   @Patch('/updateObservationReturnCase/:id/:idCaseValidate/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN)
+  @Permission(PermissionsEnum.SUPER_ADMIN)
   updateObservationReturnCase(
     @Param('id') id: number,
     @Body() updateObservationReturnCaseDto: UpdateObservationReturnCaseDto,
@@ -71,7 +67,7 @@ export class ObservationReturnCaseController {
   }
 
   @Delete('deleteObservationReturnCase:id/:idCaseValidate/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN)
+  @Permission(PermissionsEnum.SUPER_ADMIN)
   deleteObservationReturnCase(@Param('id') id: number) {
     return this.observationReturnCaseService.deleteObservationReturnCase(id);
   }

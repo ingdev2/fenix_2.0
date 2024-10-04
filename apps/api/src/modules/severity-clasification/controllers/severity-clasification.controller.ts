@@ -6,17 +6,15 @@ import {
   Patch,
   Param,
   Delete,
-  HttpException,
   UseGuards,
 } from '@nestjs/common';
 import { SeverityClasificationService } from '../services/severity-clasification.service';
 import { CreateSeverityClasificationDto } from '../dto/create-severity-clasification.dto';
 import { UpdateSeverityClasificationDto } from '../dto/update-severity-clasification.dto';
-import { SeverityClasification } from '../entities/severity-clasification.entity';
 import { ApiTags } from '@nestjs/swagger';
 import { PermissionGuard } from 'src/utils/guards/permission.guard';
 import { Permission } from 'src/utils/decorators/permission.decorator';
-import { permissions } from 'src/utils/enums/permissions.enum';
+import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
 
 @ApiTags('severity-clasification')
 @Controller('severity-clasification')
@@ -27,7 +25,7 @@ export class SeverityClasificationController {
   ) {}
 
   @Post('/createSeverityClasification/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
   createSeverityClasification(
     @Body() createSeverityClasificationDto: CreateSeverityClasificationDto,
   ) {
@@ -42,14 +40,12 @@ export class SeverityClasificationController {
   }
 
   @Get('findSeverityClasification/:id/')
-  findSeverityClasification(
-    @Param('id') id: number,
-  ) {
+  findSeverityClasification(@Param('id') id: number) {
     return this.severityClasificationService.findOneSeverityClasification(id);
   }
 
   @Patch('/updateSeverityClasification/:id/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
   updateSeverityClasification(
     @Param('id') id: number,
     @Body() updateSeverityClasificationDto: UpdateSeverityClasificationDto,
@@ -61,7 +57,7 @@ export class SeverityClasificationController {
   }
 
   @Delete('/deleteSeverityClasification/:id/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
   deleteSeverityClasification(@Param('id') id: number) {
     return this.severityClasificationService.deleteSeverityClasification(id);
   }

@@ -11,7 +11,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity({ name: 'fenix_action_plan_activities'})
+@Entity({ name: 'fenix_action_plan_activities' })
 export class ActionPlanActivity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -49,10 +49,7 @@ export class ActionPlanActivity {
   @DeleteDateColumn()
   deletedAt: Date;
 
-  @ManyToOne(
-    () => ActionPlan,
-    (actionPlan) => actionPlan.actionPlanActivity,
-  )
+  @ManyToOne(() => ActionPlan, (actionPlan) => actionPlan.actionPlanActivity)
   @JoinColumn({ name: 'plan_aa_actionplan_id_fk' })
   actionPlan: ActionPlan;
 

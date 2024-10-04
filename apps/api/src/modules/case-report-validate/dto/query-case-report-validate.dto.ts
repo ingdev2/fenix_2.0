@@ -33,11 +33,6 @@ export class QueryCaseReportValidateDto {
   @IsNumber()
   @IsOptional()
   @Type(() => Number)
-  unitId: number;
-
-  @IsNumber()
-  @IsOptional()
-  @Type(() => Number)
   severityClasificationId: number;
 
   @IsString()

@@ -3,25 +3,20 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
-  HttpException,
-  Put,
   Query,
   Ip,
   UseGuards,
 } from '@nestjs/common';
 import { CaseReportValidateService } from '../services/case-report-validate.service';
-import { UpdateCaseReportValidateDto } from '../dto/update-case-report-validate.dto';
-import { CaseReportValidate } from '../entities/case-report-validate.entity';
 import { ApiTags } from '@nestjs/swagger';
 import { FindSimilarCaseReportValidateDto } from '../dto/find-similar-case-report-validate';
 import { CreateReportValDto } from '../helper/val-dto-validator.helper';
 import { QueryCaseReportValidateDto } from '../dto/query-case-report-validate.dto';
 import { PermissionGuard } from 'src/utils/guards/permission.guard';
 import { Permission } from 'src/utils/decorators/permission.decorator';
-import { permissions } from 'src/utils/enums/permissions.enum';
+import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
 
 @ApiTags('case-report-validate')
 @Controller('case-report-validate')
@@ -41,7 +36,7 @@ export class CaseReportValidateController {
   }
 
   @Post('/createReportValidate/:idValidator/:reportId/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.VALIDATOR)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.VALIDATOR)
   async createReportValidate(
     @Body() createReportValDto: CreateReportValDto,
     @Ip() clientIp: string,
@@ -57,9 +52,7 @@ export class CaseReportValidateController {
   }
 
   @Get('/summaryReports')
-  async SummaryReports(
-    @Query() query: QueryCaseReportValidateDto,
-  ) {
+  async SummaryReports(@Query() query: QueryCaseReportValidateDto) {
     const creationDateObj = query.creationDate
       ? new Date(query.creationDate)
       : undefined;
@@ -70,7 +63,6 @@ export class CaseReportValidateController {
       query.statusMovementId,
       query.patientDoc,
       query.caseTypeId,
-      query.unitId,
       query.priorityId,
       query.severityClasificationId,
       query.eventTypeId,
@@ -78,7 +70,7 @@ export class CaseReportValidateController {
   }
 
   @Get('/summaryReportsForValidator/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.VALIDATOR)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.VALIDATOR)
   async SummaryReportsForValidator(
     @Query('filingNumber') filingNumber?: string,
     @Query('statusMovementId') statusMovementId?: number,
@@ -100,10 +92,8 @@ export class CaseReportValidateController {
   }
 
   @Get('/summaryReportsForReview/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.VALIDATOR)
-  async summaryReportsForReview(
-    @Query() query: QueryCaseReportValidateDto,
-  ) {
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.VALIDATOR)
+  async summaryReportsForReview(@Query() query: QueryCaseReportValidateDto) {
     const creationDateObj = query.creationDate
       ? new Date(query.creationDate)
       : undefined;
@@ -129,9 +119,7 @@ export class CaseReportValidateController {
   }
 
   @Get('/findReportValidateByConsecutive/:consecutive')
-  findReportValidateByConsecutive(
-    @Param('consecutive') consecutive: string,
-  ) {
+  findReportValidateByConsecutive(@Param('consecutive') consecutive: string) {
     return this.caseReportValidateService.findOneReportValidateByConsecutive(
       consecutive,
     );
@@ -151,10 +139,10 @@ export class CaseReportValidateController {
 
   @Delete('/cancelReportValidate/:id/:idUser/:userIdPermission')
   @Permission(
-    permissions.SUPER_ADMIN,
-    permissions.VALIDATOR,
-    permissions.ANALYST,
-    permissions.INVESTIGATOR,
+    PermissionsEnum.SUPER_ADMIN,
+    PermissionsEnum.VALIDATOR,
+    PermissionsEnum.ANALYST,
+    PermissionsEnum.INVESTIGATOR,
   )
   async cancelReportValidate(
     @Param('id') id: string,

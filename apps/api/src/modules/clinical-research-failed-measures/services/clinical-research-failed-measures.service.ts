@@ -1,15 +1,14 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateClinicalResearchFailedMeasureDto } from '../dto/create-clinical-research-failed-measure.dto';
-import { UpdateClinicalResearchFailedMeasureDto } from '../dto/update-clinical-research-failed-measure.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ClinicalResearchFailedMeasure as ClinicalResearchFailedMeasureEntity } from '../entities/clinical-research-failed-measure.entity';
+import { ClinicalResearchFailedMeasure } from '../entities/clinical-research-failed-measure.entity';
 import { QueryRunner, Repository } from 'typeorm';
 
 @Injectable()
 export class ClinicalResearchFailedMeasuresService {
   constructor(
-    @InjectRepository(ClinicalResearchFailedMeasureEntity)
-    private readonly clinicalResearchFailedMeasureRepository: Repository<ClinicalResearchFailedMeasureEntity>,
+    @InjectRepository(ClinicalResearchFailedMeasure)
+    private readonly clinicalResearchFailedMeasureRepository: Repository<ClinicalResearchFailedMeasure>,
   ) {}
   async createClinicalResearchFailedMeasureTransaction(
     clinicalResearchFailedMeasure: CreateClinicalResearchFailedMeasureDto[],
@@ -17,7 +16,7 @@ export class ClinicalResearchFailedMeasuresService {
     queryRunner: QueryRunner,
   ) {
     const existingClinicalResearchFailedMeasure =
-      await queryRunner.manager.find(ClinicalResearchFailedMeasureEntity, {
+      await queryRunner.manager.find(ClinicalResearchFailedMeasure, {
         where: { meas_fcr_clinicalresearch_id_fk: clinicalResearchId },
       });
 
@@ -26,13 +25,10 @@ export class ClinicalResearchFailedMeasuresService {
     }
 
     for (const clinicalResearchFM of clinicalResearchFailedMeasure) {
-      const data = queryRunner.manager.create(
-        ClinicalResearchFailedMeasureEntity,
-        {
-          ...clinicalResearchFM,
-          meas_fcr_clinicalresearch_id_fk: clinicalResearchId,
-        },
-      );
+      const data = queryRunner.manager.create(ClinicalResearchFailedMeasure, {
+        ...clinicalResearchFM,
+        meas_fcr_clinicalresearch_id_fk: clinicalResearchId,
+      });
 
       await queryRunner.manager.save(data);
     }

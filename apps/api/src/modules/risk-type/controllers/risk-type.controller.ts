@@ -6,19 +6,15 @@ import {
   Patch,
   Param,
   Delete,
-  HttpException,
-  HttpStatus,
-  Put,
   UseGuards,
 } from '@nestjs/common';
 import { RiskTypeService } from '../services/risk-type.service';
 import { CreateRiskTypeDto } from '../dto/create-risk-type.dto';
 import { UpdateRiskTypeDto } from '../dto/update-risk-type.dto';
-import { RiskType } from '../entities/risk-type.entity';
 import { ApiTags } from '@nestjs/swagger';
 import { PermissionGuard } from 'src/utils/guards/permission.guard';
 import { Permission } from 'src/utils/decorators/permission.decorator';
-import { permissions } from 'src/utils/enums/permissions.enum';
+import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
 
 @ApiTags('risk-type')
 @Controller('risk-type')
@@ -27,7 +23,7 @@ export class RiskTypeController {
   constructor(private readonly riskTypeService: RiskTypeService) {}
 
   @Post('/createRisktype/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
   createRisktype(@Body() createRiskTypeDto: CreateRiskTypeDto) {
     return this.riskTypeService.createRiskType(createRiskTypeDto);
   }
@@ -43,7 +39,7 @@ export class RiskTypeController {
   }
 
   @Patch('/updateRisktype/:id/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
   updateRisktype(
     @Param('id') id: number,
     @Body() updateRiskTypeDto: UpdateRiskTypeDto,
@@ -52,7 +48,7 @@ export class RiskTypeController {
   }
 
   @Delete('/deleteRisktype/:id/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
   deleteRisktype(@Param('id') id: number) {
     return this.riskTypeService.deleteRiskType(id);
   }

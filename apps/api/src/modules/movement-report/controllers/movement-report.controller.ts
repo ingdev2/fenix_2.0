@@ -6,19 +6,15 @@ import {
   Patch,
   Param,
   Delete,
-  HttpException,
-  HttpStatus,
-  Put,
   UseGuards,
 } from '@nestjs/common';
 import { MovementReportService } from '../services/movement-report.service';
 import { CreateMovementReportDto } from '../dto/create-movement-report.dto';
 import { UpdateMovementReportDto } from '../dto/update-movement-report.dto';
-import { MovementReport } from '../entities/movement-report.entity';
 import { ApiTags } from '@nestjs/swagger';
 import { PermissionGuard } from 'src/utils/guards/permission.guard';
 import { Permission } from 'src/utils/decorators/permission.decorator';
-import { permissions } from 'src/utils/enums/permissions.enum';
+import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
 
 @ApiTags('movement-report')
 @Controller('movement-report')
@@ -27,7 +23,7 @@ export class MovementReportController {
   constructor(private readonly movementReportService: MovementReportService) {}
 
   @Post('/createMovementReport/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN)
+  @Permission(PermissionsEnum.SUPER_ADMIN)
   createMovementReport(
     @Body() createMovementReportDto: CreateMovementReportDto,
   ) {
@@ -47,7 +43,7 @@ export class MovementReportController {
   }
 
   @Patch('/updateMovementReport/:id/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN)
+  @Permission(PermissionsEnum.SUPER_ADMIN)
   updateMovementReport(
     @Param('id') id: number,
     @Body() updateMovementReportDto: UpdateMovementReportDto,
@@ -59,7 +55,7 @@ export class MovementReportController {
   }
 
   @Delete('/deleteMovementReport/:id/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN)
+  @Permission(PermissionsEnum.SUPER_ADMIN)
   deleteMovementReport(@Param('id') id: number) {
     return this.movementReportService.deleteMovementReport(id);
   }

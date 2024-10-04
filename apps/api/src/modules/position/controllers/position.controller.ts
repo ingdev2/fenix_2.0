@@ -6,18 +6,15 @@ import {
   Patch,
   Param,
   Delete,
-  HttpException,
-  Put,
   UseGuards,
 } from '@nestjs/common';
 import { PositionService } from '../services/position.service';
 import { CreatePositionDto } from '../dto/create-position.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { Position } from '../entities/position.entity';
 import { UpdatePositionDto } from '../dto/update-position.dto';
 import { PermissionGuard } from 'src/utils/guards/permission.guard';
 import { Permission } from 'src/utils/decorators/permission.decorator';
-import { permissions } from 'src/utils/enums/permissions.enum';
+import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
 
 @ApiTags('position')
 @Controller('position')
@@ -26,7 +23,7 @@ export class PositionController {
   constructor(private readonly positionService: PositionService) {}
 
   @Post('/createPosition/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
   createPosition(@Body() createPositionDto: CreatePositionDto) {
     return this.positionService.createPosition(createPositionDto);
   }
@@ -52,7 +49,7 @@ export class PositionController {
   }
 
   @Patch('/updatePosition/:id/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
   updatePosition(
     @Param('id') id: number,
     @Body() updatePositionDto: UpdatePositionDto,
@@ -61,7 +58,7 @@ export class PositionController {
   }
 
   @Delete('/deletePosition/:id/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.PARAMETERIZER)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
   async deletePosition(@Param('id') id: number) {
     return await this.positionService.deletePosition(id);
   }

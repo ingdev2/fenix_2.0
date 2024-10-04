@@ -1,4 +1,4 @@
-export enum logReports {
+export enum LogReportsEnum {
   LOG_CREATION = 'REGISTRÓ EL CASO',
   LOG_VALIDATION = 'VALIDÓ EL CASO',
   LOG_ANULATION = 'ANULÓ EL CASO',

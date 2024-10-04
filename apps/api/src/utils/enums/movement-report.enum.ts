@@ -1,4 +1,4 @@
-export enum movementReport {
+export enum MovementReportEnum {
   REPORT_CREATION = 'REPORTADO',
   VALIDATION = 'VALIDADO',
   REACTIVATION = 'REACTIVADO',

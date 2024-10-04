@@ -3,21 +3,17 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
-  HttpException,
   Query,
   UseGuards,
 } from '@nestjs/common';
 import { ActionPlanService } from '../services/action-plan.service';
 import { CreateActionPlanDto } from '../dto/create-action-plan.dto';
-import { UpdateActionPlanDto } from '../dto/update-action-plan.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { ActionPlan } from '../entities/action-plan.entity';
 import { PermissionGuard } from 'src/utils/guards/permission.guard';
 import { Permission } from 'src/utils/decorators/permission.decorator';
-import { permissions } from 'src/utils/enums/permissions.enum';
+import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
 
 @ApiTags('action-plan')
 @Controller('action-plan')
@@ -27,14 +23,12 @@ export class ActionPlanController {
 
   @Post('/createActionPlan/:userIdPermission')
   @Permission(
-    permissions.SUPER_ADMIN,
-    permissions.PARAMETERIZER,
-    permissions.ANALYST,
-    permissions.INVESTIGATOR,
+    PermissionsEnum.SUPER_ADMIN,
+    PermissionsEnum.PARAMETERIZER,
+    PermissionsEnum.ANALYST,
+    PermissionsEnum.INVESTIGATOR,
   )
-  createActionPlan(
-    @Body() createActionPlanDto: CreateActionPlanDto,
-  ) {
+  createActionPlan(@Body() createActionPlanDto: CreateActionPlanDto) {
     return this.actionPlanService.createActionPlan(createActionPlanDto);
   }
 
@@ -62,10 +56,7 @@ export class ActionPlanController {
   }
 
   @Delete('/deleteActionPlan/:id/:userIdPermission')
-  @Permission(
-    permissions.SUPER_ADMIN,
-    permissions.PARAMETERIZER,
-  )
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
   deleteActionPlan(@Param('id') id: number) {
     return this.actionPlanService.deleteActionPlan(id);
   }

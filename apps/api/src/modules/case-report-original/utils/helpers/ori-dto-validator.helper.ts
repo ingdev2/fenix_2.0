@@ -8,15 +8,14 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { validate } from 'class-validator';
 import { Repository } from 'typeorm';
 import { CaseType } from 'src/modules/case-type/entities/case-type.entity';
-import { caseTypeReport } from 'src/utils/enums/caseType-report.enum';
+import { CaseTypeReportEnum } from 'src/utils/enums/caseType-report.enum';
 
-export type CreateReportOriDto = //Discriminador que define los Dto
-
-    | CreateOriAdverseEventReportDto
-    | CreateOriComplicationsReportDto
-    | CreateOriIncidentReportDto
-    | CreateOriIndicatingUnsafeCareReportDto
-    | CreateOriRiskReportDto;
+export type CreateReportOriDto =
+  | CreateOriAdverseEventReportDto
+  | CreateOriComplicationsReportDto
+  | CreateOriIncidentReportDto
+  | CreateOriIndicatingUnsafeCareReportDto
+  | CreateOriRiskReportDto;
 
 export async function OriDtoValidator(
   createReportDto: any,
@@ -31,35 +30,32 @@ export async function OriDtoValidator(
   });
 
   if (!caseTypeFound) {
-    throw new HttpException(
-      `El tipo de caso no existe.`,
-      HttpStatus.NOT_FOUND,
-    );
+    throw new HttpException(`El tipo de caso no existe.`, HttpStatus.NOT_FOUND);
   }
 
   switch (caseTypeFound.cas_t_name) {
-    case caseTypeReport.RISK:
+    case CaseTypeReportEnum.RISK:
       dtoInstance = plainToInstance(CreateOriRiskReportDto, createReportDto);
       break;
-    case caseTypeReport.ADVERSE_EVENT:
+    case CaseTypeReportEnum.ADVERSE_EVENT:
       dtoInstance = plainToInstance(
         CreateOriAdverseEventReportDto,
         createReportDto,
       );
       break;
-    case caseTypeReport.INCIDENT:
+    case CaseTypeReportEnum.INCIDENT:
       dtoInstance = plainToInstance(
         CreateOriIncidentReportDto,
         createReportDto,
       );
       break;
-    case caseTypeReport.INDICATING_UNSAFE_CARE:
+    case CaseTypeReportEnum.INDICATING_UNSAFE_CARE:
       dtoInstance = plainToInstance(
         CreateOriIndicatingUnsafeCareReportDto,
         createReportDto,
       );
       break;
-    case caseTypeReport.COMPLICATIONS:
+    case CaseTypeReportEnum.COMPLICATIONS:
       dtoInstance = plainToInstance(
         CreateOriComplicationsReportDto,
         createReportDto,

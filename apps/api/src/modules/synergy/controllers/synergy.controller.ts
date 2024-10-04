@@ -6,18 +6,15 @@ import {
   Patch,
   Param,
   Delete,
-  Put,
   Ip,
-  HttpException,
   UseGuards,
 } from '@nestjs/common';
 import { SynergyService } from '../services/synergy.service';
 import { CreateSynergyDto } from '../dto/create-synergy.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { Synergy } from '../entities/synergy.entity';
 import { PermissionGuard } from 'src/utils/guards/permission.guard';
 import { Permission } from 'src/utils/decorators/permission.decorator';
-import { permissions } from 'src/utils/enums/permissions.enum';
+import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
 
 @ApiTags('synergy')
 @Controller('synergy')
@@ -26,7 +23,7 @@ export class SynergyController {
   constructor(private readonly synergyService: SynergyService) {}
 
   @Post('/createSynergy/:idValidator/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.VALIDATOR)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.VALIDATOR)
   createSynergy(
     @Body() createSynergyDto: CreateSynergyDto[],
     @Ip() clientIp: string,
@@ -40,13 +37,13 @@ export class SynergyController {
   }
 
   @Get('/listSynergies/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.VALIDATOR)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.VALIDATOR)
   listSynergies() {
     return this.synergyService.findAllSynergy();
   }
 
   @Get('/findSynergy/:id/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.VALIDATOR)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.VALIDATOR)
   findSynergy(@Param('id') id: number) {
     return this.synergyService.findOneSynergy(id);
   }
@@ -62,7 +59,7 @@ export class SynergyController {
   // }
 
   @Patch('/resolutionSynergy/:id/:idValidator/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.VALIDATOR)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.VALIDATOR)
   resolutionSynergy(
     @Param('id') id: number,
     @Ip() clientIp: string,
@@ -72,7 +69,7 @@ export class SynergyController {
   }
 
   @Delete('/deleteSynergy/:id/:userIdPermission')
-  @Permission(permissions.SUPER_ADMIN, permissions.VALIDATOR)
+  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.VALIDATOR)
   deleteSynergy(@Param('id') id: number) {
     return this.synergyService.deleteSynergy(id);
   }

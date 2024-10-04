@@ -1,5 +1,6 @@
 import {
   IsBoolean,
+  IsDateString,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -7,6 +8,10 @@ import {
 } from 'class-validator';
 
 export class CreateCaseReportOriginalDto {
+  @IsDateString()
+  @IsNotEmpty()
+  ori_cr_dateofcase: Date;
+
   @IsNumber()
   @IsNotEmpty()
   ori_cr_casetype_id_fk: number;
@@ -15,9 +20,13 @@ export class CreateCaseReportOriginalDto {
   @IsString()
   ori_cr_filingnumber: string;
 
-  @IsNumber()
+  @IsBoolean()
   @IsNotEmpty()
-  ori_cr_reporter_id: number;
+  ori_cr_anonymoususer: boolean;
+
+  @IsString()
+  @IsOptional()
+  ori_cr_reporter_id: string;
 
   @IsNumber()
   @IsNotEmpty()
@@ -63,6 +72,14 @@ export class CreateCaseReportOriginalDto {
   @IsOptional()
   ori_cr_epspatient: string;
 
+  @IsString()
+  @IsOptional()
+  ori_cr_diagnosticcode: string;
+
+  @IsString()
+  @IsOptional()
+  ori_cr_diagnosticdescription: string;
+
   @IsNumber()
   @IsOptional()
   ori_cr_admconsecutivepatient: number;
@@ -73,27 +90,31 @@ export class CreateCaseReportOriginalDto {
 
   @IsNumber()
   @IsNotEmpty()
-  ori_cr_service_id_fk: number;
+  ori_cr_originservice_id_fk: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  ori_cr_reportingservice_id_fk: number;
 
   @IsNumber()
   @IsNotEmpty()
   ori_cr_event_id_fk: number;
 
-  @IsNumber()
+  @IsString()
   @IsOptional()
-  ori_cr_risktype_id_fk: number; //
+  ori_cr_descriptionOthers: string;
 
   @IsNumber()
   @IsOptional()
-  ori_cr_severityclasif_id_fk: number; //
+  ori_cr_risktype_id_fk: number;
 
   @IsNumber()
   @IsOptional()
-  ori_cr_risklevel_id_fk: number; //
+  ori_cr_severityclasif_id_fk: number;
 
   @IsNumber()
-  @IsNotEmpty()
-  ori_cr_unit_id_fk: number;
+  @IsOptional()
+  ori_cr_risklevel_id_fk: number;
 
   @IsNumber()
   @IsNotEmpty()
@@ -125,13 +146,13 @@ export class CreateCaseReportOriginalDto {
 
   @IsOptional()
   @IsString()
-  ori_cr_inmediateaction: string; //
+  ori_cr_inmediateaction: string;
 
   @IsBoolean()
   @IsOptional()
-  ori_cr_materializedrisk: boolean; //
+  ori_cr_materializedrisk: boolean;
 
   @IsBoolean()
   @IsOptional()
-  ori_cr_associatedpatient: boolean; //
+  ori_cr_associatedpatient: boolean;
 }

@@ -2,14 +2,14 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateCaseTypeDto } from '../dto/create-case-type.dto';
 import { UpdateCaseTypeDto } from '../dto/update-case-type.dto';
 import { Repository } from 'typeorm';
-import { CaseType as CaseTypeEntity } from '../entities/case-type.entity';
+import { CaseType } from '../entities/case-type.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class CaseTypeService {
   constructor(
-    @InjectRepository(CaseTypeEntity)
-    private readonly caseTypeRepository: Repository<CaseTypeEntity>,
+    @InjectRepository(CaseType)
+    private readonly caseTypeRepository: Repository<CaseType>,
   ) {}
 
   async createCaseType(createCaseTypeDto: CreateCaseTypeDto) {
@@ -114,8 +114,8 @@ export class CaseTypeService {
     if (!caseTypeFound) {
       return new HttpException(
         `Tipo de caso no encontrado, favor recargar.`,
-        HttpStatus.NOT_FOUND
-      )
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     const result = await this.caseTypeRepository.softDelete(id);

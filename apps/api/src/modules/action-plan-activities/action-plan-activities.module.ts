@@ -8,6 +8,6 @@ import { ActionPlanActivity } from './entities/action-plan-activity.entity';
   imports: [TypeOrmModule.forFeature([ActionPlanActivity])],
   controllers: [ActionPlanActivitiesController],
   providers: [ActionPlanActivitiesService],
-  exports: [ActionPlanActivitiesService]
+  exports: [ActionPlanActivitiesService],
 })
 export class ActionPlanActivitiesModule {}

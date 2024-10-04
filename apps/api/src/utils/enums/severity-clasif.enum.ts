@@ -1,4 +1,4 @@
-export enum severityClasification {
+export enum SeverityClasificationEnum {
   SERIOUS_SEVERITY = 'SEVERIDAD GRAVE',
   MODERATE_SEVERITY = 'SEVERIDAD MODERADA',
   MILD_SEVERITY = 'SEVERIDAD LEVE',

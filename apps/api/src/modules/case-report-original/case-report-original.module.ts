@@ -18,19 +18,12 @@ import { OriginModule } from '../origin/origin.module';
 import { SubOriginModule } from '../sub-origin/sub-origin.module';
 import { RiskLevelModule } from '../risk-level/risk-level.module';
 import { UnitModule } from '../unit/unit.module';
-import { Priority } from '../priority/entities/priority.entity';
-import { SeverityClasification } from '../severity-clasification/entities/severity-clasification.entity';
-import { MovementReportModule } from '../movement-report/movement-report.module';
 import { PermissionGuard } from 'src/utils/guards/permission.guard';
 import { UserModule } from 'src/modules_bonnadonahub/user/user.module';
-import { MovementReport } from '../movement-report/entities/movement-report.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      CaseReportOriginal,
-      CaseType,
-    ]),
+    TypeOrmModule.forFeature([CaseReportOriginal, CaseType]),
     CaseReportValidateModule,
     LogModule,
     MedicineModule,
