@@ -1,4 +1,4 @@
-import { HttpService as NestHttpService } from '@nestjs/axios';
+import { HttpService } from '@nestjs/axios';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 
@@ -6,7 +6,7 @@ require('dotenv').config();
 
 @Injectable()
 export class HttpPositionService {
-  constructor(private readonly httpPositionService: NestHttpService) {}
+  constructor(private readonly httpPositionService: HttpService) {}
 
   async getPositionData(code?: number) {
     try {

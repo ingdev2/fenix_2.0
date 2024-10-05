@@ -2,15 +2,15 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateReasonReturnCaseDto } from '../dto/create-reason-return-case.dto';
 import { UpdateReasonReturnCaseDto } from '../dto/update-reason-return-case.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ReasonReturnCase as ReasonReturnCaseEntity } from '../entities/reason-return-case.entity';
+import { ReasonReturnCase } from '../entities/reason-return-case.entity';
 import { Repository } from 'typeorm';
 import { RolePermissionService } from 'src/modules/role-permission/services/role-permission.service';
 
 @Injectable()
 export class ReasonReturnCaseService {
   constructor(
-    @InjectRepository(ReasonReturnCaseEntity)
-    private readonly reasonReturnCaseRepository: Repository<ReasonReturnCaseEntity>,
+    @InjectRepository(ReasonReturnCase)
+    private readonly reasonReturnCaseRepository: Repository<ReasonReturnCase>,
 
     private readonly roleService: RolePermissionService,
   ) {}
@@ -135,8 +135,8 @@ export class ReasonReturnCaseService {
     if (!reasonFound) {
       return new HttpException(
         `Razón devolución de caso no encontrado, favor recargar.`,
-        HttpStatus.NOT_FOUND
-      )
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     const result = await this.reasonReturnCaseRepository.softDelete(id);

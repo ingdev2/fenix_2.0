@@ -2,14 +2,14 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateFailedMeasureDto } from '../dto/create-failed-measure.dto';
 import { UpdateFailedMeasureDto } from '../dto/update-failed-measure.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FailedMeasure as FailedMeasureEntity } from '../entities/failed-measure.entity';
+import { FailedMeasure } from '../entities/failed-measure.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class FailedMeasuresService {
   constructor(
-    @InjectRepository(FailedMeasureEntity)
-    private readonly failedMeasureRepository: Repository<FailedMeasureEntity>,
+    @InjectRepository(FailedMeasure)
+    private readonly failedMeasureRepository: Repository<FailedMeasure>,
   ) {}
 
   async createFailedMeasure(createFailedMeasureDto: CreateFailedMeasureDto) {
@@ -118,8 +118,8 @@ export class FailedMeasuresService {
     if (!failedMeasureFound) {
       return new HttpException(
         `Medida fallida no encontrada, favor recargar.`,
-        HttpStatus.NOT_FOUND
-      )
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     const result = await this.failedMeasureRepository.softDelete(id);

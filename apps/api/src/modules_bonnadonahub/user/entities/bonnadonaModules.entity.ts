@@ -1,4 +1,12 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { Permissions } from './bonnadonaPermissions.entity';
 
 @Entity()
@@ -21,9 +29,6 @@ export class Modules {
   @DeleteDateColumn({ type: 'timestamp', select: false })
   deletedAt?: Date;
 
-  @OneToMany(
-    _type => Permissions,
-    permissions => permissions.module,
-  )
+  @OneToMany((_type) => Permissions, (permissions) => permissions.module)
   permissions?: Permissions[];
 }

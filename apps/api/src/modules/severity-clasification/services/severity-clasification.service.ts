@@ -1,20 +1,15 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateSeverityClasificationDto } from '../dto/create-severity-clasification.dto';
 import { UpdateSeverityClasificationDto } from '../dto/update-severity-clasification.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { SeverityClasification as SeverityClasifEntity } from '../entities/severity-clasification.entity';
+import { SeverityClasification } from '../entities/severity-clasification.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class SeverityClasificationService {
   constructor(
-    @InjectRepository(SeverityClasifEntity)
-    private readonly severityClasifRepository: Repository<SeverityClasifEntity>,
+    @InjectRepository(SeverityClasification)
+    private readonly severityClasifRepository: Repository<SeverityClasification>,
   ) {}
 
   async createSeverityClasification(

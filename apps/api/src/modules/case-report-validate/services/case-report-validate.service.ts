@@ -47,7 +47,7 @@ import { SeverityClasificationService } from 'src/modules/severity-clasification
 import { OriginService } from 'src/modules/origin/services/origin.service';
 import { SubOriginService } from 'src/modules/sub-origin/services/sub-origin.service';
 import { RiskLevelService } from 'src/modules/risk-level/services/risk-level.service';
-import { Priority } from 'src/modules/priority/entities/priority.entity';
+import { PriorityEntity } from 'src/modules/priority/entities/priority.entity';
 import { ObservationReturnCase } from 'src/modules/observation-return-case/entities/observation-return-case.entity';
 import { ObservationReturnCaseService } from 'src/modules/observation-return-case/services/observation-return-case.service';
 
@@ -316,7 +316,7 @@ export class CaseReportValidateService {
         createReportValDto.val_cr_severityclasif_id_fk !== null &&
         createReportValDto.val_cr_severityclasif_id_fk !== undefined
       ) {
-        const priorityFind = await queryRunner.manager.findOne(Priority, {
+        const priorityFind = await queryRunner.manager.findOne(PriorityEntity, {
           where: {
             prior_severityclasif_id_fk:
               createReportValDto.val_cr_severityclasif_id_fk,

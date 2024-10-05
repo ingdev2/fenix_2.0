@@ -291,7 +291,6 @@ export class ReportAnalystAssignmentService {
         where: {
           ana_validatedcase_id_fk: idCaseReportValidate,
           ana_status: true,
-          // ana_isreturned: false,
         },
         withDeleted: true,
       });

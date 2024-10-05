@@ -2,14 +2,14 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateOncologyCategoryDto } from '../dto/create-oncology-category.dto';
 import { UpdateOncologyCategoryDto } from '../dto/update-oncology-category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { OncologyCategory as OncologyCategoryEntity } from '../entities/oncology-category.entity';
+import { OncologyCategory } from '../entities/oncology-category.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class OncologyCategoryService {
   constructor(
-    @InjectRepository(OncologyCategoryEntity)
-    private readonly oncologyCategoryRepository: Repository<OncologyCategoryEntity>,
+    @InjectRepository(OncologyCategory)
+    private readonly oncologyCategoryRepository: Repository<OncologyCategory>,
   ) {}
 
   async createOncologyCategory(

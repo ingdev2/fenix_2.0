@@ -43,5 +43,4 @@ export class Users {
 
   @OneToOne((_type) => UserDetails, (details) => details.user)
   details!: UserDetails;
-
 }

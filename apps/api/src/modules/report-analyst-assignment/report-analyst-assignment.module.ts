@@ -13,7 +13,6 @@ import { RoleResponseTime } from '../role-response-time/entities/role-response-t
 import { RolePermission } from '../role-permission/entities/role-permission.entity';
 import { CaseType } from '../case-type/entities/case-type.entity';
 import { SeverityClasification } from '../severity-clasification/entities/severity-clasification.entity';
-import { MovementReportModule } from '../movement-report/movement-report.module';
 import { PermissionGuard } from 'src/utils/guards/permission.guard';
 import { UserModule } from 'src/modules_bonnadonahub/user/user.module';
 import { ReportResearcherAssignment } from '../report-researchers-assignment/entities/report-researchers-assignment.entity';

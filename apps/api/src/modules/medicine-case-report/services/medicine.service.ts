@@ -1,8 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateMedicineDto } from '../dto/create-medicine.dto';
 import { UpdateMedicineDto } from '../dto/update-medicine.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Medicine as MedicineEntity } from '../entities/medicine.entity';
+import { Medicine } from '../entities/medicine.entity';
 import { QueryRunner, Repository } from 'typeorm';
 import { HttpException } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common';
@@ -10,8 +10,8 @@ import { HttpStatus } from '@nestjs/common';
 @Injectable()
 export class MedicineService {
   constructor(
-    @InjectRepository(MedicineEntity)
-    private readonly medicineRepository: Repository<MedicineEntity>,
+    @InjectRepository(Medicine)
+    private readonly medicineRepository: Repository<Medicine>,
   ) {}
 
   async createMedicineTransaction(

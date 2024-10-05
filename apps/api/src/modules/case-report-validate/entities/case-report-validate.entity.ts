@@ -23,7 +23,7 @@ import { EventType } from 'src/modules/event-type/entities/event-type.entity';
 import { Event } from 'src/modules/event/entities/event.entity';
 import { Service } from 'src/modules/service/entities/service.entity';
 import { ReportResearcherAssignment } from 'src/modules/report-researchers-assignment/entities/report-researchers-assignment.entity';
-import { Priority } from 'src/modules/priority/entities/priority.entity';
+import { PriorityEntity } from 'src/modules/priority/entities/priority.entity';
 import { MovementReport } from 'src/modules/movement-report/entities/movement-report.entity';
 import { CharacterizationCase } from 'src/modules/characterization-cases/entities/characterization-case.entity';
 import { ObservationReturnCase } from 'src/modules/observation-return-case/entities/observation-return-case.entity';
@@ -219,9 +219,9 @@ export class CaseReportValidate {
   @JoinColumn({ name: 'val_cr_reportingservice_id_fk' })
   reportingService: Service;
 
-  @ManyToOne(() => Priority, (priority) => priority.caseReportValidate)
+  @ManyToOne(() => PriorityEntity, (priority) => priority.caseReportValidate)
   @JoinColumn({ name: 'val_cr_priority_id_fk' })
-  priority: Priority;
+  priority: PriorityEntity;
 
   @ManyToOne(
     () => MovementReport,

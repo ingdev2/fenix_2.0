@@ -4,7 +4,7 @@ import { DataSource, Repository } from 'typeorm';
 
 import { CaseReportOriginal } from '../entities/case-report-original.entity';
 import { CaseType } from 'src/modules/case-type/entities/case-type.entity';
-import { Priority } from 'src/modules/priority/entities/priority.entity';
+import { PriorityEntity } from 'src/modules/priority/entities/priority.entity';
 import { SeverityClasification } from 'src/modules/severity-clasification/entities/severity-clasification.entity';
 
 import { CaseReportValidateService } from 'src/modules/case-report-validate/services/case-report-validate.service';
@@ -197,7 +197,7 @@ export class CaseReportOriginalService {
           severityClasificationFound.id;
       }
 
-      const priorityFind = await queryRunner.manager.findOne(Priority, {
+      const priorityFind = await queryRunner.manager.findOne(PriorityEntity, {
         where: {
           prior_severityclasif_id_fk:
             createReportOriDto.ori_cr_severityclasif_id_fk,

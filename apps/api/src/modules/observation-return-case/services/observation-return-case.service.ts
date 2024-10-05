@@ -8,7 +8,7 @@ import {
 import { CreateObservationReturnCaseDto } from '../dto/create-observation-return-case.dto';
 import { UpdateObservationReturnCaseDto } from '../dto/update-observation-return-case.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ObservationReturnCase as ObservationReturnCaseEntity } from '../entities/observation-return-case.entity';
+import { ObservationReturnCase } from '../entities/observation-return-case.entity';
 import { Repository } from 'typeorm';
 import { ReasonReturnCaseService } from 'src/modules/reason-return-case/services/reason-return-case.service';
 import { CaseReportValidateService } from 'src/modules/case-report-validate/services/case-report-validate.service';
@@ -16,8 +16,8 @@ import { CaseReportValidateService } from 'src/modules/case-report-validate/serv
 @Injectable()
 export class ObservationReturnCaseService {
   constructor(
-    @InjectRepository(ObservationReturnCaseEntity)
-    private readonly observationReturnRepository: Repository<ObservationReturnCaseEntity>,
+    @InjectRepository(ObservationReturnCase)
+    private readonly observationReturnRepository: Repository<ObservationReturnCase>,
 
     private readonly reasonReturnCaseService: ReasonReturnCaseService,
     @Inject(forwardRef(() => CaseReportValidateService))
@@ -153,16 +153,14 @@ export class ObservationReturnCaseService {
     const observationReturnFound =
       await this.observationReturnRepository.findOneBy({ id });
 
-      if (!observationReturnFound) {
-        return new HttpException(
-          `Observación no encontrado, favor recargar.`,
-          HttpStatus.NOT_FOUND
-        )
-      }
+    if (!observationReturnFound) {
+      return new HttpException(
+        `Observación no encontrado, favor recargar.`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
 
-    const result = await this.observationReturnRepository.softDelete(
-      id,
-    );
+    const result = await this.observationReturnRepository.softDelete(id);
 
     if (result.affected === 0) {
       return new HttpException(

@@ -14,7 +14,6 @@ import { SeverityClasification } from '../severity-clasification/entities/severi
 import { RolePermission } from '../role-permission/entities/role-permission.entity';
 import { RoleResponseTime } from '../role-response-time/entities/role-response-time.entity';
 import { ReportAnalystAssignment } from '../report-analyst-assignment/entities/report-analyst-assignment.entity';
-import { MovementReportModule } from '../movement-report/movement-report.module';
 import { UserModule } from 'src/modules_bonnadonahub/user/user.module';
 import { PermissionGuard } from 'src/utils/guards/permission.guard';
 

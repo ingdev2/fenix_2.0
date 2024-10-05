@@ -2,18 +2,18 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreatePriorityDto } from '../dto/create-priority.dto';
 import { UpdatePriorityDto } from '../dto/update-priority.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Priority as PriorityEntity } from '../entities/priority.entity';
+import { PriorityEntity } from '../entities/priority.entity';
 import { Repository } from 'typeorm';
 import { SeverityClasificationService } from 'src/modules/severity-clasification/services/severity-clasification.service';
-import { SeverityClasification as SeverityClasificationEntity } from 'src/modules/severity-clasification/entities/severity-clasification.entity';
+import { SeverityClasification } from 'src/modules/severity-clasification/entities/severity-clasification.entity';
 
 @Injectable()
 export class PriorityService {
   constructor(
     @InjectRepository(PriorityEntity)
     private readonly priorityRepository: Repository<PriorityEntity>,
-    @InjectRepository(SeverityClasificationEntity)
-    private readonly severityClasificationRepository: Repository<SeverityClasificationEntity>,
+    @InjectRepository(SeverityClasification)
+    private readonly severityClasificationRepository: Repository<SeverityClasification>,
 
     private readonly severityClasificationService: SeverityClasificationService,
   ) {}
@@ -31,9 +31,13 @@ export class PriorityService {
       );
     }
 
-    const findSeverityClasif = await this.severityClasificationRepository.findOne({
-      where: { id: createPriorityDto.prior_severityclasif_id_fk, sev_c_status: true },
-    });
+    const findSeverityClasif =
+      await this.severityClasificationRepository.findOne({
+        where: {
+          id: createPriorityDto.prior_severityclasif_id_fk,
+          sev_c_status: true,
+        },
+      });
 
     if (!findSeverityClasif) {
       return new HttpException(

@@ -1,19 +1,6 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  HttpException,
-  HttpStatus,
-  Put,
-} from '@nestjs/common';
+import { Controller, Get, Body, Patch, Param, Delete } from '@nestjs/common';
 import { MedicineService } from '../services/medicine.service';
-import { CreateMedicineDto } from '../dto/create-medicine.dto';
 import { UpdateMedicineDto } from '../dto/update-medicine.dto';
-import { Medicine } from '../entities/medicine.entity';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('medicine')

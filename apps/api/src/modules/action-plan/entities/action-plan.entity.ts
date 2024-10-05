@@ -4,7 +4,7 @@ import { ClinicalResearch } from 'src/modules/clinical-research/entities/clinica
 import { EventType } from 'src/modules/event-type/entities/event-type.entity';
 import { Event } from 'src/modules/event/entities/event.entity';
 import { Position } from 'src/modules/position/entities/position.entity';
-import { Priority } from 'src/modules/priority/entities/priority.entity';
+import { PriorityEntity } from 'src/modules/priority/entities/priority.entity';
 import { Service } from 'src/modules/service/entities/service.entity';
 import { Unit } from 'src/modules/unit/entities/unit.entity';
 import {
@@ -108,9 +108,9 @@ export class ActionPlan {
   @JoinColumn({ name: 'plan_a_unit_id_fk' })
   unit: Unit;
 
-  @ManyToOne(() => Priority, (priority) => priority.actionPlan)
+  @ManyToOne(() => PriorityEntity, (priority) => priority.actionPlan)
   @JoinColumn({ name: 'plan_a_priority_id_fk' })
-  priority: Priority;
+  priority: PriorityEntity;
 
   @OneToMany(
     () => ClinicalResearch,

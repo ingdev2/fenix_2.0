@@ -1,5 +1,4 @@
 import { CaseReportValidate } from 'src/modules/case-report-validate/entities/case-report-validate.entity';
-import { ReportAnalystAssignment } from 'src/modules/report-analyst-assignment/entities/report-analyst-assignment.entity';
 import {
   Column,
   CreateDateColumn,

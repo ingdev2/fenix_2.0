@@ -2,14 +2,14 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateRolePermissionDto } from '../dto/create-role-permission.dto';
 import { UpdateRolePermissionDto } from '../dto/update-role-permission.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { RolePermission as RolePermissionEntity } from '../entities/role-permission.entity';
+import { RolePermission } from '../entities/role-permission.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class RolePermissionService {
   constructor(
-    @InjectRepository(RolePermissionEntity)
-    private readonly roleRepository: Repository<RolePermissionEntity>,
+    @InjectRepository(RolePermission)
+    private readonly roleRepository: Repository<RolePermission>,
   ) {}
 
   async createRole(createRoleDto: CreateRolePermissionDto) {
@@ -126,12 +126,12 @@ export class RolePermissionService {
 
   async deleteRole(id: number) {
     const roleFound = await this.roleRepository.findOneBy({ id });
-    
+
     if (!roleFound) {
       return new HttpException(
         `Rol no encontrado, favor recargar.`,
-        HttpStatus.NOT_FOUND
-      )
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     const result = await this.roleRepository.softDelete(id);

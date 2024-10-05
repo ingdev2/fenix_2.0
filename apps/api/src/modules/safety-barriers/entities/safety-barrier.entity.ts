@@ -1,5 +1,13 @@
 import { ClinicalResearch } from 'src/modules/clinical-research/entities/clinical-research.entity';
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity({ name: 'fenix_safety_barrier' })
 export class SafetyBarrier {
@@ -24,6 +32,9 @@ export class SafetyBarrier {
   @DeleteDateColumn()
   deletedAt: Date;
 
-  @OneToMany(() => ClinicalResearch, (clinicalResearch) => clinicalResearch.safetyBarrier)
+  @OneToMany(
+    () => ClinicalResearch,
+    (clinicalResearch) => clinicalResearch.safetyBarrier,
+  )
   clinicalResearch: ClinicalResearch[];
 }

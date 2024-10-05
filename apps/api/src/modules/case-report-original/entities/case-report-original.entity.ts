@@ -6,7 +6,7 @@ import { Event } from 'src/modules/event/entities/event.entity';
 import { Medicine } from 'src/modules/medicine-case-report/entities/medicine.entity';
 import { MovementReport } from 'src/modules/movement-report/entities/movement-report.entity';
 import { Origin } from 'src/modules/origin/entities/origin.entity';
-import { Priority } from 'src/modules/priority/entities/priority.entity';
+import { PriorityEntity } from 'src/modules/priority/entities/priority.entity';
 import { RiskLevel } from 'src/modules/risk-level/entities/risk-level.entity';
 import { RiskType } from 'src/modules/risk-type/entities/risk-type.entity';
 import { Service } from 'src/modules/service/entities/service.entity';
@@ -214,7 +214,7 @@ export class CaseReportOriginal {
   @JoinColumn({ name: 'ori_cr_reportingservice_id_fk' })
   reportingService: Service;
 
-  @ManyToOne(() => Priority, (priority) => priority.caseReportOriginal)
+  @ManyToOne(() => PriorityEntity, (priority) => priority.caseReportOriginal)
   @JoinColumn({ name: 'ori_cr_priority_id_fk' })
-  priority: Priority;
+  priority: PriorityEntity;
 }

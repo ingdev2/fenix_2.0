@@ -1,5 +1,13 @@
 import { ClinicalResearch } from 'src/modules/clinical-research/entities/clinical-research.entity';
-import { Column, CreateDateColumn, DeleteDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Entity, OneToMany } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+  Entity,
+  OneToMany,
+} from 'typeorm';
 
 @Entity({ name: 'fenix_risk_factor' })
 export class RiskFactor {
@@ -24,6 +32,9 @@ export class RiskFactor {
   @DeleteDateColumn()
   deletedAt: Date;
 
-  @OneToMany(() => ClinicalResearch, (clinicalResearch) => clinicalResearch.riskFactor)
+  @OneToMany(
+    () => ClinicalResearch,
+    (clinicalResearch) => clinicalResearch.riskFactor,
+  )
   clinicalResearch: ClinicalResearch[];
 }

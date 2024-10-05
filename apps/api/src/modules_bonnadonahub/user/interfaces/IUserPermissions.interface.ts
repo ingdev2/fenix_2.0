@@ -1,4 +1,4 @@
 export interface IUserPermission {
-    name: string;
-    module: string;
-  }
+  name: string;
+  module: string;
+}

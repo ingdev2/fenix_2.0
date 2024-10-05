@@ -1,21 +1,16 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateServiceDto } from '../dto/create-service.dto';
 import { UpdateServiceDto } from '../dto/update-service.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Service as ServiceEntity } from '../entities/service.entity';
+import { Service } from '../entities/service.entity';
 import { Repository } from 'typeorm';
 import { UnitService } from 'src/modules/unit/services/unit.service';
 
 @Injectable()
 export class ServiceService {
   constructor(
-    @InjectRepository(ServiceEntity)
-    private readonly serviceRepository: Repository<ServiceEntity>,
+    @InjectRepository(Service)
+    private readonly serviceRepository: Repository<Service>,
 
     private readonly unitService: UnitService,
   ) {}

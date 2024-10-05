@@ -1,11 +1,11 @@
-import { IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateFailedMeasureDto {
-    @IsNotEmpty()
-    @IsString()
-    meas_f_name: string;
+  @IsNotEmpty()
+  @IsString()
+  meas_f_name: string;
 
-    @IsOptional()
-    @IsString()
-    meas_f_description: string;
+  @IsOptional()
+  @IsString()
+  meas_f_description: string;
 }

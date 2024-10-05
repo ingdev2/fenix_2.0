@@ -2,14 +2,14 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateMovementReportDto } from '../dto/create-movement-report.dto';
 import { UpdateMovementReportDto } from '../dto/update-movement-report.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MovementReport as MovementReportEntity } from '../entities/movement-report.entity';
+import { MovementReport } from '../entities/movement-report.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class MovementReportService {
   constructor(
-    @InjectRepository(MovementReportEntity)
-    private readonly movementReportRepository: Repository<MovementReportEntity>,
+    @InjectRepository(MovementReport)
+    private readonly movementReportRepository: Repository<MovementReport>,
   ) {}
 
   async createMovementReport(createMovementReportDto: CreateMovementReportDto) {
@@ -129,13 +129,11 @@ export class MovementReportService {
     if (!movementReportFound) {
       return new HttpException(
         `Movimiento de reporte no encontrado, favor recargar.`,
-        HttpStatus.NOT_FOUND
-      )
+        HttpStatus.NOT_FOUND,
+      );
     }
 
-    const result = await this.movementReportRepository.softDelete(
-      id,
-    );
+    const result = await this.movementReportRepository.softDelete(id);
 
     if (result.affected === 0) {
       return new HttpException(

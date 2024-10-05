@@ -31,7 +31,7 @@ export class Synergy {
   // syn_patientmedicalhistory: String;  //antecedentes
 
   // @Column({ type: 'varchar' })
-  // syn_patientcomorbidity: String; //comorbilidad 
+  // syn_patientcomorbidity: String; //comorbilidad
 
   // @Column()
   // syn_proceduredate: Date;  // Fecha de procedimiento

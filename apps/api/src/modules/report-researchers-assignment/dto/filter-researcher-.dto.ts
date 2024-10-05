@@ -6,7 +6,4 @@ export class FilterReportResearcherAssignmentDto {
 
   @IsString()
   empPosition: string;
-
-  // @IsNumber()
-  // empStatus: number;
 }

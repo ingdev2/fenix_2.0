@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   title: "Fénix",
   description: "Software de Clínica Bonnadona",
   icons: {
-    icon: "/icon.png",
+    icon: "/favicon.ico",
   },
 };
 

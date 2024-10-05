@@ -1,40 +1,40 @@
-import { Type } from "class-transformer";
-import { IsNumber, IsOptional, IsString } from "class-validator";
+import { Type } from 'class-transformer';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class QueryReportResearchersAssignmentDto {
-    @IsString()
-    @IsOptional()
-    filingNumber: string;
+  @IsString()
+  @IsOptional()
+  filingNumber: string;
 
-    @IsString()
-    @IsOptional()
-    patientDoc: string;
-  
-    @IsNumber()
-    @IsOptional()
-    @Type(() => Number)
-    caseTypeId: number;
+  @IsString()
+  @IsOptional()
+  patientDoc: string;
 
-    @IsNumber()
-    @IsOptional()
-    @Type(() => Number)
-    eventId: number;
+  @IsNumber()
+  @IsOptional()
+  @Type(() => Number)
+  caseTypeId: number;
 
-    @IsNumber()
-    @IsOptional()
-    @Type(() => Number)
-    priorityId: number;
+  @IsNumber()
+  @IsOptional()
+  @Type(() => Number)
+  eventId: number;
 
-    @IsNumber()
-    @IsOptional()
-    @Type(() => Number)
-    statusMovementId: number;
+  @IsNumber()
+  @IsOptional()
+  @Type(() => Number)
+  priorityId: number;
 
-    @IsString()
-    @IsOptional()
-    empImmediateBoss: string;
+  @IsNumber()
+  @IsOptional()
+  @Type(() => Number)
+  statusMovementId: number;
 
-    @IsString()
-    @IsOptional()
-    empPosition: string;
+  @IsString()
+  @IsOptional()
+  empImmediateBoss: string;
+
+  @IsString()
+  @IsOptional()
+  empPosition: string;
 }

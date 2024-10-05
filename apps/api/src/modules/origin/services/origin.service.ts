@@ -1,20 +1,15 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateOriginDto } from '../dto/create-origin.dto';
 import { UpdateOriginDto } from '../dto/update-origin.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Origin as OriginEntity } from '../entities/origin.entity';
+import { Origin } from '../entities/origin.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class OriginService {
   constructor(
-    @InjectRepository(OriginEntity)
-    private readonly originRepository: Repository<OriginEntity>,
+    @InjectRepository(Origin)
+    private readonly originRepository: Repository<Origin>,
   ) {}
 
   async createOrigin(createOriginDto: CreateOriginDto) {
