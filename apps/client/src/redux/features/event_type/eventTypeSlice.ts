@@ -3,8 +3,9 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState: EventType = {
   id: 0,
   eve_t_casetype_id_fk: 0,
+  eve_t_oncologycategory_id_fk: 0,
+  eve_t_characterizationcase_id_fk: 0,
   eve_t_name: "",
-  eve_t_description: "",
   eve_t_status: true,
   createdAt: "",
   updateAt: "",
@@ -21,11 +22,14 @@ export const eventTypeSlice = createSlice({
     setCaseTypeIdFk: (state, action) => {
       state.eve_t_casetype_id_fk = action.payload;
     },
+    setCharacterizationCaseIdFk: (state, action) => {
+      state.eve_t_characterizationcase_id_fk = action.payload;
+    },
+    setOncologyCategoryIdFk: (state, action) => {
+      state.eve_t_oncologycategory_id_fk = action.payload;
+    },
     setNameEventType: (state, action) => {
       state.eve_t_name = action.payload;
-    },
-    setDescriptionEventType: (state, action) => {
-      state.eve_t_description = action.payload;
     },
     setStatusEventType: (state, action) => {
       state.eve_t_status = action.payload;
@@ -41,8 +45,10 @@ export const eventTypeSlice = createSlice({
     },
     setDefaultValuesEventType: (state) => {
       state.id = 0;
+      state.eve_t_casetype_id_fk= 0;
+      state.eve_t_oncologycategory_id_fk= 0;
+      state.eve_t_characterizationcase_id_fk= 0;
       state.eve_t_name = "";
-      state.eve_t_description = "";
       state.eve_t_status = true;
       state.createdAt = "";
       state.updateAt = "";
@@ -53,8 +59,10 @@ export const eventTypeSlice = createSlice({
 
 export const {
   setIdEventType,
+  setCaseTypeIdFk,
+  setCharacterizationCaseIdFk,
+  setOncologyCategoryIdFk,
   setNameEventType,
-  setDescriptionEventType,
   setStatusEventType,
   setCreateDateEventType,
   setUpdateDateEventType,

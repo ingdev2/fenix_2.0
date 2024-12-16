@@ -1,16 +1,31 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { getSession } from "next-auth/react";
+
+const addTokenToRequest = async (headers: any, { getState }: any) => {
+  const session: any = await getSession();
+
+  if (session?.user?.access_token) {
+    headers.set("Authorization", `Bearer ${session.user.access_token}`);
+  }
+
+  return headers;
+};
 
 export const fluidTypeApi = createApi({
   reducerPath: "fluidTypeApi",
   baseQuery: fetchBaseQuery({
     baseUrl: `${process.env.NEXT_PUBLIC_BACKEND_URL}/fluid-type`,
+
+    prepareHeaders(headers, { getState }) {
+      return addTokenToRequest(headers, { getState });
+    },
   }),
 
-  refetchOnMountOrArgChange: true,
+  // refetchOnMountOrArgChange: true,
 
-  refetchOnFocus: true,
+  // refetchOnFocus: true,
 
-  refetchOnReconnect: true,
+  // refetchOnReconnect: true,
 
   endpoints: (builder) => ({
     getAllFluidTypes: builder.query<FluidType[], null>({
@@ -19,15 +34,18 @@ export const fluidTypeApi = createApi({
 
     createFluidType: builder.mutation({
       query: (newFluidType) => ({
-        url: "createFluidType/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd",
+        url: "createFluidType/",
         method: "POST",
         body: newFluidType,
       }),
     }),
 
-    updateFluidType: builder.mutation<any, { id: number; updateFluidType: Partial<FluidType> }>({
+    updateFluidType: builder.mutation<
+      any,
+      { id: number; updateFluidType: Partial<FluidType> }
+    >({
       query: ({ id, updateFluidType }) => ({
-        url: `updateFluidType/${id}/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd`,
+        url: `updateFluidType/${id}/`,
         method: "PATCH",
         body: updateFluidType,
       }),
@@ -35,7 +53,7 @@ export const fluidTypeApi = createApi({
 
     deleteFluidType: builder.mutation({
       query: (id) => ({
-        url: `deleteFluidType/${id}/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd`,
+        url: `deleteFluidType/${id}/`,
         method: "DELETE",
         params: { id },
       }),

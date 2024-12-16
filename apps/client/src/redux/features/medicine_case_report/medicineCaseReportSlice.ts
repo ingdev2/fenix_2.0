@@ -10,6 +10,7 @@ const initialState: MedicineCaseReport = {
   createdAt: "",
   updateAt: "",
   deletedAt: "",
+  listMedicines: [],
 };
 
 export const medicineCaseReportSlice = createSlice({
@@ -43,6 +44,9 @@ export const medicineCaseReportSlice = createSlice({
     setDeleteDateMedicineCaseReport: (state, action) => {
       state.deletedAt = action.payload;
     },
+    setListMedicinesCaseReport: (state, action) => {
+      state.listMedicines = action.payload;
+    },
     setDefaultValuesMedicineCaseReport: (state) => {
       state.id = 0;
       state.med_case_id_fk = "";
@@ -53,6 +57,7 @@ export const medicineCaseReportSlice = createSlice({
       state.createdAt = "";
       state.updateAt = "";
       state.deletedAt = "";
+      state.listMedicines = [];
     },
   },
 });
@@ -67,6 +72,7 @@ export const {
   setCreateDateMedicineCaseReport,
   setUpdateDateMedicineCaseReport,
   setDeleteDateMedicineCaseReport,
+  setListMedicinesCaseReport,
   setDefaultValuesMedicineCaseReport,
 } = medicineCaseReportSlice.actions;
 

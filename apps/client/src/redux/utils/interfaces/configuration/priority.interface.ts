@@ -8,6 +8,5 @@ interface Priority {
   createdAt: string;
   updateAt: string;
   deletedAt: string | null;
-  severityClasification: SeverityClasification;
 }
 

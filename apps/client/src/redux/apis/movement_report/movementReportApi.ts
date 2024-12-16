@@ -1,16 +1,31 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { getSession } from "next-auth/react";
+
+const addTokenToRequest = async (headers: any, { getState }: any) => {
+  const session: any = await getSession();
+
+  if (session?.user?.access_token) {
+    headers.set("Authorization", `Bearer ${session.user.access_token}`);
+  }
+
+  return headers;
+};
 
 export const movementReportApi = createApi({
   reducerPath: "movementReportApi",
   baseQuery: fetchBaseQuery({
     baseUrl: `${process.env.NEXT_PUBLIC_BACKEND_URL}/movement-report`,
+
+    prepareHeaders(headers, { getState }) {
+      return addTokenToRequest(headers, { getState });
+    },
   }),
 
-  refetchOnMountOrArgChange: true,
+  // refetchOnMountOrArgChange: true,
 
-  refetchOnFocus: true,
+  // refetchOnFocus: true,
 
-  refetchOnReconnect: true,
+  // refetchOnReconnect: true,
 
   endpoints: (builder) => ({
     getAllMovementReports: builder.query<MovementReport[], null>({
@@ -19,7 +34,7 @@ export const movementReportApi = createApi({
 
     createMovementReport: builder.mutation<any, Partial<MovementReport>>({
       query: (newMovementReport) => ({
-        url: "createMovementReport/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd",
+        url: "createMovementReport/",
         method: "POST",
         body: newMovementReport,
       }),
@@ -30,7 +45,7 @@ export const movementReportApi = createApi({
       { id: number; updateMovementReport: Partial<MovementReport> }
     >({
       query: ({ id, updateMovementReport }) => ({
-        url: `updateMovementReport/${id}/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd`,
+        url: `updateMovementReport/${id}/`,
         method: "PATCH",
         body: updateMovementReport,
       }),
@@ -38,7 +53,7 @@ export const movementReportApi = createApi({
 
     deleteMovementReport: builder.mutation({
       query: (id) => ({
-        url: `deleteMovementReport/${id}/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd`,
+        url: `deleteMovementReport/${id}/`,
         method: "DELETE",
         params: { id },
       }),

@@ -1,16 +1,31 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { getSession } from "next-auth/react";
+
+const addTokenToRequest = async (headers: any, { getState }: any) => {
+  const session: any = await getSession();
+
+  if (session?.user?.access_token) {
+    headers.set("Authorization", `Bearer ${session.user.access_token}`);
+  }
+
+  return headers;
+};
 
 export const safetyBarrierApi = createApi({
   reducerPath: "safetyBarrierApi",
   baseQuery: fetchBaseQuery({
     baseUrl: `${process.env.NEXT_PUBLIC_BACKEND_URL}/safety-barriers`,
+
+    prepareHeaders(headers, { getState }) {
+      return addTokenToRequest(headers, { getState });
+    },
   }),
 
-  refetchOnMountOrArgChange: true,
+  // refetchOnMountOrArgChange: true,
 
-  refetchOnFocus: true,
+  // refetchOnFocus: true,
 
-  refetchOnReconnect: true,
+  // refetchOnReconnect: true,
 
   endpoints: (builder) => ({
     getAllSafetyBarriers: builder.query<SafetyBarrier[], null>({
@@ -19,7 +34,7 @@ export const safetyBarrierApi = createApi({
 
     createSafetyBarrier: builder.mutation({
       query: (newSafetyBarrier) => ({
-        url: "createSafetyBarrier/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd",
+        url: "createSafetyBarrier/",
         method: "POST",
         body: newSafetyBarrier,
       }),
@@ -27,7 +42,7 @@ export const safetyBarrierApi = createApi({
 
     updateSafetyBarrier: builder.mutation<any, { id: number; updateSafetyBarrier: Partial<SafetyBarrier> }>({
       query: ({ id, updateSafetyBarrier }) => ({
-        url: `updateSafetyBarrier/${id}/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd`,
+        url: `updateSafetyBarrier/${id}/`,
         method: "PATCH",
         body: updateSafetyBarrier,
       }),
@@ -35,7 +50,7 @@ export const safetyBarrierApi = createApi({
 
     deleteSafetyBarrier: builder.mutation({
       query: (id) => ({
-        url: `deleteSafetyBarrier/${id}/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd`,
+        url: `deleteSafetyBarrier/${id}/`,
         method: "DELETE",
         params: { id },
       }),

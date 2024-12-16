@@ -1,16 +1,31 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { getSession } from "next-auth/react";
+
+const addTokenToRequest = async (headers: any, { getState }: any) => {
+  const session: any = await getSession();
+
+  if (session?.user?.access_token) {
+    headers.set("Authorization", `Bearer ${session.user.access_token}`);
+  }
+
+  return headers;
+};
 
 export const damageTypeApi = createApi({
   reducerPath: "damageTypeApi",
   baseQuery: fetchBaseQuery({
     baseUrl: `${process.env.NEXT_PUBLIC_BACKEND_URL}/damage-type`,
+    
+    prepareHeaders(headers, { getState }) {
+      return addTokenToRequest(headers, { getState });
+    },
   }),
 
-  refetchOnMountOrArgChange: true,
+  // refetchOnMountOrArgChange: true,
 
-  refetchOnFocus: true,
+  // refetchOnFocus: true,
 
-  refetchOnReconnect: true,
+  // refetchOnReconnect: true,
 
   endpoints: (builder) => ({
     getAllDamageTypes: builder.query<DamageType[], null>({
@@ -19,7 +34,7 @@ export const damageTypeApi = createApi({
 
     createDamageType: builder.mutation({
       query: (newDamageType) => ({
-        url: "createDamageType/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd",
+        url: "createDamageType/",
         method: "POST",
         body: newDamageType,
       }),
@@ -27,7 +42,7 @@ export const damageTypeApi = createApi({
 
     updateDamageType: builder.mutation<any, { id: number; updateDamageType: Partial<DamageType> }>({
       query: ({ id, updateDamageType }) => ({
-        url: `updateDamageType/${id}/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd`,
+        url: `updateDamageType/${id}/`,
         method: "PATCH",
         body: updateDamageType,
       }),
@@ -35,7 +50,7 @@ export const damageTypeApi = createApi({
 
     deleteDamageType: builder.mutation({
       query: (id) => ({
-        url: `deleteDamageType/${id}/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd`,
+        url: `deleteDamageType/${id}/`,
         method: "DELETE",
         params: { id },
       }),

@@ -1,16 +1,31 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { getSession } from "next-auth/react";
+
+const addTokenToRequest = async (headers: any, { getState }: any) => {
+  const session: any = await getSession();
+
+  if (session?.user?.access_token) {
+    headers.set("Authorization", `Bearer ${session.user.access_token}`);
+  }
+
+  return headers;
+};
 
 export const unsafeActionApi = createApi({
   reducerPath: "unsafeActionApi",
   baseQuery: fetchBaseQuery({
     baseUrl: `${process.env.NEXT_PUBLIC_BACKEND_URL}/unsafe-action`,
+
+    prepareHeaders(headers, { getState }) {
+      return addTokenToRequest(headers, { getState });
+    },
   }),
 
-  refetchOnMountOrArgChange: true,
+  // refetchOnMountOrArgChange: true,
 
-  refetchOnFocus: true,
+  // refetchOnFocus: true,
 
-  refetchOnReconnect: true,
+  // refetchOnReconnect: true,
 
   endpoints: (builder) => ({
     getAllUnsafeActions: builder.query<UnsafeAction[], null>({
@@ -19,15 +34,18 @@ export const unsafeActionApi = createApi({
 
     createUnsafeAction: builder.mutation<any, Partial<UnsafeAction>>({
       query: (newUnsafeAction) => ({
-        url: "createUnsafeAction/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd",
+        url: "createUnsafeAction/",
         method: "POST",
         body: newUnsafeAction,
       }),
     }),
 
-    updateUnsafeAction: builder.mutation<any, { id: number; updateUnsafeAction: Partial<UnsafeAction> }>({
+    updateUnsafeAction: builder.mutation<
+      any,
+      { id: number; updateUnsafeAction: Partial<UnsafeAction> }
+    >({
       query: ({ id, updateUnsafeAction }) => ({
-        url: `updateUnsafeAction/${id}/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd`,
+        url: `updateUnsafeAction/${id}/`,
         method: "PATCH",
         body: updateUnsafeAction,
       }),
@@ -35,7 +53,7 @@ export const unsafeActionApi = createApi({
 
     deleteUnsafeAction: builder.mutation({
       query: (id) => ({
-        url: `deleteUnsafeAction/${id}/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd`,
+        url: `deleteUnsafeAction/${id}/`,
         method: "DELETE",
         params: { id },
       }),

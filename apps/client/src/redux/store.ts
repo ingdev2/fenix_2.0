@@ -5,6 +5,7 @@ import storage from "./storage/storage";
 
 import actionPlanReducer from "./features/action_plan/actionPlanSlice";
 import actionPlanActivityReducer from "./features/action_plan_activity/actionPlanActivitySlice";
+import caseReportOriginalReducer from "./features/case_report_original/caseReportOriginalSlice";
 import caseReportValidateReducer from "./features/case_report_validate/caseReportValidateSlice";
 import caseTypeReducer from "./features/case_type/caseTypeSlice";
 import characterizationCaseReducer from "./features/characterization_case/characterizationCaseSlice";
@@ -30,7 +31,7 @@ import positionReducer from "./features/position/positionSlice";
 import priorityReducer from "./features/priority/prioritySlice";
 import protocolReducer from "./features/protocol/protocolSlice";
 import reasonReturnCaseReducer from "./features/reason_return_case/reasonReturnCaseSlice";
-import reportAnalistAssignmentReducer from "./features/report_analist_assignment/reportAnalistAssignmentSlice";
+import reportAnalistAssignmentReducer from "./features/report_analyst_assignment/reportAnalystAssignmentSlice";
 import reportResearcherAssignmentReducer from "./features/report_researcher_assignment/reportResearcherAssignmentSlice";
 import researchInstrumentReducer from "./features/research_instrument/researchInstrumentSlice";
 import riskFactorReducer from "./features/risk_factor/riskFactorSlice";
@@ -45,9 +46,14 @@ import subOriginReducer from "./features/sub-origin/subOriginSlice";
 import unitReducer from "./features/unit/unitSlice";
 import unsafeActionReducer from "./features/unsafe_action/unsafeActionSlice";
 import compressionConceptReportReducer from "./features/compression-concept-reports/compressionConceptReportSlice";
-import changeOfCaseTypeReducer from "./features/common/change_of_case_type/changeOfCaseTypeSlice";
+import changeOfCaseTypeReducer from "./features/global/changeOfCaseTypeSlice";
 import oncologyCategoryReducer from "./features/oncology_category/oncologyCategorySlice";
-import itemMenuSelectedKeyReducer from "./features/common/item_menu_selected_key/itemMenuSelectedKeySlice";
+import messageStateReducer from "./features/common/message/messageStateSlice";
+import modalReducer from "./features/common/modal/modalSlice";
+import userSessionReducer from "./features/user_session/userSessionSlice";
+import synergyReducer from "./features/synergy/synergySlice";
+import observationCancellationCaseReducer from "./features/observation_cancellation_case/observationCancellationCaseSlice";
+import reasonCancellationCaseReducer from "./features/reason_cancellation_case/reasonCancellationCaseSlice";
 
 import { unitApi } from "./apis/unit/unitApi";
 import { caseTypeApi } from "./apis/case_type/caseTypeApi";
@@ -71,17 +77,40 @@ import { movementReportApi } from "./apis/movement_report/movementReportApi";
 import { serviceApi } from "./apis/service/serviceApi";
 import { subOriginApi } from "./apis/sub_origin/subOriginApi";
 import { priorityApi } from "./apis/priority/priorityApi";
-import { reasonReturnCaseApi } from "./apis/reason_return_case/reasonReturnCase";
+import { reasonReturnCaseApi } from "./apis/reason_return_case/reasonReturnCaseApi";
 import { eventTypeApi } from "./apis/event_type/eventTypeApi";
 import { eventApi } from "./apis/event/eventApi";
 import { compressionConceptReportApi } from "./apis/compression_concept_report/compressionConceptReportApi";
-import { oncologyCategoryApi } from "./apis/oncology_category/oncologyCategory";
+import { oncologyCategoryApi } from "./apis/oncology_category/oncologyCategoryApi";
+import { caseReportValidateApi } from "./apis/case_report_validate/caseReportValidateApi";
+import { caseReportOriginalApi } from "./apis/case_report_original/caseReportOriginalApi";
+import { patientApi } from "./apis/patient/patientApi";
+import { medicineApi } from "./apis/medicine/medicineApi";
+import { deviceApi } from "./apis/device/deviceApi";
+import { documentTypeApi } from "./apis/document-type/documentTypeApi";
+import { positionApi } from "./apis/position/positionApi";
+import { reportAnalystAssignmentApi } from "./apis/report_analyst_assignment/reportAnalystAssignmentApi";
+import { verifyActiveUserApi } from "./apis/users_b_hub/verifyActiveUserApi";
+import { synergyApi } from "./apis/synergy/synergyApi";
+import { observationCancellationCaseApi } from "./apis/observation_cancellation_case/observationCancellationCaseApi";
+import { reasonCancellationCaseApi } from "./apis/reason_cancellation_case/reasonCancellationCaseApi";
+import { reportResearcherAssignmentApi } from "./apis/report_researcher_assignment/reportResearcherAssignmentApi";
 
 const persistConfig = {
   key: "root",
   version: 1,
   storage,
-  whitelist: ["changeOfCaseType"],
+  whitelist: [
+    "changeOfCaseType",
+    "messageState",
+    "caseReportValidate",
+    "adverseEventOriginal",
+    "deviceCaseReport",
+    "medicineCaseReport",
+    "modal",
+    "movementReport",
+    "userSession",
+  ],
   blacklist: [],
 };
 
@@ -89,6 +118,7 @@ const rootReducer = combineReducers({
   actionPlan: actionPlanReducer,
   actionPlanActivity: actionPlanActivityReducer,
   caseReportValidate: caseReportValidateReducer,
+  caseReportOriginal: caseReportOriginalReducer,
   caseType: caseTypeReducer,
   characterizationCase: characterizationCaseReducer,
   clinicalResearch: clinicalResearchReducer,
@@ -108,7 +138,6 @@ const rootReducer = combineReducers({
   movementReport: movementReportReducer,
   observationReturnCase: observationReturnCaseReducer,
   origin: originReducer,
-  patient: patientReducer,
   position: positionReducer,
   priority: priorityReducer,
   protocol: protocolReducer,
@@ -130,7 +159,13 @@ const rootReducer = combineReducers({
   compressionConceptReport: compressionConceptReportReducer,
   changeOfCaseType: changeOfCaseTypeReducer,
   oncologyCategory: oncologyCategoryReducer,
-  itemMenuSelectedKey: itemMenuSelectedKeyReducer,
+  messageState: messageStateReducer,
+  patient: patientReducer,
+  modal: modalReducer,
+  userSession: userSessionReducer,
+  synergy: synergyReducer,
+  observationCancellationCase: observationCancellationCaseReducer,
+  reasonCancellationCase: reasonCancellationCaseReducer,
 
   [unitApi.reducerPath]: unitApi.reducer,
   [caseTypeApi.reducerPath]: caseTypeApi.reducer,
@@ -160,6 +195,19 @@ const rootReducer = combineReducers({
   [compressionConceptReportApi.reducerPath]:
     compressionConceptReportApi.reducer,
   [oncologyCategoryApi.reducerPath]: oncologyCategoryApi.reducer,
+  [caseReportValidateApi.reducerPath]: caseReportValidateApi.reducer,
+  [caseReportOriginalApi.reducerPath]: caseReportOriginalApi.reducer,
+  [patientApi.reducerPath]: patientApi.reducer,
+  [medicineApi.reducerPath]: medicineApi.reducer,
+  [deviceApi.reducerPath]: deviceApi.reducer,
+  [documentTypeApi.reducerPath]: documentTypeApi.reducer,
+  [positionApi.reducerPath]: positionApi.reducer,
+  [reportAnalystAssignmentApi.reducerPath]: reportAnalystAssignmentApi.reducer,
+  [verifyActiveUserApi.reducerPath]: verifyActiveUserApi.reducer,
+  [synergyApi.reducerPath]: synergyApi.reducer,
+  [observationCancellationCaseApi.reducerPath]:
+    observationCancellationCaseApi.reducer,
+  [reasonCancellationCaseApi.reducerPath]: reasonCancellationCaseApi.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -169,7 +217,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,
-      immutableCheck: false,
+      inmutableCheck: false,
     }).concat([
       unitApi.middleware,
       caseTypeApi.middleware,
@@ -198,6 +246,18 @@ export const store = configureStore({
       eventApi.middleware,
       compressionConceptReportApi.middleware,
       oncologyCategoryApi.middleware,
+      caseReportValidateApi.middleware,
+      caseReportOriginalApi.middleware,
+      patientApi.middleware,
+      medicineApi.middleware,
+      deviceApi.middleware,
+      documentTypeApi.middleware,
+      positionApi.middleware,
+      reportAnalystAssignmentApi.middleware,
+      verifyActiveUserApi.middleware,
+      synergyApi.middleware,
+      observationCancellationCaseApi.middleware,
+      reasonCancellationCaseApi.middleware,
     ]),
 });
 

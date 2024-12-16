@@ -42,6 +42,7 @@ export const prioritySlice = createSlice({
     },
     setDefaultValuesPriority: (state) => {
       state.id = 0;
+      state.prior_severityclasif_id_fk = 0;
       state.prior_name = "";
       state.prior_description = "";
       state.prior_status = true;

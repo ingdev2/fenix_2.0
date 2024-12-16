@@ -1,33 +1,55 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { getSession } from "next-auth/react";
+
+const addTokenToRequest = async (headers: any, { getState }: any) => {
+  const session: any = await getSession();
+
+  if (session?.user?.access_token) {
+    headers.set("Authorization", `Bearer ${session.user.access_token}`);
+  }
+
+  return headers;
+};
 
 export const priorityApi = createApi({
   reducerPath: "priorityApi",
   baseQuery: fetchBaseQuery({
     baseUrl: `${process.env.NEXT_PUBLIC_BACKEND_URL}/priority`,
+
+    prepareHeaders(headers, { getState }) {
+      return addTokenToRequest(headers, { getState });
+    },
   }),
 
-  refetchOnMountOrArgChange: true,
+  // refetchOnMountOrArgChange: true,
 
-  refetchOnFocus: true,
+  // refetchOnFocus: true,
 
-  refetchOnReconnect: true,
+  // refetchOnReconnect: true,
 
   endpoints: (builder) => ({
     getAllPriorities: builder.query<Priority[], null>({
       query: () => "listPriorities",
     }),
 
+    getPriorityById: builder.query<Priority, number>({
+      query: (Id) => `findPriority/${Id}`,
+    }),
+
     createPriority: builder.mutation<any, Partial<Priority>>({
       query: (newPriority) => ({
-        url: "createPriority/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd",
+        url: "createPriority/",
         method: "POST",
         body: newPriority,
       }),
     }),
 
-    updatePriority: builder.mutation<any, { id: number; updatePriority: Partial<Priority> }>({
+    updatePriority: builder.mutation<
+      any,
+      { id: number; updatePriority: Partial<Priority> }
+    >({
       query: ({ id, updatePriority }) => ({
-        url: `updatePriority/${id}/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd`,
+        url: `updatePriority/${id}/`,
         method: "PATCH",
         body: updatePriority,
       }),
@@ -35,7 +57,7 @@ export const priorityApi = createApi({
 
     deletePriority: builder.mutation({
       query: (id) => ({
-        url: `deletePriority/${id}/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd`,
+        url: `deletePriority/${id}/`,
         method: "DELETE",
         params: { id },
       }),
@@ -45,6 +67,7 @@ export const priorityApi = createApi({
 
 export const {
   useGetAllPrioritiesQuery,
+  useGetPriorityByIdQuery,
   useCreatePriorityMutation,
   useUpdatePriorityMutation,
   useDeletePriorityMutation,

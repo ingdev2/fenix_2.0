@@ -1,9 +1,24 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { getSession } from "next-auth/react";
+
+const addTokenToRequest = async (headers: any, { getState }: any) => {
+  const session: any = await getSession();
+
+  if (session?.user?.access_token) {
+    headers.set("Authorization", `Bearer ${session.user.access_token}`);
+  }
+
+  return headers;
+};
 
 export const caseTypeApi = createApi({
   reducerPath: "caseTypeApi",
   baseQuery: fetchBaseQuery({
     baseUrl: `${process.env.NEXT_PUBLIC_BACKEND_URL}/case-type`,
+
+    prepareHeaders(headers, { getState }) {
+      return addTokenToRequest(headers, { getState });
+    },
   }),
 
 //   refetchOnMountOrArgChange: true,
@@ -17,9 +32,13 @@ export const caseTypeApi = createApi({
       query: () => "listCaseTypes",
     }),
 
-    createCaseType: builder.mutation({
+    getCaseTypeById: builder.query<CaseType, number>({
+      query: (Id) => `findCaseType/${Id}`,
+    }),
+
+    createCaseType: builder.mutation<any, Partial<CaseType>>({
       query: (newCaseType) => ({
-        url: "createCaseType/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd",
+        url: "createCaseType/",
         method: "POST",
         body: newCaseType,
       }),
@@ -27,7 +46,7 @@ export const caseTypeApi = createApi({
 
     updateCaseType: builder.mutation<any, { id: number; updateCaseType: Partial<CaseType> }>({
       query: ({ id, updateCaseType }) => ({
-        url: `updateCaseType/${id}/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd`,
+        url: `updateCaseType/${id}/`,
         method: "PATCH",
         body: updateCaseType,
       }),
@@ -35,7 +54,7 @@ export const caseTypeApi = createApi({
 
     deleteCaseType: builder.mutation({
       query: (id) => ({
-        url: `deleteCaseType/${id}/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd`,
+        url: `deleteCaseType/${id}/`,
         method: "DELETE",
         params: { id },
       }),
@@ -45,6 +64,7 @@ export const caseTypeApi = createApi({
 
 export const {
   useGetAllCaseTypesQuery,
+  useGetCaseTypeByIdQuery,
   useCreateCaseTypeMutation,
   useUpdateCaseTypeMutation,
   useDeleteCaseTypeMutation,

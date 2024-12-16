@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState: SubOrigin = {
   id: 0,
-  sub_o_unit_id_fk: 0,
+  sub_o_origin_id_fk: 0,
   sub_o_name: "",
   sub_o_description: "",
   sub_o_status: true,
@@ -18,8 +18,8 @@ export const subOriginSlice = createSlice({
     setIdSubOrigin: (state, action) => {
       state.id = action.payload;
     },
-    setunitIdFk: (state, action) => {
-      state.sub_o_unit_id_fk = action.payload;
+    setOriginIdFk: (state, action) => {
+      state.sub_o_origin_id_fk = action.payload;
     },
     setNameSubOrigin: (state, action) => {
       state.sub_o_name = action.payload;
@@ -41,7 +41,7 @@ export const subOriginSlice = createSlice({
     },
     setDefaultValuesSubOrigin: (state) => {
       state.id = 0;
-      state.sub_o_unit_id_fk = 0;
+      state.sub_o_origin_id_fk = 0;
       state.sub_o_name = "";
       state.sub_o_description = "";
       state.sub_o_status = true;
@@ -54,7 +54,7 @@ export const subOriginSlice = createSlice({
 
 export const {
   setIdSubOrigin,
-  setunitIdFk,
+  setOriginIdFk,
   setNameSubOrigin,
   setDescriptionSubOrigin,
   setStatusSubOrigin,

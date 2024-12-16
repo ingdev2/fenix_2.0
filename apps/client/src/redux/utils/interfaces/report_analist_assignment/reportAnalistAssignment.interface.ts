@@ -1,7 +1,7 @@
-interface ReportAnalistAssignment {
+interface ReportAnalystAssignment {
   id: number;
   ana_validatedcase_id_fk: string;
-  ana_position_id_fk: number;
+  ana_positionname: string;
   ana_useranalyst_id: string;
   ana_uservalidator_id: string;
   ana_days: number;

@@ -1,16 +1,31 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { getSession } from "next-auth/react";
+
+const addTokenToRequest = async (headers: any, { getState }: any) => {
+  const session: any = await getSession();
+
+  if (session?.user?.access_token) {
+    headers.set("Authorization", `Bearer ${session.user.access_token}`);
+  }
+
+  return headers;
+};
 
 export const riskTypeApi = createApi({
   reducerPath: "riskTypeApi",
   baseQuery: fetchBaseQuery({
     baseUrl: `${process.env.NEXT_PUBLIC_BACKEND_URL}/risk-type`,
+
+    prepareHeaders(headers, { getState }) {
+      return addTokenToRequest(headers, { getState });
+    },
   }),
 
-  refetchOnMountOrArgChange: true,
+  // refetchOnMountOrArgChange: true,
 
-  refetchOnFocus: true,
+  // refetchOnFocus: true,
 
-  refetchOnReconnect: true,
+  // refetchOnReconnect: true,
 
   endpoints: (builder) => ({
     getAllRiskTypes: builder.query<RiskType[], null>({
@@ -19,15 +34,18 @@ export const riskTypeApi = createApi({
 
     createRiskType: builder.mutation({
       query: (newRiskType) => ({
-        url: "createRiskType/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd",
+        url: "createRiskType/",
         method: "POST",
         body: newRiskType,
       }),
     }),
 
-    updateRiskType: builder.mutation<any, { id: number; updateRiskType: Partial<RiskType> }>({
+    updateRiskType: builder.mutation<
+      any,
+      { id: number; updateRiskType: Partial<RiskType> }
+    >({
       query: ({ id, updateRiskType }) => ({
-        url: `updateRiskType/${id}/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd`,
+        url: `updateRiskType/${id}/`,
         method: "PATCH",
         body: updateRiskType,
       }),
@@ -35,7 +53,7 @@ export const riskTypeApi = createApi({
 
     deleteRiskType: builder.mutation({
       query: (id) => ({
-        url: `deleteRiskType/${id}/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd`,
+        url: `deleteRiskType/${id}/`,
         method: "DELETE",
         params: { id },
       }),

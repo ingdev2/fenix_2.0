@@ -18,7 +18,7 @@ export const reasonReturnCaseSlice = createSlice({
     setIdReasonReturnCase: (state, action) => {
       state.id = action.payload;
     },
-    setRoleIdFk: (state, action) => {
+    setRoleIdReasonReturnCase: (state, action) => {
       state.rec_r_role_id_fk = action.payload;
     },
     setCauseReasonReturnCase: (state, action) => {
@@ -54,7 +54,7 @@ export const reasonReturnCaseSlice = createSlice({
 
 export const {
   setIdReasonReturnCase,
-  setRoleIdFk,
+  setRoleIdReasonReturnCase,
   setCauseReasonReturnCase,
   setDescriptionReasonReturnCase,
   setStatusReasonReturnCase,

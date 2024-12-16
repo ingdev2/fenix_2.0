@@ -7,6 +7,6 @@ interface ReasonReturnCase {
   createdAt: string;
   updateAt: string;
   deletedAt: string | null;
-  role: Role;
+  // role: Role;
 }
 

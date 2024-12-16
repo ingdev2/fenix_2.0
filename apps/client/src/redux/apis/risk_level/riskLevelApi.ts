@@ -1,16 +1,31 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { getSession } from "next-auth/react";
+
+const addTokenToRequest = async (headers: any, { getState }: any) => {
+  const session: any = await getSession();
+
+  if (session?.user?.access_token) {
+    headers.set("Authorization", `Bearer ${session.user.access_token}`);
+  }
+
+  return headers;
+};
 
 export const riskLevelApi = createApi({
   reducerPath: "riskLevelApi",
   baseQuery: fetchBaseQuery({
     baseUrl: `${process.env.NEXT_PUBLIC_BACKEND_URL}/risk-level`,
+
+    prepareHeaders(headers, { getState }) {
+      return addTokenToRequest(headers, { getState });
+    },
   }),
 
-  refetchOnMountOrArgChange: true,
+  // refetchOnMountOrArgChange: true,
 
-  refetchOnFocus: true,
+  // refetchOnFocus: true,
 
-  refetchOnReconnect: true,
+  // refetchOnReconnect: true,
 
   endpoints: (builder) => ({
     getAllRiskLevels: builder.query<RiskLevel[], null>({
@@ -19,15 +34,18 @@ export const riskLevelApi = createApi({
 
     createRiskLevel: builder.mutation({
       query: (newRiskLevel) => ({
-        url: "createRiskLevel/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd",
+        url: "createRiskLevel/",
         method: "POST",
         body: newRiskLevel,
       }),
     }),
 
-    updateRiskLevel: builder.mutation<any, { id: number; updateRiskLevel: Partial<RiskLevel> }>({
+    updateRiskLevel: builder.mutation<
+      any,
+      { id: number; updateRiskLevel: Partial<RiskLevel> }
+    >({
       query: ({ id, updateRiskLevel }) => ({
-        url: `updateRiskLevel/${id}/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd`,
+        url: `updateRiskLevel/${id}/`,
         method: "PATCH",
         body: updateRiskLevel,
       }),
@@ -35,7 +53,7 @@ export const riskLevelApi = createApi({
 
     deleteRiskLevel: builder.mutation({
       query: (id) => ({
-        url: `deleteRiskLevel/${id}/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd`,
+        url: `deleteRiskLevel/${id}/`,
         method: "DELETE",
         params: { id },
       }),

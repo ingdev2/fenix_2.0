@@ -10,6 +10,7 @@ const initialState: DeviceCaseReport = {
   createdAt: "",
   updateAt: "",
   deletedAt: "",
+  listDevices: [],
 };
 
 export const deviceCaseReportSlice = createSlice({
@@ -31,17 +32,8 @@ export const deviceCaseReportSlice = createSlice({
     setDescriptionDeviceCaseReport: (state, action) => {
       state.dev_description = action.payload;
     },
-    setStatusDeviceCaseReport: (state, action) => {
-      state.dev_status = action.payload;
-    },
-    setCreateDateDeviceCaseReport: (state, action) => {
-      state.createdAt = action.payload;
-    },
-    setUpdateDateDeviceCaseReport: (state, action) => {
-      state.updateAt = action.payload;
-    },
-    setDeleteDateDeviceCaseReport: (state, action) => {
-      state.deletedAt = action.payload;
+    setListDevicesCaseReport: (state, action) => {
+      state.listDevices = action.payload;
     },
     setDefaultValuesDeviceCaseReport: (state) => {
       state.id = 0;
@@ -53,6 +45,7 @@ export const deviceCaseReportSlice = createSlice({
       state.createdAt = "";
       state.updateAt = "";
       state.deletedAt = "";
+      state.listDevices = [];
     },
   },
 });
@@ -63,10 +56,7 @@ export const {
   setCodeDeviceCaseReport,
   setNameDeviceCaseReport,
   setDescriptionDeviceCaseReport,
-  setStatusDeviceCaseReport,
-  setCreateDateDeviceCaseReport,
-  setUpdateDateDeviceCaseReport,
-  setDeleteDateDeviceCaseReport,
+  setListDevicesCaseReport,
   setDefaultValuesDeviceCaseReport,
 } = deviceCaseReportSlice.actions;
 

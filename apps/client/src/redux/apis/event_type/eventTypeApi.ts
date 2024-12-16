@@ -1,16 +1,31 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { getSession } from "next-auth/react";
+
+const addTokenToRequest = async (headers: any, { getState }: any) => {
+  const session: any = await getSession();
+
+  if (session?.user?.access_token) {
+    headers.set("Authorization", `Bearer ${session.user.access_token}`);
+  }
+
+  return headers;
+};
 
 export const eventTypeApi = createApi({
   reducerPath: "eventTypeApi",
   baseQuery: fetchBaseQuery({
     baseUrl: `${process.env.NEXT_PUBLIC_BACKEND_URL}/event-type`,
+
+    prepareHeaders(headers, { getState }) {
+      return addTokenToRequest(headers, { getState });
+    },
   }),
 
-  refetchOnMountOrArgChange: true,
+  // refetchOnMountOrArgChange: true,
 
-  refetchOnFocus: true,
+  // refetchOnFocus: true,
 
-  refetchOnReconnect: true,
+  // refetchOnReconnect: true,
 
   endpoints: (builder) => ({
     getAllEventTypes: builder.query<EventType[], null>({
@@ -27,7 +42,7 @@ export const eventTypeApi = createApi({
 
     createEventType: builder.mutation<any, Partial<EventType>>({
       query: (newEventType) => ({
-        url: "createEventType/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd",
+        url: "createEventType/",
         method: "POST",
         body: newEventType,
       }),
@@ -35,7 +50,7 @@ export const eventTypeApi = createApi({
 
     updateEventType: builder.mutation<any, { id: number; updateEventType: Partial<EventType> }>({
       query: ({ id, updateEventType }) => ({
-        url: `updateEventType/${id}/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd`,
+        url: `updateEventType/${id}/`,
         method: "PATCH",
         body: updateEventType,
       }),
@@ -43,7 +58,7 @@ export const eventTypeApi = createApi({
 
     deleteEventType: builder.mutation({
       query: (id) => ({
-        url: `deleteEventType/${id}/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd`,
+        url: `deleteEventType/${id}/`,
         method: "DELETE",
         params: { id },
       }),

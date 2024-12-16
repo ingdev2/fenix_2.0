@@ -1,16 +1,31 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { getSession } from "next-auth/react";
+
+const addTokenToRequest = async (headers: any, { getState }: any) => {
+  const session: any = await getSession();
+
+  if (session?.user?.access_token) {
+    headers.set("Authorization", `Bearer ${session.user.access_token}`);
+  }
+
+  return headers;
+};
 
 export const researchInstrumentApi = createApi({
-  reducerPath: "ResearchInstrumentApi",
+  reducerPath: "researchInstrumentApi",
   baseQuery: fetchBaseQuery({
     baseUrl: `${process.env.NEXT_PUBLIC_BACKEND_URL}/research-instrument`,
+
+    prepareHeaders(headers, { getState }) {
+      return addTokenToRequest(headers, { getState });
+    },
   }),
 
-  refetchOnMountOrArgChange: true,
+  // refetchOnMountOrArgChange: true,
 
-  refetchOnFocus: true,
+  // refetchOnFocus: true,
 
-  refetchOnReconnect: true,
+  // refetchOnReconnect: true,
 
   endpoints: (builder) => ({
     getAllResearchInstruments: builder.query<ResearchInstrument[], null>({
@@ -19,15 +34,18 @@ export const researchInstrumentApi = createApi({
 
     createResearchInstrument: builder.mutation({
       query: (newResearchInstrument) => ({
-        url: "createResearchInstrument/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd",
+        url: "createResearchInstrument/",
         method: "POST",
         body: newResearchInstrument,
       }),
     }),
 
-    updateResearchInstrument: builder.mutation<any, { id: number; updateResearchInstrument: Partial<ResearchInstrument> }>({
+    updateResearchInstrument: builder.mutation<
+      any,
+      { id: number; updateResearchInstrument: Partial<ResearchInstrument> }
+    >({
       query: ({ id, updateResearchInstrument }) => ({
-        url: `updateResearchInstrument/${id}/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd`,
+        url: `updateResearchInstrument/${id}/`,
         method: "PATCH",
         body: updateResearchInstrument,
       }),
@@ -35,7 +53,7 @@ export const researchInstrumentApi = createApi({
 
     deleteResearchInstrument: builder.mutation({
       query: (id) => ({
-        url: `deleteResearchInstrument/${id}/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd`,
+        url: `deleteResearchInstrument/${id}/`,
         method: "DELETE",
         params: { id },
       }),

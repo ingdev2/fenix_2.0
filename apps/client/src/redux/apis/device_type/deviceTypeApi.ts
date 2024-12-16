@@ -1,16 +1,31 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { getSession } from "next-auth/react";
+
+const addTokenToRequest = async (headers: any, { getState }: any) => {
+  const session: any = await getSession();
+
+  if (session?.user?.access_token) {
+    headers.set("Authorization", `Bearer ${session.user.access_token}`);
+  }
+
+  return headers;
+};
 
 export const deviceTypeApi = createApi({
   reducerPath: "deviceTypeApi",
   baseQuery: fetchBaseQuery({
     baseUrl: `${process.env.NEXT_PUBLIC_BACKEND_URL}/device-type`,
+
+    prepareHeaders(headers, { getState }) {
+      return addTokenToRequest(headers, { getState });
+    },
   }),
 
-  refetchOnMountOrArgChange: true,
+  // refetchOnMountOrArgChange: true,
 
-  refetchOnFocus: true,
+  // refetchOnFocus: true,
 
-  refetchOnReconnect: true,
+  // refetchOnReconnect: true,
 
   endpoints: (builder) => ({
     getAllDeviceTypes: builder.query<DeviceType[], null>({
@@ -19,15 +34,18 @@ export const deviceTypeApi = createApi({
 
     createDeviceType: builder.mutation({
       query: (newDeviceType) => ({
-        url: "createDeviceType/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd",
+        url: "createDeviceType/",
         method: "POST",
         body: newDeviceType,
       }),
     }),
 
-    updateDeviceType: builder.mutation<any, { id: number; updateDeviceType: Partial<DeviceType> }>({
+    updateDeviceType: builder.mutation<
+      any,
+      { id: number; updateDeviceType: Partial<DeviceType> }
+    >({
       query: ({ id, updateDeviceType }) => ({
-        url: `updateDeviceType/${id}/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd`,
+        url: `updateDeviceType/${id}/`,
         method: "PATCH",
         body: updateDeviceType,
       }),
@@ -35,7 +53,7 @@ export const deviceTypeApi = createApi({
 
     deleteDeviceType: builder.mutation({
       query: (id) => ({
-        url: `deleteDeviceType/${id}/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd`,
+        url: `deleteDeviceType/${id}/`,
         method: "DELETE",
         params: { id },
       }),

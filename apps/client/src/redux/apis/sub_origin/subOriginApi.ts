@@ -1,20 +1,39 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { getSession } from "next-auth/react";
+
+const addTokenToRequest = async (headers: any, { getState }: any) => {
+  const session: any = await getSession();
+
+  if (session?.user?.access_token) {
+    headers.set("Authorization", `Bearer ${session.user.access_token}`);
+  }
+
+  return headers;
+};
 
 export const subOriginApi = createApi({
   reducerPath: "subOriginApi",
   baseQuery: fetchBaseQuery({
     baseUrl: `${process.env.NEXT_PUBLIC_BACKEND_URL}/sub-origin`,
+
+    prepareHeaders(headers, { getState }) {
+      return addTokenToRequest(headers, { getState });
+    },
   }),
 
-  refetchOnMountOrArgChange: true,
+  // refetchOnMountOrArgChange: true,
 
-  refetchOnFocus: true,
+  // refetchOnFocus: true,
 
-  refetchOnReconnect: true,
+  // refetchOnReconnect: true,
 
   endpoints: (builder) => ({
     getAllSubOrigins: builder.query<SubOrigin[], null>({
       query: () => "listSubOrigins",
+    }),
+
+    getSubOriginById: builder.query<SubOrigin, number>({
+      query: (Id) => `findSubOrigin/${Id}`,
     }),
 
     getAllSubOriginsByOriginId: builder.query<SubOrigin[], number>({
@@ -23,7 +42,7 @@ export const subOriginApi = createApi({
 
     createSubOrigin: builder.mutation<any, Partial<SubOrigin>>({
       query: (newSubOrigin) => ({
-        url: "createSubOrigin/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd",
+        url: "createSubOrigin/",
         method: "POST",
         body: newSubOrigin,
       }),
@@ -34,7 +53,7 @@ export const subOriginApi = createApi({
       { id: number; updateSubOrigin: Partial<SubOrigin> }
     >({
       query: ({ id, updateSubOrigin }) => ({
-        url: `updateSubOrigin/${id}/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd`,
+        url: `updateSubOrigin/${id}/`,
         method: "PATCH",
         body: updateSubOrigin,
       }),
@@ -42,7 +61,7 @@ export const subOriginApi = createApi({
 
     deleteSubOrigin: builder.mutation({
       query: (id) => ({
-        url: `deleteSubOrigin/${id}/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd`,
+        url: `deleteSubOrigin/${id}/`,
         method: "DELETE",
         params: { id },
       }),
@@ -52,6 +71,7 @@ export const subOriginApi = createApi({
 
 export const {
   useGetAllSubOriginsQuery,
+  useGetSubOriginByIdQuery,
   useGetAllSubOriginsByOriginIdQuery,
   useCreateSubOriginMutation,
   useUpdateSubOriginMutation,

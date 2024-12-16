@@ -7,5 +7,4 @@ interface SubOrigin {
   createdAt: string;
   updateAt: string;
   deletedAt: string | null;
-  origin: Origin;
 }

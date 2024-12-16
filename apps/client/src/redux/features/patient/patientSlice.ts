@@ -1,83 +1,90 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState: Patient = {
-  NOMBRE: "",
-  ID: "",
-  TIPO: "",
-  SEXO: "",
-  CORREO: "",
-  DIRECCION: "",
-  EMPRESA: "",
-  TELEFONO: "",
-  CELULAR: "",
-  NIVEL_EDUCATIVO: "",
-  FECHA_NACIMIENTO: "",
+  patientDoctype: "",
+  patientDocument: "",
+  patientCompanyCode: "",
+  patientCompanyDescription: "",
+  patientFirstName: "",
+  patientSecondName: "",
+  patientSurname: "",
+  patientLastname: "",
+  patientAge: "",
+  patientGender: "",
+  diagnosisCode: "",
+  diagnosisDescription: "",
 };
 
 export const patientSlice = createSlice({
   name: "patient",
   initialState,
   reducers: {
-    setNamePatient: (state, action) => {
-      state.NOMBRE = action.payload;
+    setPatientDoctype: (state, action) => {
+      state.patientDoctype = action.payload;
     },
-    setIdPatient: (state, action) => {
-      state.ID = action.payload;
+    setPatientDocument: (state, action) => {
+      state.patientDocument = action.payload;
     },
-    setTypeIdPatient: (state, action) => {
-      state.TIPO = action.payload;
+    setPatientCompanyCode: (state, action) => {
+      state.patientCompanyCode = action.payload;
     },
-    setGenderPatient: (state, action) => {
-      state.SEXO = action.payload;
+    setPatientCompanyDescription: (state, action) => {
+      state.patientCompanyDescription = action.payload;
     },
-    setEmailPatient: (state, action) => {
-      state.CORREO = action.payload;
+    setPatientFirstName: (state, action) => {
+      state.patientFirstName = action.payload;
     },
-    setAddressPatient: (state, action) => {
-      state.DIRECCION = action.payload;
+    setPatientSecondName: (state, action) => {
+      state.patientSecondName = action.payload;
     },
-    setCompanyPatient: (state, action) => {
-      state.EMPRESA = action.payload;
+    setPatientSurname: (state, action) => {
+      state.patientSurname = action.payload;
     },
-    setTelephonePatient: (state, action) => {
-      state.TELEFONO = action.payload;
+    setPatientLastname: (state, action) => {
+      state.patientLastname = action.payload;
     },
-    setCellphonePatient: (state, action) => {
-      state.CELULAR = action.payload;
+    setPatientAge: (state, action) => {
+      state.patientAge = action.payload;
     },
-    setEducationalLevelPatient: (state, action) => {
-      state.NIVEL_EDUCATIVO = action.payload;
+    setPatientGender: (state, action) => {
+      state.patientGender = action.payload;
     },
-    setBirthdatePatient: (state, action) => {
-      state.FECHA_NACIMIENTO = action.payload;
+    setDiagnosisCode: (state, action) => {
+      state.diagnosisCode = action.payload;
+    },
+    setDiagnosisDescription: (state, action) => {
+      state.diagnosisDescription = action.payload;
     },
     setDefaultValuesPatient: (state) => {
-      state.NOMBRE = "";
-      state.ID = "";
-      state.TIPO = "";
-      state.SEXO = "";
-      state.CORREO = "";
-      state.DIRECCION = "";
-      state.EMPRESA = "";
-      state.TELEFONO = "";
-      state.CELULAR = "";
-      state.NIVEL_EDUCATIVO = "";
-      state.FECHA_NACIMIENTO = "";
+      state.patientDoctype = "";
+      state.patientDocument = "";
+      state.patientCompanyCode = "";
+      state.patientCompanyDescription = "";
+      state.patientFirstName = "";
+      state.patientSecondName = "";
+      state.patientSurname = "";
+      state.patientLastname = "";
+      state.patientAge = "";
+      state.patientGender = "";
+      state.diagnosisCode = "";
+      state.diagnosisDescription = "";
     },
   },
 });
 
 export const {
-  setNamePatient,
-  setIdPatient,
-  setTypeIdPatient,
-  setGenderPatient,
-  setEmailPatient,
-  setAddressPatient,
-  setCompanyPatient,
-  setTelephonePatient,
-  setCellphonePatient,
-  setDefaultValuesPatient,
+  setPatientDoctype,
+  setPatientDocument,
+  setPatientCompanyCode,
+  setPatientCompanyDescription,
+  setPatientFirstName,
+  setPatientSecondName,
+  setPatientSurname,
+  setPatientLastname,
+  setPatientAge,
+  setPatientGender,
+  setDiagnosisCode,
+  setDiagnosisDescription,
 } = patientSlice.actions;
 
 export default patientSlice.reducer;

@@ -4,7 +4,7 @@ const initialState: ObservationReturnCase = {
   id: 0,
   rec_o_reasonreturn_id_fk: 0,
   rec_o_validatedcase_id_fk: "",
-  rec_o_user_id: 0,
+  rec_o_user_id: "",
   rec_o_observation: "",
   rec_o_status: true,
   createdAt: "",
@@ -19,10 +19,10 @@ export const observationReturnCaseSlice = createSlice({
     setIdObservationReturnCase: (state, action) => {
       state.id = action.payload;
     },
-    setReasonReturnIdFk: (state, action) => {
+    setReasonIdObservationReturnCase: (state, action) => {
       state.rec_o_reasonreturn_id_fk = action.payload;
     },
-    setValidatedCaseIdFk: (state, action) => {
+    setValidatedReportIdObservationReturnCase: (state, action) => {
       state.rec_o_validatedcase_id_fk = action.payload;
     },
     setUserIdObservationReturnCase: (state, action) => {
@@ -47,7 +47,7 @@ export const observationReturnCaseSlice = createSlice({
       state.id = 0;
       state.rec_o_reasonreturn_id_fk = 0;
       state.rec_o_validatedcase_id_fk = "";
-      state.rec_o_user_id = 0;
+      state.rec_o_user_id = "";
       state.rec_o_observation = "";
       state.rec_o_status = true;
       state.createdAt = "";
@@ -59,8 +59,8 @@ export const observationReturnCaseSlice = createSlice({
 
 export const {
     setIdObservationReturnCase,
-    setReasonReturnIdFk,
-    setValidatedCaseIdFk,
+    setReasonIdObservationReturnCase,
+    setValidatedReportIdObservationReturnCase: setValidatedCaseIdFk,
     setUserIdObservationReturnCase,
     setObservationReturnCase,
     setStatusObservationReturnCase,

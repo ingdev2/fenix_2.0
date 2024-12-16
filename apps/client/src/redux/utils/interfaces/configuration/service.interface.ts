@@ -7,5 +7,4 @@ interface Service {
   createdAt: string;
   updateAt: string;
   deletedAt: string | null;
-  unit: Unit;
 }

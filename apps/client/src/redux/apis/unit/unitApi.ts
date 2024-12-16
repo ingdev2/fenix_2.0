@@ -1,16 +1,31 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { getSession } from "next-auth/react";
+
+const addTokenToRequest = async (headers: any, { getState }: any) => {
+  const session: any = await getSession();
+
+  if (session?.user?.access_token) {
+    headers.set("Authorization", `Bearer ${session.user.access_token}`);
+  }
+
+  return headers;
+};
 
 export const unitApi = createApi({
   reducerPath: "unitApi",
   baseQuery: fetchBaseQuery({
     baseUrl: `${process.env.NEXT_PUBLIC_BACKEND_URL}/unit`,
+
+    prepareHeaders(headers, { getState }) {
+      return addTokenToRequest(headers, { getState });
+    },
   }),
 
-  refetchOnMountOrArgChange: true,
+  // refetchOnMountOrArgChange: true,
 
-  refetchOnFocus: true,
+  // refetchOnFocus: true,
 
-  refetchOnReconnect: true,
+  // refetchOnReconnect: true,
 
   endpoints: (builder) => ({
     getAllUnits: builder.query<Unit[], null>({
@@ -19,15 +34,18 @@ export const unitApi = createApi({
 
     createUnit: builder.mutation({
       query: (newUnit) => ({
-        url: "createUnit/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd",
+        url: "createUnit/",
         method: "POST",
         body: newUnit,
       }),
     }),
 
-    updateUnit: builder.mutation<any, { id: number; updateUnit: Partial<Unit> }>({
+    updateUnit: builder.mutation<
+      any,
+      { id: number; updateUnit: Partial<Unit> }
+    >({
       query: ({ id, updateUnit }) => ({
-        url: `updateUnit/${id}/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd`,
+        url: `updateUnit/${id}/`,
         method: "PATCH",
         body: updateUnit,
       }),
@@ -35,7 +53,7 @@ export const unitApi = createApi({
 
     deleteUnit: builder.mutation({
       query: (id) => ({
-        url: `deleteUnit/${id}/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd`,
+        url: `deleteUnit/${id}/`,
         method: "DELETE",
         params: { id },
       }),

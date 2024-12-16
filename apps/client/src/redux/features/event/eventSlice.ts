@@ -1,11 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState: Event = {
+const initialState: Events = {
   id: 0,
   eve_eventtype_id_fk: 0,
   eve_unit_id_fk: 0,
   eve_name: "",
-  eve_description: "",
   eve_status: true,
   createdAt: "",
   updateAt: "",
@@ -28,9 +27,6 @@ export const eventSlice = createSlice({
     setNameEvent: (state, action) => {
       state.eve_name = action.payload;
     },
-    setDescriptionEvent: (state, action) => {
-      state.eve_description = action.payload;
-    },
     setStatusEvent: (state, action) => {
       state.eve_status = action.payload;
     },
@@ -45,8 +41,9 @@ export const eventSlice = createSlice({
     },
     setDefaultValuesEvent: (state) => {
       state.id = 0;
+      state.eve_eventtype_id_fk = 0;
+      state.eve_unit_id_fk = 0;
       state.eve_name = "";
-      state.eve_description = "";
       state.eve_status = true;
       state.createdAt = "";
       state.updateAt = "";
@@ -60,7 +57,6 @@ export const {
   setEventTypeIdFk,
   setUnitIdFk,
   setNameEvent,
-  setDescriptionEvent,
   setStatusEvent,
   setCreateDateEvent,
   setUpdateDateEvent,

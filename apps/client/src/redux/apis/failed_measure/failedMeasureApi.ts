@@ -1,16 +1,31 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { getSession } from "next-auth/react";
+
+const addTokenToRequest = async (headers: any, { getState }: any) => {
+  const session: any = await getSession();
+
+  if (session?.user?.access_token) {
+    headers.set("Authorization", `Bearer ${session.user.access_token}`);
+  }
+
+  return headers;
+};
 
 export const failedMeasureApi = createApi({
   reducerPath: "failed-measureApi",
   baseQuery: fetchBaseQuery({
     baseUrl: `${process.env.NEXT_PUBLIC_BACKEND_URL}/failed-measures`,
+
+    prepareHeaders(headers, { getState }) {
+      return addTokenToRequest(headers, { getState });
+    },
   }),
 
-  refetchOnMountOrArgChange: true,
+  // refetchOnMountOrArgChange: true,
 
-  refetchOnFocus: true,
+  // refetchOnFocus: true,
 
-  refetchOnReconnect: true,
+  // refetchOnReconnect: true,
 
   endpoints: (builder) => ({
     getAllFailedMeasures: builder.query<FailedMeasure[], null>({
@@ -19,15 +34,18 @@ export const failedMeasureApi = createApi({
 
     createFailedMeasure: builder.mutation({
       query: (newFailedMeasure) => ({
-        url: "createFailedMeasure/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd",
+        url: "createFailedMeasure/",
         method: "POST",
         body: newFailedMeasure,
       }),
     }),
 
-    updateFailedMeasure: builder.mutation<any, { id: number; updateFailedMeasure: Partial<FailedMeasure> }>({
+    updateFailedMeasure: builder.mutation<
+      any,
+      { id: number; updateFailedMeasure: Partial<FailedMeasure> }
+    >({
       query: ({ id, updateFailedMeasure }) => ({
-        url: `updateFailedMeasure/${id}/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd`,
+        url: `updateFailedMeasure/${id}/`,
         method: "PATCH",
         body: updateFailedMeasure,
       }),
@@ -35,7 +53,7 @@ export const failedMeasureApi = createApi({
 
     deleteFailedMeasure: builder.mutation({
       query: (id) => ({
-        url: `deleteFailedMeasure/${id}/77757048-2cc5-4671-8a3c-8ed4ea4c3bcd`,
+        url: `deleteFailedMeasure/${id}/`,
         method: "DELETE",
         params: { id },
       }),
