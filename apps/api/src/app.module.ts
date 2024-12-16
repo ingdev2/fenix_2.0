@@ -54,11 +54,11 @@ import { ClinicalResearchCaseReportValidateModule } from './modules/clinical-res
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.TYPEORM_HOST,
-      port: +process.env.TYPEORM_PORT,
-      username: process.env.TYPEORM_USERNAME,
-      password: process.env.TYPEORM_PASSWORD,
-      database: process.env.TYPEORM_DATABASE,
+      host: process.env.BONNADONA_HOST,
+      port: +process.env.BONNADONA_PORT,
+      username: process.env.BONNADONA_USERNAME,
+      password: process.env.BONNADONA_PASSWORD,
+      database: process.env.BONNADONA_DATABASE,
       entities: [__dirname + '/modules/**/entities/*.entity{.ts,.js}'],
       synchronize: true,
       autoLoadEntities: true,
@@ -69,7 +69,7 @@ import { ClinicalResearchCaseReportValidateModule } from './modules/clinical-res
       type: 'postgres',
       host: process.env.BONNADONA_HOST,
       port: +process.env.BONNADONA_PORT,
-      username: process.env.BONNADONA_USER,
+      username: process.env.BONNADONA_USERNAME,
       password: process.env.BONNADONA_PASSWORD,
       database: process.env.BONNADONA_DATABASE,
       entities: [

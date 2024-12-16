@@ -1,0 +1,37 @@
+interface ClinicalResearch {
+  id: string;
+  res_c_isComplete: boolean;
+  res_c_instrument_id_fk: number;
+  res_c_failure: boolean;
+  res_c_damage: boolean;
+  res_c_clinicalcontext: string;
+  res_c_devicetype_id_fk: number;
+  res_c_otherdevicetype: string;
+  res_c_damagetype_id_fk: number;
+  res_c_otherdamagetype: string;
+  res_c_fluidtype_id_fk: number;
+  res_c_fluidname: string;
+  res_c_phlebitisgeneratingfluid: boolean;
+  res_c_fluidph: number;
+  res_c_adequateinfusiontime: boolean;
+  res_c_infusiontime: number;
+  res_c_adequatedilution: boolean;
+  res_c_fluiddilution: string;
+  res_c_otherinfluencingfactors: string;
+  res_c_otherfailedmeasures: string;
+  res_c_riskfactors_id_fk: number;
+  res_c_otherriskfactors: string;
+  res_c_venipuncturetechnique: string;
+  res_c_additionalfindings: string;
+  res_c_carefailures: boolean;
+  res_c_safetybarriers_id_fk: number;
+  res_c_incorrectactions: boolean;
+  res_c_unsafeactions: boolean;
+  res_c_conclusions: string;
+  res_c_casepreventable: boolean;
+  res_c_actionplan_id_fk: number;
+  res_c_status: boolean;
+  createdAt: string;
+  updateAt: string;
+  deletedAt: string | null;
+}

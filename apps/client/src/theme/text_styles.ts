@@ -1,7 +1,7 @@
 import { CSSProperties } from "react";
 
 export const titleStyleCss: CSSProperties = {
-  fontWeight: "500",
+  fontWeight: "bold",
   lineHeight: 1.3,
   marginBottom: 7,
   overflow: "hidden",
@@ -9,7 +9,7 @@ export const titleStyleCss: CSSProperties = {
 };
 
 export const subtitleStyleCss: CSSProperties = {
-  fontWeight: "400",
+  fontWeight: "normal",
   lineHeight: 1.3,
   marginBlock: 7,
   overflow: "hidden",

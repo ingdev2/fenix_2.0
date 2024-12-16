@@ -1,103 +1,136 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
 
-export default function Home() {
+import React from "react";
+import { useRouter } from "next/navigation";
+
+import { Col, Divider, Space } from "antd";
+
+import CustomButton from "@/components/common/custom_button/CustomButton";
+import { subtitleStyleCss, titleStyleCss } from "@/theme/text_styles";
+
+const HomePage = () => {
+  const router = useRouter();
+
   return (
-    <div className={styles.page} style={{ backgroundColor: "black" }}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol style={{ color: "white" }}>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
+    <div
+      className="homepage"
+      style={{
+        width: "100vw",
+        height: "100vh",
+        display: "flex",
+        flexFlow: "column wrap",
+        justifyContent: "center",
+        alignContent: "center",
+        alignItems: "center",
+        backgroundColor: "#F7F7F7",
+      }}
+    >
+      <div
+        className="content-homepage"
+        style={{
+          display: "flex",
+          flexFlow: "column wrap",
+          justifyContent: "center",
+          alignContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Col span={24}>
+          <div
+            className="logos-homepage"
             style={{
-              backgroundColor: "blueviolet",
-              color: "white",
+              display: "flex",
+              justifyContent: "center",
+              alignContent: "center",
+              alignItems: "center",
+              paddingBlock: "13px",
             }}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
           >
-            <Image
-              className={styles.logo}
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+            <img
+              src="/logos/bonnadona/logo_original.png"
+              alt="Logo de Fenix"
+              style={{ height: "88px", paddingInline: "31px" }}
             />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
+
+            <Divider
+              orientation="center"
+              type="vertical"
+              style={{
+                height: "54px",
+                borderWidth: 2,
+                alignContent: "center",
+                alignItems: "center",
+                alignSelf: "center",
+              }}
+            />
+
+            <img
+              src="/logos/mockup/logo.png"
+              alt="Logo de Fenix"
+              style={{ height: "88px", paddingInline: "31px" }}
+            />
+          </div>
+
+          <div
+            className="text-and-buttons"
             style={{
-              backgroundColor: "Highlight",
-              color: "white",
+              textAlign: "center",
+              paddingBlock: "13px",
             }}
-            rel="noopener noreferrer"
-            className={styles.secondary}
           >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+            <h1
+              className="presentation-text-title"
+              style={{
+                ...titleStyleCss,
+                color: "#FF7700",
+              }}
+            >
+              Fénix
+            </h1>
+
+            <h3
+              className="presentation-text-content"
+              style={{
+                ...subtitleStyleCss,
+              }}
+            >
+              Plataforma para reportar casos de riesgos e incidentes clínicos.
+            </h3>
+
+            <div
+              className="content"
+              style={{
+                textAlign: "center",
+                paddingBlock: "31px",
+              }}
+            >
+              <Space size={"large"}>
+                <CustomButton
+                  titleCustomButton="Reporte Externo"
+                  typeCustomButton="primary"
+                  sizeCustomButton="middle"
+                  styleCustomButton={{ backgroundColor: "#015E90" }}
+                  onClickCustomButton={() => {}}
+                />
+
+                <CustomButton
+                  titleCustomButton="Reporte Interno"
+                  typeCustomButton="primary"
+                  sizeCustomButton="middle"
+                  styleCustomButton={{ backgroundColor: "#FF7700" }}
+                  onClickCustomButton={() => {
+                    router.push("create_report", {
+                      scroll: true,
+                    });
+                  }}
+                />
+              </Space>
+            </div>
+          </div>
+        </Col>
+      </div>
     </div>
   );
-}
+};
+
+export default HomePage;

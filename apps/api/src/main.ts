@@ -1,10 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const logger = new Logger();
 
   // app.setGlobalPrefix('api-fenix/2.0');
 
@@ -28,8 +29,11 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
+
   SwaggerModule.setup('api-docs', app, document);
 
   await app.listen(+process.env.API_PORT || 3001);
+
+  logger.log(`The aplication is running on port: ${+process.env.API_PORT}`);
 }
 bootstrap();

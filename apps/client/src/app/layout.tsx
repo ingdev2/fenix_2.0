@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Inter } from "next/font/google";
+import { Nunito } from "next/font/google";
 import type { Metadata } from "next";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { ConfigProvider } from "antd";
@@ -9,20 +9,20 @@ import es_ES from "antd/locale/es_ES";
 import { Providers } from "@/redux/providers";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const nunito = Nunito({ subsets: ["latin"], weight: ["400", "700"] });
 
 export const metadata: Metadata = {
   title: "Fénix",
   description: "Software de Clínica Bonnadona",
   icons: {
-    icon: "/favicon.ico",
+    icon: "/logos/mockup/icon.png",
   },
 };
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en" style={{ margin: 0, padding: 0 }}>
-      <body className={inter.className} style={{ margin: 0, padding: 0 }}>
+      <body className={nunito.className} style={{ margin: 0, padding: 0 }}>
         <Providers>
           <main className="container-main-app">
             <AntdRegistry>

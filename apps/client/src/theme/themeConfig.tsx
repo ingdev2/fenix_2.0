@@ -3,6 +3,7 @@ import { type ThemeConfig } from "antd";
 const themeConfig: ThemeConfig = {
   token: {
     fontSize: 14,
+    fontFamily: "Nunito, sans-serif",
     colorPrimary: "#FF7700",
     colorText: "#070707",
   },
@@ -11,13 +12,13 @@ const themeConfig: ThemeConfig = {
       siderBg: "#013B5A",
     },
     Menu: {
-      itemActiveBg: "#013B5A",
-      itemBg: "#013B5A",
+      itemActiveBg: "#903301",
+      itemBg: "#FF7700",
       itemColor: "#F7F7F7",
-      itemHoverBg: "#017DC0",
+      itemHoverBg: "#015E90",
       itemHoverColor: "#F7F7F7",
       itemSelectedColor: "#00B5E8",
-      itemSelectedBg: "#EFF7F8",
+      itemSelectedBg: "#001133",
       colorBgElevated: "#013B5A",
     },
     Descriptions: {
