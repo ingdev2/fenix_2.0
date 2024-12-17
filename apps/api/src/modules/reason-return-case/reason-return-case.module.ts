@@ -4,17 +4,11 @@ import { ReasonReturnCaseController } from './controllers/reason-return-case.con
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ReasonReturnCase } from './entities/reason-return-case.entity';
 import { RolePermissionModule } from '../role-permission/role-permission.module';
-import { UserModule } from 'src/modules_bonnadonahub/user/user.module';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([ReasonReturnCase]),
-    RolePermissionModule,
-    UserModule,
-  ],
+  imports: [TypeOrmModule.forFeature([ReasonReturnCase]), RolePermissionModule],
   controllers: [ReasonReturnCaseController],
-  providers: [ReasonReturnCaseService, PermissionGuard],
+  providers: [ReasonReturnCaseService],
   exports: [ReasonReturnCaseService],
 })
 export class ReasonReturnCaseModule {}

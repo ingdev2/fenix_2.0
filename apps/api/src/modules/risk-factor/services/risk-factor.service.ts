@@ -1,9 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
+
 import { CreateRiskFactorDto } from '../dto/create-risk-factor.dto';
 import { UpdateRiskFactorDto } from '../dto/update-risk-factor.dto';
-import { InjectRepository } from '@nestjs/typeorm';
+
 import { RiskFactor } from '../entities/risk-factor.entity';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class RiskFactorService {

@@ -6,50 +6,46 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
 } from '@nestjs/common';
 import { PositionService } from '../services/position.service';
 import { CreatePositionDto } from '../dto/create-position.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UpdatePositionDto } from '../dto/update-position.dto';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { Permission } from 'src/utils/decorators/permission.decorator';
-import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
+import { RolesEnum } from 'src/utils/enums/roles.enum';
+import { Auth } from 'src/modules/auth/decorators/auth.decorator';
 
 @ApiTags('position')
 @Controller('position')
-@UseGuards(PermissionGuard)
+@ApiBearerAuth()
 export class PositionController {
   constructor(private readonly positionService: PositionService) {}
 
   @Post('/createPosition/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   createPosition(@Body() createPositionDto: CreatePositionDto) {
     return this.positionService.createPosition(createPositionDto);
   }
 
   @Post('/synchronizePositions')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   syncronizePositions() {
     return this.positionService.synchronizePositions();
   }
 
   @Get('/listPositions')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   listPositions() {
     return this.positionService.findAllPosition();
   }
 
   @Get('/findPosition/:id')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findPosition(@Param('id') id: number) {
     return this.positionService.findOnePosition(id);
   }
 
-  @Get('/findEmployeeByCode/:code')
-  findEmployeeByCode(@Param('code') code: number) {
-    return this.positionService.findEmployeeByCode(code);
-  }
-
-  @Patch('/updatePosition/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Patch('/updatePosition/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   updatePosition(
     @Param('id') id: number,
     @Body() updatePositionDto: UpdatePositionDto,
@@ -57,8 +53,8 @@ export class PositionController {
     return this.positionService.updatePosition(id, updatePositionDto);
   }
 
-  @Delete('/deletePosition/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Delete('/deletePosition/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   async deletePosition(@Param('id') id: number) {
     return await this.positionService.deletePosition(id);
   }

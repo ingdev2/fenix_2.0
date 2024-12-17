@@ -1,9 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
+
 import { CreateSeverityClasificationDto } from '../dto/create-severity-clasification.dto';
 import { UpdateSeverityClasificationDto } from '../dto/update-severity-clasification.dto';
-import { InjectRepository } from '@nestjs/typeorm';
+
 import { SeverityClasification } from '../entities/severity-clasification.entity';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class SeverityClasificationService {

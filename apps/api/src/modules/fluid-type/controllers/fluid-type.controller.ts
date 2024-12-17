@@ -6,40 +6,40 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
 } from '@nestjs/common';
 import { FluidTypeService } from '../services/fluid-type.service';
 import { CreateFluidTypeDto } from '../dto/create-fluid-type.dto';
 import { UpdateFluidTypeDto } from '../dto/update-fluid-type.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { Permission } from 'src/utils/decorators/permission.decorator';
-import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RolesEnum } from 'src/utils/enums/roles.enum';
+import { Auth } from 'src/modules/auth/decorators/auth.decorator';
 
 @ApiTags('fluid-type')
 @Controller('fluid-type')
-@UseGuards(PermissionGuard)
+@ApiBearerAuth()
 export class FluidTypeController {
   constructor(private readonly fluidTypeService: FluidTypeService) {}
 
-  @Post('/createFluidType/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Post('/createFluidType/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   createFluidType(@Body() createFluidTypeDto: CreateFluidTypeDto) {
     return this.fluidTypeService.createFluidType(createFluidTypeDto);
   }
 
   @Get('/listFluidTypes/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   listFluidType() {
     return this.fluidTypeService.findAllFluidTypes();
   }
 
   @Get('/findFluidType/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findFluidType(@Param('id') id: number) {
     return this.fluidTypeService.findOneFluidType(id);
   }
 
-  @Patch('/updateFluidType/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Patch('/updateFluidType/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   updateFluidTypes(
     @Param('id') id: number,
     @Body() updateFluidTypeDto: UpdateFluidTypeDto,
@@ -47,8 +47,8 @@ export class FluidTypeController {
     return this.fluidTypeService.updateFluidType(id, updateFluidTypeDto);
   }
 
-  @Delete('/deleteFluidType/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Delete('/deleteFluidType/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   deleteFluidTypes(@Param('id') id: number) {
     return this.fluidTypeService.deleteFluidType(id);
   }

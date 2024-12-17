@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { CreateClinicalResearchFailedMeasureDto } from '../dto/create-clinical-research-failed-measure.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ClinicalResearchFailedMeasure } from '../entities/clinical-research-failed-measure.entity';
+
 import { QueryRunner, Repository } from 'typeorm';
+
+import { CreateClinicalResearchFailedMeasureDto } from '../dto/create-clinical-research-failed-measure.dto';
+
+import { ClinicalResearchFailedMeasure } from '../entities/clinical-research-failed-measure.entity';
 
 @Injectable()
 export class ClinicalResearchFailedMeasuresService {
@@ -25,10 +28,13 @@ export class ClinicalResearchFailedMeasuresService {
     }
 
     for (const clinicalResearchFM of clinicalResearchFailedMeasure) {
-      const data = queryRunner.manager.create(ClinicalResearchFailedMeasure, {
-        ...clinicalResearchFM,
-        meas_fcr_clinicalresearch_id_fk: clinicalResearchId,
-      });
+      const data = queryRunner.manager.create(
+        ClinicalResearchFailedMeasure,
+        {
+          ...clinicalResearchFM,
+          meas_fcr_clinicalresearch_id_fk: clinicalResearchId,
+        },
+      );
 
       await queryRunner.manager.save(data);
     }

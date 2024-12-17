@@ -6,40 +6,40 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
 } from '@nestjs/common';
 import { ProtocolService } from '../services/protocol.service';
 import { CreateProtocolDto } from '../dto/create-protocol.dto';
 import { UpdateProtocolDto } from '../dto/update-protocol.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { Permission } from 'src/utils/decorators/permission.decorator';
-import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RolesEnum } from 'src/utils/enums/roles.enum';
+import { Auth } from 'src/modules/auth/decorators/auth.decorator';
 
 @ApiTags('protocol')
 @Controller('protocol')
-@UseGuards(PermissionGuard)
+@ApiBearerAuth()
 export class ProtocolController {
   constructor(private readonly protocolService: ProtocolService) {}
 
-  @Post('/createProtocol/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Post('/createProtocol/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   createProtocol(@Body() createProtocolDto: CreateProtocolDto) {
     return this.protocolService.createProtocol(createProtocolDto);
   }
 
   @Get('/listProtocols')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   listProtocols() {
     return this.protocolService.findAllProtocols();
   }
 
   @Get('/findProtocol/:id')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findProtocol(@Param('id') id: number) {
     return this.protocolService.findOneProtocol(id);
   }
 
-  @Patch('/updateProtocol/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Patch('/updateProtocol/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   updateProtocol(
     @Param('id') id: number,
     @Body() updateProtocolDto: UpdateProtocolDto,
@@ -47,8 +47,8 @@ export class ProtocolController {
     return this.protocolService.updateProtocol(id, updateProtocolDto);
   }
 
-  @Delete('/deleteProtocol/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Delete('/deleteProtocol/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   deleteProtocol(@Param('id') id: number) {
     return this.protocolService.deleteProtocol(id);
   }

@@ -1,9 +1,16 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
+
 import { CreateOriginDto } from '../dto/create-origin.dto';
 import { UpdateOriginDto } from '../dto/update-origin.dto';
-import { InjectRepository } from '@nestjs/typeorm';
+
 import { Origin } from '../entities/origin.entity';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class OriginService {

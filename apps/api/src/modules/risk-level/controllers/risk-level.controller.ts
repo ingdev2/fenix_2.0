@@ -6,40 +6,40 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
 } from '@nestjs/common';
 import { RiskLevelService } from '../services/risk-level.service';
 import { CreateRiskLevelDto } from '../dto/create-risk-level.dto';
 import { UpdateRiskLevelDto } from '../dto/update-risk-level.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { Permission } from 'src/utils/decorators/permission.decorator';
-import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RolesEnum } from 'src/utils/enums/roles.enum';
+import { Auth } from 'src/modules/auth/decorators/auth.decorator';
 
 @ApiTags('risk-level')
 @Controller('risk-level')
-@UseGuards(PermissionGuard)
+@ApiBearerAuth()
 export class RiskLevelController {
   constructor(private readonly riskLevelService: RiskLevelService) {}
 
-  @Post('/createRiskLevel/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Post('/createRiskLevel/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   createRiskLevel(@Body() createRiskLevelDto: CreateRiskLevelDto) {
     return this.riskLevelService.createRiskLevel(createRiskLevelDto);
   }
 
   @Get('/listRiskLevels/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   listRiskLevel() {
     return this.riskLevelService.findAllRiskLevel();
   }
 
   @Get('/findRiskLevel/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findRiskLevel(@Param('id') id: number) {
     return this.riskLevelService.findOneRiskLevel(id);
   }
 
-  @Patch('/updateRiskLevel/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Patch('/updateRiskLevel/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   updateRiskLevel(
     @Param('id') id: number,
     @Body() updateRiskLevelDto: UpdateRiskLevelDto,
@@ -47,8 +47,8 @@ export class RiskLevelController {
     return this.riskLevelService.updateRiskLevel(id, updateRiskLevelDto);
   }
 
-  @Delete('/deleteRiskLevel/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Delete('/deleteRiskLevel/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   deleteRiskLevel(@Param('id') id: number) {
     return this.riskLevelService.deleteRiskLevel(id);
   }

@@ -1,27 +1,18 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Delete,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
 import { LogService } from '../services/log.service';
 import { CreateLogDto } from '../dto/create-log.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { Permission } from 'src/utils/decorators/permission.decorator';
-import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RolesEnum } from 'src/utils/enums/roles.enum';
+import { Auth } from 'src/modules/auth/decorators/auth.decorator';
 
 @ApiTags('log')
 @Controller('log')
-@UseGuards(PermissionGuard)
+@ApiBearerAuth()
 export class LogController {
   constructor(private readonly logService: LogService) {}
 
-  @Post('/createLog/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN)
+  @Post('/createLog/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.AUDITOR)
   createLog(@Body() createLogDto: CreateLogDto) {
     return this.logService.createLog(
       createLogDto.log_validatedcase_id_fk,
@@ -31,20 +22,20 @@ export class LogController {
     );
   }
 
-  @Get('/listLogs/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN)
+  @Get('/listLogs/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.AUDITOR)
   listLogs() {
     return this.logService.findAllLogs();
   }
 
-  @Get('/findOneLog/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN)
+  @Get('/findOneLog/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.AUDITOR)
   findOneLog(@Param('id') id: number) {
     return this.logService.findOneLog(id);
   }
 
-  @Delete('/deleteLog/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN)
+  @Delete('/deleteLog/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.AUDITOR)
   deleteLog(@Param('id') id: number) {
     return this.logService.deleteLog(id);
   }

@@ -1,15 +1,23 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateSynergyDto } from '../dto/create-synergy.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Synergy } from '../entities/synergy.entity';
+
 import { In, Repository } from 'typeorm';
+
+import { CreateSynergyDto } from '../dto/create-synergy.dto';
+
+import { Synergy } from '../entities/synergy.entity';
 import { CaseType } from 'src/modules/case-type/entities/case-type.entity';
-import { CaseTypeReportEnum } from 'src/utils/enums/caseType-report.enum';
-import { LogService } from 'src/modules/log/services/log.service';
-import { LogReportsEnum } from 'src/utils/enums/logs.enum';
 import { CaseReportValidate } from 'src/modules/case-report-validate/entities/case-report-validate.entity';
-import { MovementReportEnum } from 'src/utils/enums/movement-report.enum';
 import { MovementReport } from 'src/modules/movement-report/entities/movement-report.entity';
+
+import { LogService } from 'src/modules/log/services/log.service';
+
+import { CaseTypeReportEnum } from 'src/utils/enums/caseType-report.enum';
+import { LogReportsEnum } from 'src/utils/enums/logs.enum';
+import { MovementReportEnum } from 'src/utils/enums/movement-report.enum';
+import { statusResult } from 'src/utils/enums/statusResult.enum';
+import * as dayjs from 'dayjs';
+import { UpdateSynergyDto } from '../dto/update-synergy.dto';
 
 @Injectable()
 export class SynergyService {
@@ -27,50 +35,47 @@ export class SynergyService {
   ) {}
 
   async createSynergy(
-    createSynergy: CreateSynergyDto[],
+    createSynergy: CreateSynergyDto,
     clientIp: string,
     idValidator: string,
   ) {
-    const adverseEventType = await this.caseTypeRepository.findOne({
+    const adverseEventTypeFound = await this.caseTypeRepository.findOne({
       where: {
         cas_t_name: CaseTypeReportEnum.ADVERSE_EVENT,
       },
     });
 
-    if (!adverseEventType) {
+    if (!adverseEventTypeFound) {
       throw new HttpException(
         `Tipo de caso ${CaseTypeReportEnum.ADVERSE_EVENT} no encontrado`,
         HttpStatus.NOT_FOUND,
       );
     }
 
-    const synergyValidateCaseIds = createSynergy.map(
-      (list) => list.syn_validatedcase_id_fk,
-    );
+    const existingCaseValidate =
+      await this.caseReportValidateRepository.findOne({
+        where: {
+          id: createSynergy.syn_validatedcase_id_fk,
+          val_cr_validated: false,
+        },
+      });
 
-    const existingCaseValidate = await this.caseReportValidateRepository.find({
-      where: {
-        id: In(synergyValidateCaseIds),
-        val_cr_validated: false,
-      },
-    });
-
-    if (existingCaseValidate.length !== synergyValidateCaseIds.length) {
+    if (!existingCaseValidate) {
       throw new HttpException(
-        'No se encontró el reporte para algunos casos',
+        'No se encontró el caso para escalar a sinergia',
         HttpStatus.NOT_FOUND,
       );
     }
 
-    const existingSynergies = await this.synergyRepository.find({
+    const existingSynergies = await this.synergyRepository.findOne({
       where: {
-        syn_validatedcase_id_fk: In(synergyValidateCaseIds),
+        syn_validatedcase_id_fk: createSynergy.syn_validatedcase_id_fk,
       },
     });
 
-    if (existingSynergies.length > 0) {
+    if (existingSynergies) {
       throw new HttpException(
-        'Algunos casos ya fueron elevados a comité de sinergia',
+        'El caso ya fue elevado a comité de sinergia',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -83,65 +88,48 @@ export class SynergyService {
     });
 
     if (!movementReportFound) {
-      return new HttpException(
-        `El movimiento no existe.`,
-        HttpStatus.NOT_FOUND,
-      );
+      throw new HttpException(`El movimiento no existe.`, HttpStatus.NOT_FOUND);
     }
 
-    const invalidSynergyCodes = existingCaseValidate
-      .filter(
-        (caseType) => caseType.val_cr_casetype_id_fk !== adverseEventType.id,
-      )
-      .map((caseValidateCode) => caseValidateCode.val_cr_filingnumber);
-
-    if (invalidSynergyCodes.length > 0) {
+    if (
+      existingCaseValidate.val_cr_casetype_id_fk !== adverseEventTypeFound.id
+    ) {
       throw new HttpException(
-        {
-          message: `Algunos reportes no coinciden con el tipo de caso ${CaseTypeReportEnum.ADVERSE_EVENT}`,
-          data: invalidSynergyCodes,
-        },
+        `El caso #${existingCaseValidate.val_cr_filingnumber} no coincide con el tipo de caso ${CaseTypeReportEnum.ADVERSE_EVENT}`,
         HttpStatus.BAD_REQUEST,
       );
     }
 
-    const synergies = createSynergy.map((syn) => {
-      return this.synergyRepository.create({
-        ...syn,
-        syn_evaluationdate: new Date(),
-      });
+    const newSynergy = this.synergyRepository.create({
+      ...createSynergy,
+      syn_evaluationdate: dayjs().format('YYYY-MM-DD'),
     });
 
-    const savedSynergies = await this.synergyRepository.save(synergies);
+    await this.synergyRepository.save(newSynergy);
 
-    for (const synergy of savedSynergies) {
-      await this.logService.createLog(
-        synergy.syn_validatedcase_id_fk,
-        idValidator,
-        clientIp,
-        LogReportsEnum.LOG_CASE_RAISED_SYNERGY_COMMITTEE,
+    await this.logService.createLog(
+      createSynergy.syn_validatedcase_id_fk,
+      idValidator,
+      clientIp,
+      LogReportsEnum.LOG_CASE_RAISED_SYNERGY_COMMITTEE,
+    );
+
+    const updateStatusMovement = await this.caseReportValidateRepository.update(
+      createSynergy.syn_validatedcase_id_fk,
+      {
+        val_cr_statusmovement_id_fk: movementReportFound.id,
+      },
+    );
+
+    if (updateStatusMovement.affected === 0) {
+      throw new HttpException(
+        `No se pudo actualizar el movimiento del reporte.`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
 
-    for (const synergy of savedSynergies) {
-      const updateStatusMovement =
-        await this.caseReportValidateRepository.update(
-          synergy.syn_validatedcase_id_fk,
-          {
-            val_cr_statusmovement_id_fk: movementReportFound.id,
-          },
-        );
-
-      if (updateStatusMovement.affected === 0) {
-        throw new HttpException(
-          `No se pudo actualizar el moviemiento del reporte.`,
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-    }
-
     return new HttpException(
-      `¡Los casos se elevaron a sinergia correctamente!`,
+      `se elevó a sinergia correctamente`,
       HttpStatus.CREATED,
     );
   }
@@ -151,9 +139,9 @@ export class SynergyService {
       relations: {
         caseReportValidate: true,
       },
-      where: {
-        syn_status: false,
-      },
+      // where: {
+      //   syn_status: false,
+      // },
       order: {
         createdAt: 'DESC',
       },
@@ -166,7 +154,40 @@ export class SynergyService {
       );
     }
 
-    return synergies;
+    const result = [];
+    synergies.map((item) => {
+      result.push({
+        id: item.id,
+        syn_validatedcase_id_fk: item.syn_validatedcase_id_fk,
+        syn_observations: item.syn_observations,
+        syn_analystidnumber: item.syn_analystidnumber,
+        syn_evaluationdate: item.syn_evaluationdate,
+        syn_resolutiondate: item.syn_resolutiondate,
+        syn_patientcontent: item.syn_patientcontent,
+        syn_possiblefaults: item.syn_possiblefaults,
+        syn_consequences: item.syn_consequences,
+        syn_clinicalmanagement: item.syn_clinicalmanagement,
+        syn_whomwasnotified: item.syn_whomwasnotified,
+        syn_status: item.syn_status,
+        val_cr_filingnumber: item.caseReportValidate?.val_cr_filingnumber,
+        val_cr_documentpatient: item.caseReportValidate?.val_cr_documentpatient,
+        val_cr_doctypepatient: item.caseReportValidate?.val_cr_doctypepatient,
+        val_cr_firstnamepatient:
+          item.caseReportValidate?.val_cr_firstnamepatient,
+        val_cr_secondnamepatient:
+          item.caseReportValidate?.val_cr_secondnamepatient,
+        val_cr_firstlastnamepatient:
+          item.caseReportValidate?.val_cr_firstlastnamepatient,
+        val_cr_secondlastnamepatient:
+          item.caseReportValidate?.val_cr_secondlastnamepatient,
+        val_cr_agepatient: item.caseReportValidate?.val_cr_agepatient,
+        val_cr_genderpatient: item.caseReportValidate?.val_cr_genderpatient,
+        val_cr_epspatient: item.caseReportValidate?.val_cr_epspatient,
+        val_cr_description: item.caseReportValidate?.val_cr_description,
+      });
+    });
+
+    return result;
   }
 
   async findOneSynergy(id: number) {
@@ -194,68 +215,12 @@ export class SynergyService {
     return synergy;
   }
 
-  // async rescheduleSynergy(id: number, clientIp: string, idValidator: string) {
-  //   if (!clientIp) {
-  //     throw new HttpException(
-  //       'La dirección IP del usuario es requerido.',
-  //       HttpStatus.BAD_REQUEST,
-  //     );
-  //   }
-
-  //   if (!idValidator) {
-  //     throw new HttpException(
-  //       'El identificador del validador es requerido.',
-  //       HttpStatus.BAD_REQUEST,
-  //     );
-  //   }
-
-  //   const synergy = await this.findOneSynergy(id);
-
-  //   const movementReportFound =
-  //     await this.movementReportService.findOneMovementReportByName(
-  //       movementReport.CASE_RESCHEDULED_SYNERGY,
-  //     );
-
-  //   const updateSynergy = await this.synergyRepository.update(synergy.id, {
-  //     syn_reschedulingdate: new Date(),
-  //     syn_programmingcounter: (synergy.syn_programmingcounter += 1),
-  //   });
-
-  //   if (updateSynergy.affected === 0) {
-  //     throw new HttpException(
-  //       `No se pudo reprogramar el caso.`,
-  //       HttpStatus.INTERNAL_SERVER_ERROR,
-  //     );
-  //   }
-
-  //   await this.logService.createLog(
-  //     synergy.syn_validatedcase_id_fk,
-  //     idValidator,
-  //     clientIp,
-  //     logReports.LOG_CASE_RESCHEDULED_SYNERGY,
-  //   );
-
-  //   const updateStatusMovement = await this.caseReportValidateRepository.update(
-  //     synergy.syn_validatedcase_id_fk,
-  //     {
-  //       val_cr_statusmovement_id_fk: movementReportFound.id,
-  //     },
-  //   );
-
-  //   if (updateStatusMovement.affected === 0) {
-  //     throw new HttpException(
-  //       `No se pudo actualizar el moviemiento del reporte.`,
-  //       HttpStatus.INTERNAL_SERVER_ERROR,
-  //     );
-  //   }
-
-  //   return new HttpException(
-  //     `¡Caso reprogramado correctamente!`,
-  //     HttpStatus.OK,
-  //   );
-  // }
-
-  async resolutionSynergy(id: number, clientIp: string, idValidator: string) {
+  async resolutionSynergy(
+    id: number,
+    clientIp: string,
+    idValidator: string,
+    resolutionSynergyDto: UpdateSynergyDto,
+  ) {
     if (!clientIp) {
       throw new HttpException(
         'La dirección IP del usuario es requerido.',
@@ -286,19 +251,25 @@ export class SynergyService {
       );
     }
 
-    const updateStatusSynergy = await this.synergyRepository.update(
-      synergy.id,
-      {
-        syn_status: true,
-      },
-    );
+    // const updateStatusSynergy = await this.synergyRepository.update(
+    //   synergy.id,
+    //   {
+    //     syn_analystidnumber: resolutionSynergyDto.syn_analystidnumber,
+    //     syn_patientcontent: resolutionSynergyDto.syn_patientcontent,
+    //     syn_possiblefaults: resolutionSynergyDto.syn_possiblefaults,
+    //     syn_consequences: resolutionSynergyDto.syn_consequences,
+    //     syn_clinicalmanagement: resolutionSynergyDto.syn_clinicalmanagement,
+    //     syn_whomwasnotified: resolutionSynergyDto.syn_whomwasnotified,
+    //     syn_status: true,
+    //   },
+    // );
 
-    if (updateStatusSynergy.affected === 0) {
-      throw new HttpException(
-        `No se pudo reprogramar el caso.`,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+    // if (updateStatusSynergy.affected === 0) {
+    //   throw new HttpException(
+    //     `No se pudo actualizar el estado a ${statusResult.RESOLVED}.`,
+    //     HttpStatus.INTERNAL_SERVER_ERROR,
+    //   );
+    // }
 
     const updateStatusMovement = await this.caseReportValidateRepository.update(
       synergy.syn_validatedcase_id_fk,
@@ -314,15 +285,22 @@ export class SynergyService {
       );
     }
 
-    const resolutionDateSynergy = await this.synergyRepository.update(
+    const resolutionSynergy = await this.synergyRepository.update(
       synergy.id,
       {
-        syn_resolutiondate: new Date(),
+        syn_analystidnumber: resolutionSynergyDto.syn_analystidnumber,
+        syn_patientcontent: resolutionSynergyDto.syn_patientcontent,
+        syn_possiblefaults: resolutionSynergyDto.syn_possiblefaults,
+        syn_consequences: resolutionSynergyDto.syn_consequences,
+        syn_clinicalmanagement: resolutionSynergyDto.syn_clinicalmanagement,
+        syn_whomwasnotified: resolutionSynergyDto.syn_whomwasnotified,
+
+        syn_resolutiondate: dayjs().format('YYYY-MM-DD'),
         syn_status: true,
       },
     );
 
-    if (resolutionDateSynergy.affected === 0) {
+    if (resolutionSynergy.affected === 0) {
       throw new HttpException(
         `No se pudo resolver el caso.`,
         HttpStatus.INTERNAL_SERVER_ERROR,

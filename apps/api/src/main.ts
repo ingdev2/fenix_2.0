@@ -1,13 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
   const logger = new Logger();
-
-  // app.setGlobalPrefix('api-fenix/2.0');
+  const app = await NestFactory.create(AppModule);
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -17,23 +15,21 @@ async function bootstrap() {
     }),
   );
 
-  app.enableCors();
-
   const config = new DocumentBuilder()
-    .setTitle('Fénix')
+    .setTitle('FENIX 2.0')
     .setDescription(
-      'Creación de plataforma para reportar casos de riesgos e incidentes clínicos',
+      'El módulo Fénix II será el software de creación del caso o reporte, donde se podrá realizar también la validación, asignación, revisión, auditoria, seguimiento, análisis y la creación del plan de acción, así como el seguimiento del mismo, la creación y muestra de sus indicadores e informes de la gestión; opciones de: AUTOEVALUACIÓN INSTITUCIONAL, GENERACIÓN DE INFORMES Y PLANES DE MEJORAMIENTO, MEDICIÓN Y ANÁLISIS PERMANENTE, SEGUIMIENTO EN TIEMPO REAL DE LAS ACCIONES DE MEJORA, GESTIÓN DEL RIESGO INDIVIDUAL, SEGURIDAD DEL PACIENTE',
     )
     .setVersion('2.0')
-    .addBearerAuth()
     .build();
-
   const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
 
-  SwaggerModule.setup('api-docs', app, document);
+  app.enableCors();
 
-  await app.listen(+process.env.API_PORT || 3001);
-
-  logger.log(`The aplication is running on port: ${+process.env.API_PORT}`);
+  const port = +process.env.TYPEORM_PORT_RUN || 3003;
+  await app.listen(port);
+  logger.log(`The aplication is running on port: ${port || 3003}`);
 }
+
 bootstrap();

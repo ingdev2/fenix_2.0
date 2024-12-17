@@ -4,14 +4,14 @@ import { DataSource, Repository } from 'typeorm';
 
 import { CaseReportOriginal } from '../entities/case-report-original.entity';
 import { CaseType } from 'src/modules/case-type/entities/case-type.entity';
-import { PriorityEntity } from 'src/modules/priority/entities/priority.entity';
+import { Priority } from 'src/modules/priority/entities/priority.entity';
 import { SeverityClasification } from 'src/modules/severity-clasification/entities/severity-clasification.entity';
+import { MovementReport } from 'src/modules/movement-report/entities/movement-report.entity';
 
 import { CaseReportValidateService } from 'src/modules/case-report-validate/services/case-report-validate.service';
 import { LogService } from 'src/modules/log/services/log.service';
 import { MedicineService } from 'src/modules/medicine-case-report/services/medicine.service';
 import { DeviceService } from 'src/modules/device-case-report/services/device.service';
-import { CaseTypeService } from 'src/modules/case-type/services/case-type.service';
 import { RiskTypeService } from 'src/modules/risk-type/services/risk-type.service';
 import { EventTypeService } from 'src/modules/event-type/services/event-type.service';
 import { ServiceService } from 'src/modules/service/services/service.service';
@@ -34,7 +34,6 @@ import { CreateOriAdverseEventReportDto } from '../dto/create-ori-adverse-event-
 import { CreateOriIncidentReportDto } from '../dto/create-ori-incident-report.dto';
 import { CreateOriIndicatingUnsafeCareReportDto } from '../dto/create-ori-indicating-unsafe-care-report.dto';
 import { CreateOriComplicationsReportDto } from '../dto/create-ori-complications-report.dto';
-import { MovementReport } from 'src/modules/movement-report/entities/movement-report.entity';
 
 @Injectable()
 export class CaseReportOriginalService {
@@ -146,7 +145,7 @@ export class CaseReportOriginalService {
           );
           console.log(`Se creó reporte ${CaseTypeReportEnum.COMPLICATIONS}`);
           break;
-
+        // agregar un tipo de caso nuevo
         default:
           throw new HttpException(
             'Tipo de caso no reconocido.',
@@ -197,7 +196,7 @@ export class CaseReportOriginalService {
           severityClasificationFound.id;
       }
 
-      const priorityFind = await queryRunner.manager.findOne(PriorityEntity, {
+      const priorityFind = await queryRunner.manager.findOne(Priority, {
         where: {
           prior_severityclasif_id_fk:
             createReportOriDto.ori_cr_severityclasif_id_fk,
@@ -224,22 +223,22 @@ export class CaseReportOriginalService {
         );
 
       const hasMedicine =
-        createReportOriDto.medicines && createReportOriDto.medicines.length > 0;
+        createReportOriDto.medicine && createReportOriDto.medicine.length > 0;
 
       if (hasMedicine) {
         await this.medicineService.createMedicineTransaction(
-          createReportOriDto.medicines,
+          createReportOriDto.medicine,
           caseReportOriginal.id,
           queryRunner,
         );
       }
 
       const hasDevice =
-        createReportOriDto.devices && createReportOriDto.devices.length > 0;
+        createReportOriDto.device && createReportOriDto.device.length > 0;
 
       if (hasDevice) {
         await this.deviceService.createDeviceTransation(
-          createReportOriDto.devices,
+          createReportOriDto.device,
           caseReportOriginal.id,
           queryRunner,
         );
@@ -248,15 +247,15 @@ export class CaseReportOriginalService {
       const log = await this.logService.createLogTransaction(
         queryRunner,
         caseReportValidate.id,
-        caseReportOriginal.ori_cr_reporter_id,
+        caseReportOriginal.ori_cr_documentreporter,
         clientIp,
         LogReportsEnum.LOG_CREATION,
       );
 
-      await queryRunner.commitTransaction(); // registro
+      await queryRunner.commitTransaction();
 
       return new HttpException(
-        `¡Has generado tu reporte ${caseReportOriginal.ori_cr_filingnumber} exitosamente.!`,
+        `Tu reporte ha sido registrado exitosamente con el consecutivo #${caseReportOriginal.ori_cr_filingnumber}`,
         HttpStatus.CREATED,
       );
     } catch (error) {
@@ -274,7 +273,6 @@ export class CaseReportOriginalService {
   async findAllReportsOriginal() {
     const caseReportsOriginal = await this.caseReportOriginalRepository.find({
       relations: {
-        caseReportValidate: true,
         medicine: true,
         device: true,
         movementReport: true,
@@ -316,7 +314,6 @@ export class CaseReportOriginalService {
       {
         where: { id },
         relations: {
-          caseReportValidate: true,
           medicine: true,
           device: true,
           movementReport: true,

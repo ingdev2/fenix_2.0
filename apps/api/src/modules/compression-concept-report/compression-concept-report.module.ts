@@ -5,7 +5,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CompressionConceptReport } from './entities/compression-concept-report.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CompressionConceptReport])],
+  imports: [
+    TypeOrmModule.forFeature([CompressionConceptReport])
+  ],
   controllers: [CompressionConceptReportController],
   providers: [CompressionConceptReportService],
 })

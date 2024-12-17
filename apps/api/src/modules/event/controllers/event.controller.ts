@@ -6,44 +6,45 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
 } from '@nestjs/common';
 import { EventService } from '../services/event.service';
 import { CreateEventDto } from '../dto/create-event.dto';
 import { UpdateEventDto } from '../dto/update-event.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { Permission } from 'src/utils/decorators/permission.decorator';
-import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RolesEnum } from 'src/utils/enums/roles.enum';
+import { Auth } from 'src/modules/auth/decorators/auth.decorator';
 
 @ApiTags('event')
 @Controller('event')
-@UseGuards(PermissionGuard)
+@ApiBearerAuth()
 export class EventController {
   constructor(private readonly eventService: EventService) {}
 
-  @Post('/createEvent/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Post('/createEvent/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   createEvent(@Body() createEventDto: CreateEventDto) {
     return this.eventService.createEvent(createEventDto);
   }
 
-  @Post('/createEventsArray')
+  @Post('/createEventsArray') //es para cargar datos masivos
   createEventsArray(@Body() createEventDto: CreateEventDto[]) {
     return this.eventService.createEventsArray(createEventDto);
   }
 
   @Get('/listEvents/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   listEvents() {
     return this.eventService.findAllEvents();
   }
 
   @Get('/findEvent/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findEvent(@Param('id') id: number) {
     return this.eventService.findOneEvent(id);
   }
 
   @Get('/findEventsByEventTypeIdAndUnitId/:eventTypeId/:unitId?/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findEventsByEventTypeIdAndUnitId(
     @Param('eventTypeId') eventTypeId: number,
     @Param('unitId') unitId?: string,
@@ -56,18 +57,19 @@ export class EventController {
   }
 
   @Get('/findEventsByEventTypeId/:eventTypeId/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findEventsByEventTypeId(@Param('eventTypeId') eventTypeId: number) {
     return this.eventService.findEventByEventTypeId(eventTypeId);
   }
 
-  @Patch('/updateEvent/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Patch('/updateEvent/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   updateEvent(@Param('id') id: number, @Body() updateEventDto: UpdateEventDto) {
     return this.eventService.updateEvent(id, updateEventDto);
   }
 
-  @Delete('/deleteEvent/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Delete('/deleteEvent/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   deleteEvent(@Param('id') id: number) {
     return this.eventService.deleteEvent(id);
   }

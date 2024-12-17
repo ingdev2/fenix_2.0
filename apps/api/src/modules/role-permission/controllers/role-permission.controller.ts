@@ -6,45 +6,46 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
 } from '@nestjs/common';
 import { RolePermissionService } from '../services/role-permission.service';
 import { CreateRolePermissionDto } from '../dto/create-role-permission.dto';
 import { UpdateRolePermissionDto } from '../dto/update-role-permission.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { Permission } from 'src/utils/decorators/permission.decorator';
-import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RolesEnum } from 'src/utils/enums/roles.enum';
+import { Auth } from 'src/modules/auth/decorators/auth.decorator';
 
 @ApiTags('role-permission')
 @Controller('role-permission')
-@UseGuards(PermissionGuard)
+@ApiBearerAuth()
 export class RolePermissionController {
   constructor(private readonly roleService: RolePermissionService) {}
 
-  @Post('/createRole/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN)
+  @Post('/createRole/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   createRole(@Body() createRoleDto: CreateRolePermissionDto) {
     return this.roleService.createRole(createRoleDto);
   }
 
   @Get('/listRoles/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   listRoles() {
     return this.roleService.findAllRoles();
   }
 
   @Get('/findRole/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findRole(@Param('id') id: number) {
     return this.roleService.findOneRole(id);
   }
 
   @Get('/findRoleByName/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findRoleByName(@Body() createRoleDto: CreateRolePermissionDto) {
     return this.roleService.findRoleByName(createRoleDto);
   }
 
-  @Patch('/updateRole/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN)
+  @Patch('/updateRole/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   updateRole(
     @Param('id') id: number,
     @Body() updateRoleDto: UpdateRolePermissionDto,
@@ -52,8 +53,8 @@ export class RolePermissionController {
     return this.roleService.updateRole(id, updateRoleDto);
   }
 
-  @Delete('/deleteRole/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN)
+  @Delete('/deleteRole/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   deleteRole(@Param('id') id: number) {
     return this.roleService.deleteRole(id);
   }

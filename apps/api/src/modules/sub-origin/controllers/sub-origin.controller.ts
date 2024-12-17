@@ -6,45 +6,46 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
 } from '@nestjs/common';
 import { SubOriginService } from '../services/sub-origin.service';
 import { CreateSubOriginDto } from '../dto/create-sub-origin.dto';
 import { UpdateSubOriginDto } from '../dto/update-sub-origin.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { Permission } from 'src/utils/decorators/permission.decorator';
-import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RolesEnum } from 'src/utils/enums/roles.enum';
+import { Auth } from 'src/modules/auth/decorators/auth.decorator';
 
 @ApiTags('sub-origin')
 @Controller('sub-origin')
-@UseGuards(PermissionGuard)
+@ApiBearerAuth()
 export class SubOriginController {
   constructor(private readonly subOriginService: SubOriginService) {}
 
-  @Post('/createSubOrigin/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Post('/createSubOrigin/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   createSubOrigin(@Body() createSubOriginDto: CreateSubOriginDto) {
     return this.subOriginService.createSubOrigin(createSubOriginDto);
   }
 
   @Get('/listSubOrigins/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   listSubOrigins() {
     return this.subOriginService.findAllSubOrigins();
   }
 
   @Get('/findSubOrigin/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findSubOrigin(@Param('id') id: number) {
     return this.subOriginService.findOneSubOrigin(id);
   }
 
   @Get('/findSubOriginByOriginId/:originId')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findSubOriginByOriginId(@Param('originId') originId: number) {
     return this.subOriginService.findSubOriginByOriginId(originId);
   }
 
-  @Patch('/updateSubOrigin/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Patch('/updateSubOrigin/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   updateSubOrigin(
     @Param('id') id: number,
     @Body() updateSubOriginDto: UpdateSubOriginDto,
@@ -52,8 +53,8 @@ export class SubOriginController {
     return this.subOriginService.updateSubOrigin(id, updateSubOriginDto);
   }
 
-  @Delete('/deleteSubOrigin/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Delete('/deleteSubOrigin/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   deleteSubOrigin(@Param('id') id: number) {
     return this.subOriginService.deleteSubOrigin(id);
   }

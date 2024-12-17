@@ -1,7 +1,7 @@
 import { CaseReportOriginal } from 'src/modules/case-report-original/entities/case-report-original.entity';
 import { CaseReportValidate } from 'src/modules/case-report-validate/entities/case-report-validate.entity';
 import { RoleResponseTime } from 'src/modules/role-response-time/entities/role-response-time.entity';
-import { PriorityEntity } from 'src/modules/priority/entities/priority.entity';
+import { Priority } from 'src/modules/priority/entities/priority.entity';
 import {
   Column,
   CreateDateColumn,
@@ -54,6 +54,6 @@ export class SeverityClasification {
   )
   roleResponseTime: RoleResponseTime[];
 
-  @OneToOne(() => PriorityEntity, (priority) => priority.severityClasification)
-  priority: PriorityEntity;
+  @OneToOne(() => Priority, (priority) => priority.severityClasification)
+  priority: Priority;
 }

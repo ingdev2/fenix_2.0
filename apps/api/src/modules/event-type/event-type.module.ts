@@ -4,13 +4,11 @@ import { EventTypeController } from './controllers/event-type.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventType } from './entities/event-type.entity';
 import { CaseTypeModule } from '../case-type/case-type.module';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { UserModule } from 'src/modules_bonnadonahub/user/user.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([EventType]), CaseTypeModule, UserModule],
+  imports: [TypeOrmModule.forFeature([EventType]), CaseTypeModule],
   controllers: [EventTypeController],
-  providers: [EventTypeService, PermissionGuard],
+  providers: [EventTypeService],
   exports: [EventTypeService],
 })
 export class EventTypeModule {}

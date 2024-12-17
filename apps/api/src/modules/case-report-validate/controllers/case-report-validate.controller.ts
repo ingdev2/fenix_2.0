@@ -7,36 +7,36 @@ import {
   Delete,
   Query,
   Ip,
-  UseGuards,
 } from '@nestjs/common';
 import { CaseReportValidateService } from '../services/case-report-validate.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { FindSimilarCaseReportValidateDto } from '../dto/find-similar-case-report-validate';
 import { CreateReportValDto } from '../helper/val-dto-validator.helper';
 import { QueryCaseReportValidateDto } from '../dto/query-case-report-validate.dto';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { Permission } from 'src/utils/decorators/permission.decorator';
-import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
+import { RolesEnum } from 'src/utils/enums/roles.enum';
+import { Auth } from 'src/modules/auth/decorators/auth.decorator';
 
 @ApiTags('case-report-validate')
 @Controller('case-report-validate')
-@UseGuards(PermissionGuard)
+@ApiBearerAuth()
 export class CaseReportValidateController {
   constructor(
     private readonly caseReportValidateService: CaseReportValidateService,
   ) {}
 
-  @Get('/findReportsSimilar')
+  @Post('/findReportsSimilar')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   async findReportsSimilar(
-    @Body() similarCaseReportValidate: FindSimilarCaseReportValidateDto,
+    @Body()
+    similarCaseReportValidate: FindSimilarCaseReportValidateDto,
   ) {
     return await this.caseReportValidateService.findSimilarCaseReportsValidate(
       similarCaseReportValidate,
     );
   }
 
-  @Post('/createReportValidate/:idValidator/:reportId/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.VALIDATOR)
+  @Post('/createReportValidate/:idValidator/:reportId/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   async createReportValidate(
     @Body() createReportValDto: CreateReportValDto,
     @Ip() clientIp: string,
@@ -52,53 +52,25 @@ export class CaseReportValidateController {
   }
 
   @Get('/summaryReports')
-  async SummaryReports(@Query() query: QueryCaseReportValidateDto) {
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
+  async summaryReports() {
+    return await this.caseReportValidateService.summaryReports();
+  }
+
+  @Get('/validateCases/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
+  async validateCases() {
+    return await this.caseReportValidateService.validateCases();
+  }
+
+  @Get('/otherCases/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
+  async otherCases(@Query() query: QueryCaseReportValidateDto) {
     const creationDateObj = query.creationDate
       ? new Date(query.creationDate)
       : undefined;
 
-    return await this.caseReportValidateService.summaryReports(
-      creationDateObj,
-      query.filingNumber,
-      query.statusMovementId,
-      query.patientDoc,
-      query.caseTypeId,
-      query.priorityId,
-      query.severityClasificationId,
-      query.eventTypeId,
-    );
-  }
-
-  @Get('/summaryReportsForValidator/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.VALIDATOR)
-  async SummaryReportsForValidator(
-    @Query('filingNumber') filingNumber?: string,
-    @Query('statusMovementId') statusMovementId?: number,
-    @Query('caseTypeId') caseTypeId?: number,
-    @Query('patientDoc') patientDoc?: string,
-    @Query('priorityId') priorityId?: number,
-    @Query('creationDate') creationDate?: string,
-  ) {
-    const creationDateObj = creationDate ? new Date(creationDate) : undefined;
-
-    return await this.caseReportValidateService.summaryReportsForValidator(
-      filingNumber,
-      statusMovementId,
-      caseTypeId,
-      patientDoc,
-      priorityId,
-      creationDateObj,
-    );
-  }
-
-  @Get('/summaryReportsForReview/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.VALIDATOR)
-  async summaryReportsForReview(@Query() query: QueryCaseReportValidateDto) {
-    const creationDateObj = query.creationDate
-      ? new Date(query.creationDate)
-      : undefined;
-
-    return await this.caseReportValidateService.summaryReportsForReview(
+    return await this.caseReportValidateService.otherCases(
       query.filingNumber,
       query.statusMovementId,
       query.caseTypeId,
@@ -109,24 +81,27 @@ export class CaseReportValidateController {
   }
 
   @Get('/listReportsValidate')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   listReportsValidate() {
     return this.caseReportValidateService.findAllReportsValidate();
   }
 
   @Get('/findReportValidate/:id')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findReportValidate(@Param('id') id: string) {
     return this.caseReportValidateService.findOneReportValidate(id);
   }
 
   @Get('/findReportValidateByConsecutive/:consecutive')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findReportValidateByConsecutive(@Param('consecutive') consecutive: string) {
     return this.caseReportValidateService.findOneReportValidateByConsecutive(
       consecutive,
     );
   }
 
-  // @Patch('/updateReportValidate/:id/:userIdPermission')
-  // @Permission(permissions.SUPER_ADMIN, permissions.VALIDATOR)
+  // @Patch('/updateReportValidate/:id/')
+  //   @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   // updateReportValidate(
   //   @Param('id') id: string,
   //   @Body() updateCaseReportValidateDto: UpdateCaseReportValidateDto,
@@ -137,13 +112,8 @@ export class CaseReportValidateController {
   //   );
   // }
 
-  @Delete('/cancelReportValidate/:id/:idUser/:userIdPermission')
-  @Permission(
-    PermissionsEnum.SUPER_ADMIN,
-    PermissionsEnum.VALIDATOR,
-    PermissionsEnum.ANALYST,
-    PermissionsEnum.INVESTIGATOR,
-  )
+  @Delete('/cancelReportValidate/:id/:idUser/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   async cancelReportValidate(
     @Param('id') id: string,
     @Ip() clientIp: string,

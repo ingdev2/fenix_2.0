@@ -6,7 +6,7 @@ import { Event } from 'src/modules/event/entities/event.entity';
 import { Medicine } from 'src/modules/medicine-case-report/entities/medicine.entity';
 import { MovementReport } from 'src/modules/movement-report/entities/movement-report.entity';
 import { Origin } from 'src/modules/origin/entities/origin.entity';
-import { PriorityEntity } from 'src/modules/priority/entities/priority.entity';
+import { Priority } from 'src/modules/priority/entities/priority.entity';
 import { RiskLevel } from 'src/modules/risk-level/entities/risk-level.entity';
 import { RiskType } from 'src/modules/risk-type/entities/risk-type.entity';
 import { Service } from 'src/modules/service/entities/service.entity';
@@ -57,7 +57,7 @@ export class CaseReportOriginal {
   ori_cr_secondlastnamepatient: string;
 
   @Column({ nullable: true })
-  ori_cr_agepatient: number;
+  ori_cr_agepatient: string;
 
   @Column({ type: 'varchar', nullable: true })
   ori_cr_genderpatient: string;
@@ -66,19 +66,25 @@ export class CaseReportOriginal {
   ori_cr_epspatient: string;
 
   @Column({ type: 'varchar', nullable: true })
-  ori_cr_diagnosticcode: string;
+  ori_cr_diagnosticcodepatient: string;
 
   @Column({ type: 'varchar', nullable: true })
-  ori_cr_diagnosticdescription: string;
+  ori_cr_diagnosticdescriptionpatient: string;
 
   @Column({ nullable: true })
   ori_cr_admconsecutivepatient: number;
 
   @Column({ nullable: true })
+  ori_cr_foliopatient: string;
+
+  @Column({ nullable: true })
   ori_cr_anonymoususer: boolean;
 
   @Column({ nullable: true })
-  ori_cr_reporter_id: string;
+  ori_cr_fullnamereporter: string;
+
+  @Column({ nullable: true })
+  ori_cr_documentreporter: string;
 
   @Column({ nullable: true })
   ori_cr_eventtype_id_fk: number;
@@ -93,12 +99,12 @@ export class CaseReportOriginal {
   ori_cr_event_id_fk: number;
 
   @Column({ type: 'varchar', nullable: true })
-  ori_cr_descriptionOthers: string;
+  ori_cr_descriptionothers: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true }) //
   ori_cr_risktype_id_fk: number;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true }) //
   ori_cr_severityclasif_id_fk: number;
 
   @Column({ nullable: true })
@@ -107,7 +113,7 @@ export class CaseReportOriginal {
   @Column({ nullable: true })
   ori_cr_suborigin_id_fk: number;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true }) //
   ori_cr_risklevel_id_fk: number;
 
   @Column({ nullable: true })
@@ -119,10 +125,10 @@ export class CaseReportOriginal {
   @Column({ nullable: true })
   ori_cr_characterization_id_fk: number;
 
-  @Column({ nullable: true })
+  @Column({ default: false })
   ori_cr_infoprovidedfamily: boolean;
 
-  @Column({ nullable: true })
+  @Column({ default: false })
   ori_cr_clinicalfollowrequired: boolean;
 
   @Column({ type: 'varchar', nullable: true })
@@ -131,13 +137,13 @@ export class CaseReportOriginal {
   @Column({ type: 'varchar', nullable: true })
   ori_cr_description: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: 'varchar', nullable: true }) //
   ori_cr_inmediateaction: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true }) //
   ori_cr_materializedrisk: boolean;
 
-  @Column({ default: true })
+  @Column({ default: true }) //
   ori_cr_associatedpatient: boolean;
 
   @Column({ default: true })
@@ -214,7 +220,7 @@ export class CaseReportOriginal {
   @JoinColumn({ name: 'ori_cr_reportingservice_id_fk' })
   reportingService: Service;
 
-  @ManyToOne(() => PriorityEntity, (priority) => priority.caseReportOriginal)
+  @ManyToOne(() => Priority, (priority) => priority.caseReportOriginal)
   @JoinColumn({ name: 'ori_cr_priority_id_fk' })
-  priority: PriorityEntity;
+  priority: Priority;
 }

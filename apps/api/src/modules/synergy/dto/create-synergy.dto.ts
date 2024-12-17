@@ -2,6 +2,7 @@ import {
   IsBoolean,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   IsUUID,
 } from 'class-validator';
@@ -11,39 +12,31 @@ export class CreateSynergyDto {
   @IsUUID()
   syn_validatedcase_id_fk: string;
 
-  // @IsNotEmpty()
-  // @IsString()
-  // syn_patient_id: String;
+  @IsOptional()
+  @IsString()
+  syn_observations: string;
 
-  // @IsNotEmpty()
-  // @IsString()
-  // syn_patientname: String;
+  @IsNotEmpty()
+  @IsString()
+  syn_analystidnumber: string;
 
-  // @IsNotEmpty()
-  // @IsNumber()
-  // syn_patientage: number;
+  @IsOptional()
+  @IsString()
+  syn_patientcontent: string;
 
-  // @IsNotEmpty()
-  // @IsString()
-  // syn_patientmedicalhistory: String;
+  @IsOptional()
+  @IsString()
+  syn_possiblefaults: string;
 
-  // @IsNotEmpty()
-  // @IsString()
-  // syn_patientcomorbidity: String;
+  @IsOptional()
+  @IsString()
+  syn_consequences: string;
 
-  // @IsNotEmpty()
-  // @IsString()
-  // syn_preliminaryCauses: String;
+  @IsOptional()
+  @IsString()
+  syn_clinicalmanagement: string;
 
-  // @IsNotEmpty()
-  // @IsString()
-  // syn_patientImpact: String;
-
-  // @IsNotEmpty()
-  // @IsString()
-  // syn_currentTreatmentAndFamilyStatus: String;
-
-  // @IsNotEmpty()
-  // @IsBoolean()
-  // syn_clinicalStaffNotified: boolean;
+  @IsOptional()
+  @IsString()
+  syn_whomwasnotified: string;
 }

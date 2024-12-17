@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { CreateClinicalResearchCaseReportValidateDto } from '../dto/create-clinical-research-case-report-validate.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ClinicalResearchCaseReportValidate } from '../entities/clinical-research-case-report-validate.entity';
+
 import { QueryRunner, Repository } from 'typeorm';
+
+import { CreateClinicalResearchCaseReportValidateDto } from '../dto/create-clinical-research-case-report-validate.dto';
+
+import { ClinicalResearchCaseReportValidate } from '../entities/clinical-research-case-report-validate.entity';
 
 @Injectable()
 export class ClinicalResearchCaseReportValidateService {

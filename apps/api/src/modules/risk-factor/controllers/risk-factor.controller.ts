@@ -6,40 +6,41 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
 } from '@nestjs/common';
 import { RiskFactorService } from '../services/risk-factor.service';
 import { CreateRiskFactorDto } from '../dto/create-risk-factor.dto';
 import { UpdateRiskFactorDto } from '../dto/update-risk-factor.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { Permission } from 'src/utils/decorators/permission.decorator';
-import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RolesEnum } from 'src/utils/enums/roles.enum';
+import { RiskFactor } from '../entities/risk-factor.entity';
+import { Auth } from 'src/modules/auth/decorators/auth.decorator';
 
 @ApiTags('risk-factor')
 @Controller('risk-factor')
-@UseGuards(PermissionGuard)
+@ApiBearerAuth()
 export class RiskFactorController {
   constructor(private readonly riskFactorService: RiskFactorService) {}
 
-  @Post('/createRiskFactor/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Post('/createRiskFactor/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   createRiskFactor(@Body() createRiskFactorDto: CreateRiskFactorDto) {
     return this.riskFactorService.createRiskFactor(createRiskFactorDto);
   }
 
   @Get('/listRiskFactors/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   listRiskFactors() {
     return this.riskFactorService.findAllRiskFactors();
   }
 
   @Get('/findRiskFactor/:id')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findRiskFactor(@Param('id') id: number) {
     return this.riskFactorService.findOneRiskFactor(id);
   }
 
-  @Patch('/updateRiskFactor/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Patch('/updateRiskFactor/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   updateRiskFactor(
     @Param('id') id: number,
     @Body() updateRiskFactorDto: UpdateRiskFactorDto,
@@ -47,8 +48,8 @@ export class RiskFactorController {
     return this.riskFactorService.updateRiskFactor(id, updateRiskFactorDto);
   }
 
-  @Delete('/deleteRiskFactor/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Delete('/deleteRiskFactor/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   deleteRiskFactor(@Param('id') id: number) {
     return this.riskFactorService.deleteRiskFactor(id);
   }

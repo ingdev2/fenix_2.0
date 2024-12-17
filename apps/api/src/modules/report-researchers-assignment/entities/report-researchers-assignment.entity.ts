@@ -1,4 +1,5 @@
 import { CaseReportValidate } from 'src/modules/case-report-validate/entities/case-report-validate.entity';
+import { ReportAnalystAssignment } from 'src/modules/report-analyst-assignment/entities/report-analyst-assignment.entity';
 import {
   Column,
   CreateDateColumn,
@@ -18,6 +19,9 @@ export class ReportResearcherAssignment {
   @Column({ type: 'uuid' })
   res_validatedcase_id_fk: string;
 
+  @Column()
+  res_positionname: string;
+
   @Column({ type: 'varchar' })
   res_useranalyst_id: string;
 
@@ -29,6 +33,9 @@ export class ReportResearcherAssignment {
 
   @Column({ default: false })
   res_isreturned: boolean;
+
+  @Column({ nullable: true })
+  res_justifications: string;
 
   @Column({ default: true })
   res_status: boolean;

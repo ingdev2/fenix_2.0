@@ -127,31 +127,16 @@ export class ClinicalResearch {
   @DeleteDateColumn()
   deletedAt: Date;
 
-  @OneToMany(
-    () => ClinicalResearchInfluencingFactor,
-    (clinicalResearchInfluencingFactor) =>
-      clinicalResearchInfluencingFactor.clinicalResearch,
-  )
+  @OneToMany(() => ClinicalResearchInfluencingFactor, (clinicalResearchInfluencingFactor) => clinicalResearchInfluencingFactor.clinicalResearch)
   clinicalResearchInfluencingFactor: ClinicalResearchInfluencingFactor[];
 
-  @OneToMany(
-    () => ClinicalResearchFailedMeasure,
-    (clinicalResearchFailedMeasure) =>
-      clinicalResearchFailedMeasure.clinicalResearch,
-  )
+  @OneToMany(() => ClinicalResearchFailedMeasure, (clinicalResearchFailedMeasure) => clinicalResearchFailedMeasure.clinicalResearch)
   clinicalResearchFailedMeasure: ClinicalResearchFailedMeasure[];
 
-  @OneToMany(
-    () => ClinicalResearchCaseReportValidate,
-    (clinicalResearchCaseReportValidate) =>
-      clinicalResearchCaseReportValidate.clinicalResearch,
-  )
+  @OneToMany(() => ClinicalResearchCaseReportValidate, (clinicalResearchCaseReportValidate) => clinicalResearchCaseReportValidate.clinicalResearch)
   clinicalResearchCaseReportValidate: ClinicalResearchCaseReportValidate[];
 
-  @ManyToOne(
-    () => ResearchInstrument,
-    (researchInstrument) => researchInstrument.clinicalResearch,
-  )
+  @ManyToOne(() => ResearchInstrument, (researchInstrument) => researchInstrument.clinicalResearch)
   @JoinColumn({ name: 'res_c_instrument_id_fk' })
   researchInstrument: ResearchInstrument;
 
@@ -171,12 +156,10 @@ export class ClinicalResearch {
   @JoinColumn({ name: 'res_c_riskfactors_id_fk' })
   riskFactor: RiskFactor;
 
-  @ManyToOne(
-    () => SafetyBarrier,
-    (safetyBarrier) => safetyBarrier.clinicalResearch,
-  )
+  @ManyToOne(() => SafetyBarrier, (safetyBarrier) => safetyBarrier.clinicalResearch)
   @JoinColumn({ name: 'res_c_safetybarriers_id_fk' })
   safetyBarrier: SafetyBarrier;
+
 
   @ManyToOne(() => ActionPlan, (actionPlan) => actionPlan.clinicalResearch)
   @JoinColumn({ name: 'res_c_actionplan_id_fk' })

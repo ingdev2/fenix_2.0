@@ -3,10 +3,9 @@ import { FluidTypeService } from './services/fluid-type.service';
 import { FluidTypeController } from './controllers/fluid-type.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FluidType } from './entities/fluid-type.entity';
-import { UserModule } from 'src/modules_bonnadonahub/user/user.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([FluidType]), UserModule],
+  imports: [TypeOrmModule.forFeature([FluidType])],
   controllers: [FluidTypeController],
   providers: [FluidTypeService],
   exports: [FluidTypeService],

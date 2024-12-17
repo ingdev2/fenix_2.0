@@ -1,10 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreatePositionDto } from '../dto/create-position.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Position } from '../entities/position.entity';
+
 import { Repository } from 'typeorm';
-import { HttpPositionService } from '../http/http-position.service';
+
+import { CreatePositionDto } from '../dto/create-position.dto';
 import { UpdatePositionDto } from '../dto/update-position.dto';
+
+import { Position } from '../entities/position.entity';
+
+import { HttpPositionService } from '../http/http-position.service';
 
 @Injectable()
 export class PositionService {
@@ -126,33 +130,6 @@ export class PositionService {
       throw new HttpException('No se encontró el cargo', HttpStatus.NOT_FOUND);
     }
     return position;
-  }
-
-  async findEmployeeByCode(code: number) {
-    if (!code) {
-      throw new HttpException(
-        'El codigo del cargo es requerido.',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
-    const externalData = await this.httpPositionService.getPositionData(code);
-
-    if (!Array.isArray(externalData.data.data)) {
-      throw new HttpException(
-        'La estructura de los datos externos no es la esperada.',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-
-    if (externalData.data.data.length === 0) {
-      throw new HttpException(
-        'No se encontraron datos del empleado',
-        HttpStatus.NOT_FOUND,
-      );
-    }
-
-    return externalData.data.data;
   }
 
   async updatePosition(id: number, updatePositionDto: UpdatePositionDto) {

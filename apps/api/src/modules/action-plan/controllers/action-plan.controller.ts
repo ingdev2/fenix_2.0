@@ -6,33 +6,28 @@ import {
   Param,
   Delete,
   Query,
-  UseGuards,
 } from '@nestjs/common';
+
 import { ActionPlanService } from '../services/action-plan.service';
 import { CreateActionPlanDto } from '../dto/create-action-plan.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { Permission } from 'src/utils/decorators/permission.decorator';
-import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RolesEnum } from 'src/utils/enums/roles.enum';
+import { Auth } from 'src/modules/auth/decorators/auth.decorator';
 
 @ApiTags('action-plan')
+@ApiBearerAuth()
 @Controller('action-plan')
-@UseGuards(PermissionGuard)
 export class ActionPlanController {
   constructor(private readonly actionPlanService: ActionPlanService) {}
 
-  @Post('/createActionPlan/:userIdPermission')
-  @Permission(
-    PermissionsEnum.SUPER_ADMIN,
-    PermissionsEnum.PARAMETERIZER,
-    PermissionsEnum.ANALYST,
-    PermissionsEnum.INVESTIGATOR,
-  )
+  @Post('/createActionPlan/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   createActionPlan(@Body() createActionPlanDto: CreateActionPlanDto) {
     return this.actionPlanService.createActionPlan(createActionPlanDto);
   }
 
-  @Get('/summaryActionPlan/:userIdPermission')
+  @Get('/summaryActionPlan/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   summaryActionPlan(
     @Query('actionPlanName') actionPlanName?: string,
     @Query('eventTypeId') eventTypeId?: number,
@@ -46,17 +41,19 @@ export class ActionPlanController {
   }
 
   @Get('/listActionPlans/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   listActionPlans() {
     return this.actionPlanService.findAllActionPlan();
   }
 
   @Get('/findOneActionPlan/:id')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findOneActionPlan(@Param('id') id: number) {
     return this.actionPlanService.findOneActionPlan(id);
   }
 
-  @Delete('/deleteActionPlan/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Delete('/deleteActionPlan/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   deleteActionPlan(@Param('id') id: number) {
     return this.actionPlanService.deleteActionPlan(id);
   }

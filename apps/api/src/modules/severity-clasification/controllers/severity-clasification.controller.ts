@@ -6,26 +6,24 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
 } from '@nestjs/common';
 import { SeverityClasificationService } from '../services/severity-clasification.service';
 import { CreateSeverityClasificationDto } from '../dto/create-severity-clasification.dto';
 import { UpdateSeverityClasificationDto } from '../dto/update-severity-clasification.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { Permission } from 'src/utils/decorators/permission.decorator';
-import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RolesEnum } from 'src/utils/enums/roles.enum';
+import { Auth } from 'src/modules/auth/decorators/auth.decorator';
 
 @ApiTags('severity-clasification')
 @Controller('severity-clasification')
-@UseGuards(PermissionGuard)
+@ApiBearerAuth()
 export class SeverityClasificationController {
   constructor(
     private readonly severityClasificationService: SeverityClasificationService,
   ) {}
 
-  @Post('/createSeverityClasification/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Post('/createSeverityClasification/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   createSeverityClasification(
     @Body() createSeverityClasificationDto: CreateSeverityClasificationDto,
   ) {
@@ -35,17 +33,19 @@ export class SeverityClasificationController {
   }
 
   @Get('/listSeverityClasifications/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   listSeverityClasifications() {
     return this.severityClasificationService.findAllSeverityClasifications();
   }
 
   @Get('findSeverityClasification/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findSeverityClasification(@Param('id') id: number) {
     return this.severityClasificationService.findOneSeverityClasification(id);
   }
 
-  @Patch('/updateSeverityClasification/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Patch('/updateSeverityClasification/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   updateSeverityClasification(
     @Param('id') id: number,
     @Body() updateSeverityClasificationDto: UpdateSeverityClasificationDto,
@@ -56,8 +56,8 @@ export class SeverityClasificationController {
     );
   }
 
-  @Delete('/deleteSeverityClasification/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Delete('/deleteSeverityClasification/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   deleteSeverityClasification(@Param('id') id: number) {
     return this.severityClasificationService.deleteSeverityClasification(id);
   }

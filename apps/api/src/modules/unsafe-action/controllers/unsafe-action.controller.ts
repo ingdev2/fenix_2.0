@@ -6,40 +6,40 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
 } from '@nestjs/common';
 import { UnsafeActionService } from '../services/unsafe-action.service';
 import { CreateUnsafeActionDto } from '../dto/create-unsafe-action.dto';
 import { UpdateUnsafeActionDto } from '../dto/update-unsafe-action.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { Permission } from 'src/utils/decorators/permission.decorator';
-import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RolesEnum } from 'src/utils/enums/roles.enum';
+import { Auth } from 'src/modules/auth/decorators/auth.decorator';
 
 @ApiTags('unsafe-action')
 @Controller('unsafe-action')
-@UseGuards(PermissionGuard)
+@ApiBearerAuth()
 export class UnsafeActionController {
   constructor(private readonly unsafeActionService: UnsafeActionService) {}
 
-  @Post('/createUnsafeAction/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Post('/createUnsafeAction/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   createUnsafeAction(@Body() createUnsafeActionDto: CreateUnsafeActionDto) {
     return this.unsafeActionService.createUnsafeAction(createUnsafeActionDto);
   }
 
   @Get('/listUnsafeActions/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   listUnsafeActions() {
     return this.unsafeActionService.findAllUnsafeActions();
   }
 
   @Get('/findUnsafeAction/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findUnsafeAction(@Param('id') id: number) {
     return this.unsafeActionService.findOneUnsafeActions(id);
   }
 
-  @Patch('/updateUnsafeAction/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Patch('/updateUnsafeAction/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   updateUnsafeAction(
     @Param('id') id: number,
     @Body() updateUnsafeActionDto: UpdateUnsafeActionDto,
@@ -50,8 +50,8 @@ export class UnsafeActionController {
     );
   }
 
-  @Delete('/deleteUnsafeAction/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Delete('/deleteUnsafeAction/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   deleteUnsafeAction(@Param('id') id: number) {
     return this.unsafeActionService.deleteUnsafeAction(id);
   }

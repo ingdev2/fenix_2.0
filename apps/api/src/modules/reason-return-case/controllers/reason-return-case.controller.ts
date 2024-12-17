@@ -6,44 +6,44 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
 } from '@nestjs/common';
 import { ReasonReturnCaseService } from '../services/reason-return-case.service';
 import { CreateReasonReturnCaseDto } from '../dto/create-reason-return-case.dto';
 import { UpdateReasonReturnCaseDto } from '../dto/update-reason-return-case.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { Permission } from 'src/utils/decorators/permission.decorator';
-import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RolesEnum } from 'src/utils/enums/roles.enum';
+import { Auth } from 'src/modules/auth/decorators/auth.decorator';
 
 @ApiTags('reason-return-case')
 @Controller('reason-return-case')
-@UseGuards(PermissionGuard)
+@ApiBearerAuth()
 export class ReasonReturnCaseController {
   constructor(
     private readonly reasonReturnCaseService: ReasonReturnCaseService,
   ) {}
 
-  @Post('/createReasonReturnCase/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
-  create(@Body() createReasonReturnCaseDto: CreateReasonReturnCaseDto) {
+  @Post('/createReasonReturnCase/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
+  createReasonReturnCase(@Body() createReasonReturnCaseDto: CreateReasonReturnCaseDto) {
     return this.reasonReturnCaseService.createReasonReturnCase(
       createReasonReturnCaseDto,
     );
   }
 
   @Get('/listReasonReturnCases/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   listReasonReturnCases() {
     return this.reasonReturnCaseService.findAllReasonReturnCases();
   }
 
   @Get('/findReasonReturnCase/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findReasonReturnCase(@Param('id') id: number) {
     return this.reasonReturnCaseService.findOneReasonReturnCase(id);
   }
 
-  @Patch('/updateReasonReturnCase/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Patch('/updateReasonReturnCase/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   updateReasonReturnCase(
     @Param('id') id: number,
     @Body() updateReasonReturnCaseDto: UpdateReasonReturnCaseDto,
@@ -54,8 +54,8 @@ export class ReasonReturnCaseController {
     );
   }
 
-  @Delete('/deleteReasonReturnCase/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Delete('/deleteReasonReturnCase/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   deleteReasonReturnCase(@Param('id') id: number) {
     return this.reasonReturnCaseService.deleteReasonReturnCase(id);
   }

@@ -32,10 +32,6 @@ export class InfluencingFactor {
   @DeleteDateColumn()
   deletedAt: Date;
 
-  @OneToMany(
-    () => ClinicalResearchInfluencingFactor,
-    (clinicalResearchInfluencingFactor) =>
-      clinicalResearchInfluencingFactor.influencingFactor,
-  )
+  @OneToMany(() => ClinicalResearchInfluencingFactor, (clinicalResearchInfluencingFactor) => clinicalResearchInfluencingFactor.influencingFactor)
   clinicalResearchInfluencingFactor: ClinicalResearchInfluencingFactor[];
 }

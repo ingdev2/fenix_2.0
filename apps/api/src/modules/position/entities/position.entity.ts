@@ -37,12 +37,6 @@ export class Position {
   @DeleteDateColumn()
   deletedAt: Date;
 
-  @OneToMany(
-    () => ReportAnalystAssignment,
-    (reportAnalystAssignment) => reportAnalystAssignment.position,
-  )
-  reportAnalystAssignment: ReportAnalystAssignment[];
-
   @OneToMany(() => ActionPlan, (actionPlan) => actionPlan.position)
   actionPlan: ActionPlan[];
 

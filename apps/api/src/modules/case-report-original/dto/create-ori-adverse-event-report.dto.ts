@@ -27,7 +27,11 @@ export class CreateOriAdverseEventReportDto {
 
   @IsString()
   @IsOptional()
-  ori_cr_reporter_id: string;
+  ori_cr_fullnamereporter: string;
+
+  @IsString()
+  @IsOptional()
+  ori_cr_documentreporter: string;
 
   @IsNumber()
   @IsNotEmpty()
@@ -69,9 +73,9 @@ export class CreateOriAdverseEventReportDto {
   @IsNotEmpty()
   ori_cr_secondlastnamepatient: string;
 
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  ori_cr_agepatient: number;
+  ori_cr_agepatient: string;
 
   @IsString()
   @IsNotEmpty()
@@ -83,15 +87,19 @@ export class CreateOriAdverseEventReportDto {
 
   @IsString()
   @IsOptional()
-  ori_cr_diagnosticcode: string;
+  ori_cr_diagnosticcodepatient: string;
 
   @IsString()
   @IsOptional()
-  ori_cr_diagnosticdescription: string;
+  ori_cr_diagnosticdescriptionpatient: string;
 
   @IsNumber()
   @IsOptional()
   ori_cr_admconsecutivepatient: number;
+
+  @IsString()
+  @IsOptional()
+  ori_cr_foliopatient: string;
 
   @IsNumber()
   @IsNotEmpty()
@@ -104,6 +112,10 @@ export class CreateOriAdverseEventReportDto {
   @IsNumber()
   @IsNotEmpty()
   ori_cr_event_id_fk: number;
+
+  @IsString()
+  @IsOptional()
+  ori_cr_descriptionothers: string;
 
   @IsNumber()
   @IsNotEmpty()
@@ -121,11 +133,11 @@ export class CreateOriAdverseEventReportDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateMedicineDto)
-  medicines: CreateMedicineDto[];
+  medicine: CreateMedicineDto[];
 
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateDeviceDto)
-  devices: CreateDeviceDto[];
+  device: CreateDeviceDto[];
 }

@@ -6,24 +6,22 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
 } from '@nestjs/common';
 import { SafetyBarriersService } from '../services/safety-barriers.service';
 import { CreateSafetyBarrierDto } from '../dto/create-safety-barrier.dto';
 import { UpdateSafetyBarrierDto } from '../dto/update-safety-barrier.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { Permission } from 'src/utils/decorators/permission.decorator';
-import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RolesEnum } from 'src/utils/enums/roles.enum';
+import { Auth } from 'src/modules/auth/decorators/auth.decorator';
 
 @ApiTags('safety-barriers')
 @Controller('safety-barriers')
-@UseGuards(PermissionGuard)
+@ApiBearerAuth()
 export class SafetyBarriersController {
   constructor(private readonly safetyBarriersService: SafetyBarriersService) {}
 
-  @Post('/createSafetyBarrier/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Post('/createSafetyBarrier/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   createSafetyBarrier(@Body() createSafetyBarrierDto: CreateSafetyBarrierDto) {
     return this.safetyBarriersService.createSafetyBarrier(
       createSafetyBarrierDto,
@@ -31,17 +29,19 @@ export class SafetyBarriersController {
   }
 
   @Get('/listSafetyBarriers')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   listSafetyBarriers() {
     return this.safetyBarriersService.findAllSafetyBarriers();
   }
 
   @Get('/findSafetyBarrier/:id')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findSafetyBarrier(@Param('id') id: number) {
     return this.safetyBarriersService.findOneSafetyBarrier(id);
   }
 
-  @Patch('/updateSafetyBarrier/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Patch('/updateSafetyBarrier/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   updateSafetyBarrier(
     @Param('id') id: number,
     @Body() updateSafetyBarrierDto: UpdateSafetyBarrierDto,
@@ -52,8 +52,8 @@ export class SafetyBarriersController {
     );
   }
 
-  @Delete('/deleteSafetyBarrier/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Delete('/deleteSafetyBarrier/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   deleteSafetyBarrier(@Param('id') id: number) {
     return this.safetyBarriersService.deleteSafetyBarrier(id);
   }

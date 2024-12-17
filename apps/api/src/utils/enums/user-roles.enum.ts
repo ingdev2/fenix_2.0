@@ -1,4 +1,4 @@
-export enum UserRoles {
+export enum UserRolesEnum {
   VALIDATOR = 'VALIDADOR',
   ANALYST = 'ANALISTA',
   INVESTIGATOR = 'INVESTIGADOR',

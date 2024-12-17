@@ -1,9 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
+
 import { CreateDeviceTypeDto } from '../dto/create-device-type.dto';
 import { UpdateDeviceTypeDto } from '../dto/update-device-type.dto';
-import { InjectRepository } from '@nestjs/typeorm';
+
 import { DeviceType } from '../entities/device-type.entity';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class DeviceTypeService {
@@ -108,8 +111,8 @@ export class DeviceTypeService {
     if (!deviceTypeFound) {
       return new HttpException(
         `Tipo de dispositivo no encontrado, favor recargar.`,
-        HttpStatus.NOT_FOUND,
-      );
+        HttpStatus.NOT_FOUND
+      )
     }
 
     const result = await this.deviceTypeRepository.softDelete(id);

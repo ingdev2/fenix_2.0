@@ -1,9 +1,16 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
+
 import { CreateRiskTypeDto } from '../dto/create-risk-type.dto';
 import { UpdateRiskTypeDto } from '../dto/update-risk-type.dto';
-import { Repository } from 'typeorm';
+
 import { RiskType } from '../entities/risk-type.entity';
-import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class RiskTypeService {

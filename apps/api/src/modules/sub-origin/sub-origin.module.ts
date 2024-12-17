@@ -4,13 +4,11 @@ import { SubOriginController } from './controllers/sub-origin.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SubOrigin } from './entities/sub-origin.entity';
 import { OriginModule } from '../origin/origin.module';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { UserModule } from 'src/modules_bonnadonahub/user/user.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([SubOrigin]), OriginModule, UserModule],
+  imports: [TypeOrmModule.forFeature([SubOrigin]), OriginModule],
   controllers: [SubOriginController],
-  providers: [SubOriginService, PermissionGuard],
+  providers: [SubOriginService],
   exports: [SubOriginService],
 })
 export class SubOriginModule {}

@@ -6,34 +6,28 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
 } from '@nestjs/common';
 import { ObservationReturnCaseService } from '../services/observation-return-case.service';
 import { CreateObservationReturnCaseDto } from '../dto/create-observation-return-case.dto';
 import { UpdateObservationReturnCaseDto } from '../dto/update-observation-return-case.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { Permission } from 'src/utils/decorators/permission.decorator';
-import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RolesEnum } from 'src/utils/enums/roles.enum';
+import { Auth } from 'src/modules/auth/decorators/auth.decorator';
 
 @ApiTags('observation-return-case')
 @Controller('observation-return-case')
-@UseGuards(PermissionGuard)
+@ApiBearerAuth()
 export class ObservationReturnCaseController {
   constructor(
     private readonly observationReturnCaseService: ObservationReturnCaseService,
   ) {}
 
   @Post(
-    '/createObservationReturnCase/:idUser/:idCaseValidate/:userIdPermission',
+    '/createObservationReturnCase/:idUser/:idCaseValidate/',
   )
-  @Permission(
-    PermissionsEnum.SUPER_ADMIN,
-    PermissionsEnum.ANALYST,
-    PermissionsEnum.INVESTIGATOR,
-  )
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   createObservationReturnCase(
-    @Param('idUser') idUser: number,
+    @Param('idUser') idUser: string,
     @Param('idCaseValidate') idCaseValidate: string,
     @Body() createObservationReturnCaseDto: CreateObservationReturnCaseDto,
   ) {
@@ -45,17 +39,19 @@ export class ObservationReturnCaseController {
   }
 
   @Get('/listObservationReturnCases')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   listObservationReturnCases() {
     return this.observationReturnCaseService.findAllObservationReturnCase();
   }
 
   @Get('/findObservationReturnCase/:id')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findObservationReturnCase(@Param('id') id: number) {
     return this.observationReturnCaseService.findOneObservationReturnCase(id);
   }
 
-  @Patch('/updateObservationReturnCase/:id/:idCaseValidate/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN)
+  @Patch('/updateObservationReturnCase/:id/:idCaseValidate/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   updateObservationReturnCase(
     @Param('id') id: number,
     @Body() updateObservationReturnCaseDto: UpdateObservationReturnCaseDto,
@@ -66,8 +62,8 @@ export class ObservationReturnCaseController {
     );
   }
 
-  @Delete('deleteObservationReturnCase:id/:idCaseValidate/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN)
+  @Delete('deleteObservationReturnCase/:id/:idCaseValidate/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   deleteObservationReturnCase(@Param('id') id: number) {
     return this.observationReturnCaseService.deleteObservationReturnCase(id);
   }

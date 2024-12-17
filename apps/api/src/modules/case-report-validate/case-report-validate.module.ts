@@ -25,8 +25,6 @@ import { SubOriginModule } from '../sub-origin/sub-origin.module';
 import { RiskLevelModule } from '../risk-level/risk-level.module';
 import { ObservationReturnCase } from '../observation-return-case/entities/observation-return-case.entity';
 import { ObservationReturnCaseModule } from '../observation-return-case/observation-return-case.module';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { UserModule } from 'src/modules_bonnadonahub/user/user.module';
 
 @Module({
   imports: [
@@ -52,13 +50,12 @@ import { UserModule } from 'src/modules_bonnadonahub/user/user.module';
     OriginModule,
     SubOriginModule,
     RiskLevelModule,
-    UserModule,
     forwardRef(() => ResearchersModule),
     forwardRef(() => ReportAnalystAssignmentModule),
     forwardRef(() => ObservationReturnCaseModule),
   ],
   controllers: [CaseReportValidateController],
-  providers: [CaseReportValidateService, PermissionGuard],
+  providers: [CaseReportValidateService],
   exports: [CaseReportValidateService],
 })
 export class CaseReportValidateModule {}

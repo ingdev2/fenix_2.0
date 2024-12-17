@@ -1,8 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateCompressionConceptReportDto } from '../dto/create-compression-concept-report.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CompressionConceptReport } from '../entities/compression-concept-report.entity';
+
 import { Repository } from 'typeorm';
+
+import { CreateCompressionConceptReportDto } from '../dto/create-compression-concept-report.dto';
+
+import { CompressionConceptReport } from '../entities/compression-concept-report.entity';
 
 @Injectable()
 export class CompressionConceptReportService {
@@ -70,12 +73,13 @@ export class CompressionConceptReportService {
         where: { id, comp_c_status: true },
       });
 
-    if (!compressionConceptReport) {
-      return new HttpException(
-        'No se encontró el indicador de compresion de los conceptos de reportes.',
-        HttpStatus.NOT_FOUND,
-      );
-    }
+      if (!compressionConceptReport) {
+        return new HttpException(
+          'No se encontró el indicador de compresion de los conceptos de reportes.',
+          HttpStatus.NOT_FOUND,
+        );
+      }
     return compressionConceptReport;
   }
+
 }

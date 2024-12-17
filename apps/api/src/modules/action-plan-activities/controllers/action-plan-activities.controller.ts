@@ -7,30 +7,4 @@ export class ActionPlanActivitiesController {
   constructor(
     private readonly actionPlanActivitiesService: ActionPlanActivitiesService,
   ) {}
-
-  @Get()
-  findAll() {
-    return this.actionPlanActivitiesService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.actionPlanActivitiesService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateActionPlanActivityDto: UpdateActionPlanActivityDto,
-  ) {
-    return this.actionPlanActivitiesService.update(
-      +id,
-      updateActionPlanActivityDto,
-    );
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.actionPlanActivitiesService.remove(+id);
-  }
 }

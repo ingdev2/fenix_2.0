@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { CreateClinicalResearchInfluencingFactorDto } from '../dto/create-clinical-research-influencing-factor.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ClinicalResearchInfluencingFactor } from '../entities/clinical-research-influencing-factor.entity';
+
 import { QueryRunner, Repository } from 'typeorm';
+
+import { CreateClinicalResearchInfluencingFactorDto } from '../dto/create-clinical-research-influencing-factor.dto';
+
+import { ClinicalResearchInfluencingFactor } from '../entities/clinical-research-influencing-factor.entity';
 
 @Injectable()
 export class ClinicalResearchInfluencingFactorService {

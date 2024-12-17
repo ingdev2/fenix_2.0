@@ -22,8 +22,8 @@ export class ObservationReturnCase {
   @Column({ type: 'uuid' })
   rec_o_validatedcase_id_fk: string;
 
-  @Column()
-  rec_o_user_id: number;
+  @Column({ type: 'varchar' })
+  rec_o_user_id: string;
 
   @Column({ type: 'varchar' })
   rec_o_observation: string;

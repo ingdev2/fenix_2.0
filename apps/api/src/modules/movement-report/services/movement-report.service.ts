@@ -1,9 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
+
 import { CreateMovementReportDto } from '../dto/create-movement-report.dto';
 import { UpdateMovementReportDto } from '../dto/update-movement-report.dto';
-import { InjectRepository } from '@nestjs/typeorm';
+
 import { MovementReport } from '../entities/movement-report.entity';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class MovementReportService {
@@ -129,11 +132,13 @@ export class MovementReportService {
     if (!movementReportFound) {
       return new HttpException(
         `Movimiento de reporte no encontrado, favor recargar.`,
-        HttpStatus.NOT_FOUND,
-      );
+        HttpStatus.NOT_FOUND
+      )
     }
 
-    const result = await this.movementReportRepository.softDelete(id);
+    const result = await this.movementReportRepository.softDelete(
+      id,
+    );
 
     if (result.affected === 0) {
       return new HttpException(

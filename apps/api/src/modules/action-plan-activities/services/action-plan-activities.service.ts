@@ -3,7 +3,7 @@ import { CreateActionPlanActivityDto } from '../dto/create-action-plan-activity.
 import { UpdateActionPlanActivityDto } from '../dto/update-action-plan-activity.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ActionPlanActivity } from '../entities/action-plan-activity.entity';
-import { Repository } from 'typeorm';
+import { QueryRunner, Repository } from 'typeorm';
 
 @Injectable()
 export class ActionPlanActivitiesService {
@@ -36,19 +36,4 @@ export class ActionPlanActivitiesService {
     }
   }
 
-  findAll() {
-    return `This action returns all actionPlanActivities`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} actionPlanActivity`;
-  }
-
-  update(id: number, updateActionPlanActivityDto: UpdateActionPlanActivityDto) {
-    return `This action updates a #${id} actionPlanActivity`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} actionPlanActivity`;
-  }
 }

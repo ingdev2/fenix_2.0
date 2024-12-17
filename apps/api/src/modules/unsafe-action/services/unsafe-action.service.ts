@@ -1,9 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
+
 import { CreateUnsafeActionDto } from '../dto/create-unsafe-action.dto';
 import { UpdateUnsafeActionDto } from '../dto/update-unsafe-action.dto';
-import { InjectRepository } from '@nestjs/typeorm';
+
 import { UnsafeAction } from '../entities/unsafe-action.entity';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class UnsafeActionService {

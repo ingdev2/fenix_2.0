@@ -1,37 +1,41 @@
-import { Controller, Get, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { MedicineService } from '../services/medicine.service';
-import { UpdateMedicineDto } from '../dto/update-medicine.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Auth } from 'src/modules/auth/decorators/auth.decorator';
+import { RolesEnum } from 'src/utils/enums/roles.enum';
 
 @ApiTags('medicine')
+@ApiBearerAuth()
 @Controller('medicine')
 export class MedicineController {
   constructor(private readonly medicineService: MedicineService) {}
 
-  // @Post('/createMedicine')
-  // createMedicine(@Body() createMedicineDto: CreateMedicineDto) {
-  //   return this.medicineService.createMedicine(createMedicineDto);
-  // }
-
   @Get('/listMedicines')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   listMedicines() {
     return this.medicineService.findAllMedicines();
   }
 
   @Get('/findMedicine/:id')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findMedicine(@Param('id') id: number) {
     return this.medicineService.findOneMedicine(id);
   }
 
-  @Patch('/updateMedicine/:id')
-  updateMedicine(
-    @Param('id') id: number,
-    @Body() updateMedicineDto: UpdateMedicineDto,
-  ) {
-    return this.medicineService.updateMedicine(id, updateMedicineDto);
+  @Get('/findExternalMedicine')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
+  async findExternalMedicine(@Query('medicine') medicine: string) {
+    return this.medicineService.findExternalMedidicinesQuery(medicine)
   }
 
   @Delete('/DeleteMedicine/:id')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   DeleteMedicine(@Param('id') id: number) {
     return this.medicineService.deleteMedicine(id);
   }

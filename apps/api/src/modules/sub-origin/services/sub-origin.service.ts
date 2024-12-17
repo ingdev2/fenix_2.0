@@ -1,9 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
+
 import { CreateSubOriginDto } from '../dto/create-sub-origin.dto';
 import { UpdateSubOriginDto } from '../dto/update-sub-origin.dto';
-import { InjectRepository } from '@nestjs/typeorm';
+
 import { SubOrigin } from '../entities/sub-origin.entity';
-import { Repository } from 'typeorm';
 import { OriginService } from 'src/modules/origin/services/origin.service';
 
 @Injectable()

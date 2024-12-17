@@ -1,9 +1,13 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
+
 import { CreateRoleResponseTimeDto } from '../dto/create-role-response-time.dto';
 import { UpdateRoleResponseTimeDto } from '../dto/update-role-response-time.dto';
-import { InjectRepository } from '@nestjs/typeorm';
+
 import { RoleResponseTime } from '../entities/role-response-time.entity';
-import { Repository } from 'typeorm';
+
 import { SeverityClasificationService } from 'src/modules/severity-clasification/services/severity-clasification.service';
 import { RolePermissionService } from 'src/modules/role-permission/services/role-permission.service';
 

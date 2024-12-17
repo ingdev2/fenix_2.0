@@ -7,25 +7,25 @@ import {
   Param,
   Delete,
   UseGuards,
+  HttpException,
 } from '@nestjs/common';
 import { ResearchInstrumentService } from '../services/research-instrument.service';
 import { CreateResearchInstrumentDto } from '../dto/create-research-instrument.dto';
 import { UpdateResearchInstrumentDto } from '../dto/update-research-instrument.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { Permission } from 'src/utils/decorators/permission.decorator';
-import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RolesEnum } from 'src/utils/enums/roles.enum';
+import { Auth } from 'src/modules/auth/decorators/auth.decorator';
 
 @ApiTags('research-instrument')
 @Controller('research-instrument')
-@UseGuards(PermissionGuard)
+@ApiBearerAuth()
 export class ResearchInstrumentController {
   constructor(
     private readonly researchInstrumentService: ResearchInstrumentService,
   ) {}
 
-  @Post('/createResearchInstrument/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Post('/createResearchInstrument/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   createResearchInstrument(
     @Body() createResearchInstrumentDto: CreateResearchInstrumentDto,
   ) {
@@ -35,17 +35,19 @@ export class ResearchInstrumentController {
   }
 
   @Get('/listResearchInstruments/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   listResearchInstruments() {
     return this.researchInstrumentService.findAllResearchInstruments();
   }
 
   @Get('/findResearchInstrument/:id')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findResearchInstrument(@Param('id') id: number) {
     return this.researchInstrumentService.findOneResearchInstrument(id);
   }
 
-  @Patch('/updateResearchInstrument/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Patch('/updateResearchInstrument/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   updateResearchInstrument(
     @Param('id') id: number,
     @Body() updateResearchInstrumentDto: UpdateResearchInstrumentDto,
@@ -56,8 +58,8 @@ export class ResearchInstrumentController {
     );
   }
 
-  @Delete('/deleteResearchInstrument/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Delete('/deleteResearchInstrument/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   deleteResearchInstrument(@Param('id') id: number) {
     return this.researchInstrumentService.deleteResearchInstrument(id);
   }

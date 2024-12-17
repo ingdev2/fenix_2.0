@@ -1,4 +1,6 @@
 import { ActionPlan } from 'src/modules/action-plan/entities/action-plan.entity';
+import { CaseReportOriginal } from 'src/modules/case-report-original/entities/case-report-original.entity';
+import { CaseReportValidate } from 'src/modules/case-report-validate/entities/case-report-validate.entity';
 import { Event } from 'src/modules/event/entities/event.entity';
 import { Service } from 'src/modules/service/entities/service.entity';
 import {
@@ -6,6 +8,8 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -15,6 +19,9 @@ import {
 export class Unit {
   @PrimaryGeneratedColumn()
   id: number;
+
+  // @Column()
+  // unit_service_id_fk: number;
 
   @Column({ type: 'varchar' })
   unit_name: string;

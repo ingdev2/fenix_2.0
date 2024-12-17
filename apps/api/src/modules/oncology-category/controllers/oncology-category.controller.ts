@@ -6,26 +6,24 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
 } from '@nestjs/common';
 import { OncologyCategoryService } from '../services/oncology-category.service';
 import { CreateOncologyCategoryDto } from '../dto/create-oncology-category.dto';
 import { UpdateOncologyCategoryDto } from '../dto/update-oncology-category.dto';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { ApiTags } from '@nestjs/swagger';
-import { Permission } from 'src/utils/decorators/permission.decorator';
-import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RolesEnum } from 'src/utils/enums/roles.enum';
+import { Auth } from 'src/modules/auth/decorators/auth.decorator';
 
 @ApiTags('oncology-category')
 @Controller('oncology-category')
-@UseGuards(PermissionGuard)
+@ApiBearerAuth()
 export class OncologyCategoryController {
   constructor(
     private readonly oncologyCategoryService: OncologyCategoryService,
   ) {}
 
-  @Post('/createOncologyCategory/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Post('/createOncologyCategory/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   createOncologyCategory(
     @Body() createOncologyCategoryDto: CreateOncologyCategoryDto,
   ) {
@@ -35,17 +33,19 @@ export class OncologyCategoryController {
   }
 
   @Get('/listOncologyCategories/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   listOncologyCategories() {
     return this.oncologyCategoryService.findAllOncologyCategories();
   }
 
   @Get('/findOncologyCategory/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findOncologyCategory(@Param('id') id: number) {
     return this.oncologyCategoryService.findOneOncologyCategory(id);
   }
 
-  @Patch('/updateOncologyCategory/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Patch('/updateOncologyCategory/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   updateOncologyCategory(
     @Param('id') id: number,
     @Body() updateOncologyCategoryDto: UpdateOncologyCategoryDto,
@@ -56,8 +56,8 @@ export class OncologyCategoryController {
     );
   }
 
-  @Delete('/deleteOncologyCategory/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Delete('/deleteOncologyCategory/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   deleteOncologyCategory(@Param('id') id: number) {
     return this.oncologyCategoryService.deleteOncologyCategory(id);
   }

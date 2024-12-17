@@ -6,26 +6,25 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
 } from '@nestjs/common';
 import { InfluencingFactorService } from '../services/influencing-factor.service';
 import { CreateInfluencingFactorDto } from '../dto/create-influencing-factor.dto';
 import { UpdateInfluencingFactorDto } from '../dto/update-influencing-factor.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { Permission } from 'src/utils/decorators/permission.decorator';
-import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RolesEnum } from 'src/utils/enums/roles.enum';
+import { InfluencingFactor } from '../entities/influencing-factor.entity';
+import { Auth } from 'src/modules/auth/decorators/auth.decorator';
 
 @ApiTags('influencing-factor')
 @Controller('influencing-factor')
-@UseGuards(PermissionGuard)
+@ApiBearerAuth()
 export class InfluencingFactorController {
   constructor(
     private readonly influencingFactorService: InfluencingFactorService,
   ) {}
 
-  @Post('/createInfluencingFactor/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Post('/createInfluencingFactor/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   createInfluencingFactor(
     @Body() createInfluencingFactorDto: CreateInfluencingFactorDto,
   ) {
@@ -35,17 +34,19 @@ export class InfluencingFactorController {
   }
 
   @Get('/listInfluencingFactors/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   listInfluencingFactors() {
     return this.influencingFactorService.findAllInfluencingFactors();
   }
 
   @Get('/findInfluencingFactor/:id')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findInfluencingFactor(@Param('id') id: number) {
     return this.influencingFactorService.findOneInfluencingFactor(id);
   }
 
-  @Patch('/updateInfluencingFactor/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Patch('/updateInfluencingFactor/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   updateInfluencingFactor(
     @Param('id') id: number,
     @Body() updateInfluencingFactorDto: UpdateInfluencingFactorDto,
@@ -56,8 +57,8 @@ export class InfluencingFactorController {
     );
   }
 
-  @Delete('/deleteInfluencingFactor/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Delete('/deleteInfluencingFactor/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   deleteInfluencingFactor(@Param('id') id: number) {
     return this.influencingFactorService.deleteInfluencingFactor(id);
   }

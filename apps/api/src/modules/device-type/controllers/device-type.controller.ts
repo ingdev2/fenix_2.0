@@ -6,40 +6,40 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
 } from '@nestjs/common';
 import { DeviceTypeService } from '../services/device-type.service';
 import { CreateDeviceTypeDto } from '../dto/create-device-type.dto';
 import { UpdateDeviceTypeDto } from '../dto/update-device-type.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { Permission } from 'src/utils/decorators/permission.decorator';
-import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RolesEnum } from 'src/utils/enums/roles.enum';
+import { Auth } from 'src/modules/auth/decorators/auth.decorator';
 
 @ApiTags('device-type')
 @Controller('device-type')
-@UseGuards(PermissionGuard)
+@ApiBearerAuth()
 export class DeviceTypeController {
   constructor(private readonly deviceTypeService: DeviceTypeService) {}
 
-  @Post('/createDeviceType/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Post('/createDeviceType/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   createDeviceType(@Body() createDeviceTypeDto: CreateDeviceTypeDto) {
     return this.deviceTypeService.createDeviceType(createDeviceTypeDto);
   }
 
   @Get('/listDeviceTypes/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   listDeviceTypes() {
     return this.deviceTypeService.findAllDeviceTypes();
   }
 
   @Get('/findDeviceType/:id')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findDeviceType(@Param('id') id: number) {
     return this.deviceTypeService.findOneDeviceType(id);
   }
 
-  @Patch('/updateDeviceType/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Patch('/updateDeviceType/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   updateDeviceType(
     @Param('id') id: number,
     @Body() updateDeviceTypeDto: UpdateDeviceTypeDto,
@@ -47,8 +47,8 @@ export class DeviceTypeController {
     return this.deviceTypeService.updateDeviceType(id, updateDeviceTypeDto);
   }
 
-  @Delete('/deleteDeviceType/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Delete('/deleteDeviceType/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   deleteDeviceType(@Param('id') id: number) {
     return this.deviceTypeService.deleteDeviceType(id);
   }

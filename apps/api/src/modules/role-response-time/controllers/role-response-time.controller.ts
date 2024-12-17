@@ -11,21 +11,20 @@ import {
 import { RoleResponseTimeService } from '../services/role-response-time.service';
 import { CreateRoleResponseTimeDto } from '../dto/create-role-response-time.dto';
 import { UpdateRoleResponseTimeDto } from '../dto/update-role-response-time.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { Permission } from 'src/utils/decorators/permission.decorator';
-import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RolesEnum } from 'src/utils/enums/roles.enum';
+import { Auth } from 'src/modules/auth/decorators/auth.decorator';
 
 @ApiTags('role-response-time')
 @Controller('role-response-time')
-@UseGuards(PermissionGuard)
+@ApiBearerAuth()
 export class RoleResponseTimeController {
   constructor(
     private readonly roleResponseTimeService: RoleResponseTimeService,
   ) {}
 
-  @Post('/createRoleResponseTime/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN)
+  @Post('/createRoleResponseTime/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   createRoleResponseTime(
     @Body() createRoleResponseTimeDto: CreateRoleResponseTimeDto,
   ) {
@@ -34,20 +33,20 @@ export class RoleResponseTimeController {
     );
   }
 
-  @Get('/listRoleResponseTimes/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN)
+  @Get('/listRoleResponseTimes/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   listRoleResponseTimes() {
     return this.roleResponseTimeService.findAllRoleResponseTimes();
   }
 
-  @Get('/findRoleResponseTime/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN)
+  @Get('/findRoleResponseTime/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findRoleResponseTime(@Param('id') id: number) {
     return this.roleResponseTimeService.findOnefindAllRoleResponseTime(id);
   }
 
-  @Patch('/updateRoleResponseTime/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN)
+  @Patch('/updateRoleResponseTime/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   updateCreateRoleResponseTime(
     @Param('id') id: number,
     @Body() updateCaseResponseTimeDto: UpdateRoleResponseTimeDto,
@@ -58,8 +57,8 @@ export class RoleResponseTimeController {
     );
   }
 
-  @Delete('/deleteRoleResponseTime/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN)
+  @Delete('/deleteRoleResponseTime/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   deleteCreateRoleResponseTime(@Param('id') id: number) {
     return this.roleResponseTimeService.deleteRoleResponseTime(id);
   }

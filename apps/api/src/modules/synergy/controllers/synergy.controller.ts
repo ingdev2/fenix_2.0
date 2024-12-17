@@ -7,25 +7,24 @@ import {
   Param,
   Delete,
   Ip,
-  UseGuards,
 } from '@nestjs/common';
 import { SynergyService } from '../services/synergy.service';
 import { CreateSynergyDto } from '../dto/create-synergy.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { Permission } from 'src/utils/decorators/permission.decorator';
-import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RolesEnum } from 'src/utils/enums/roles.enum';
+import { Auth } from 'src/modules/auth/decorators/auth.decorator';
+import { UpdateSynergyDto } from '../dto/update-synergy.dto';
 
 @ApiTags('synergy')
 @Controller('synergy')
-@UseGuards(PermissionGuard)
+@ApiBearerAuth()
 export class SynergyController {
   constructor(private readonly synergyService: SynergyService) {}
 
-  @Post('/createSynergy/:idValidator/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.VALIDATOR)
+  @Post('/createSynergy/:idValidator/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   createSynergy(
-    @Body() createSynergyDto: CreateSynergyDto[],
+    @Body() createSynergyDto: CreateSynergyDto,
     @Ip() clientIp: string,
     @Param('idValidator') idValidator: string,
   ) {
@@ -36,40 +35,31 @@ export class SynergyController {
     );
   }
 
-  @Get('/listSynergies/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.VALIDATOR)
+  @Get('/listSynergies/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   listSynergies() {
     return this.synergyService.findAllSynergy();
   }
 
-  @Get('/findSynergy/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.VALIDATOR)
+  @Get('/findSynergy/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findSynergy(@Param('id') id: number) {
     return this.synergyService.findOneSynergy(id);
   }
 
-  // @Patch('/rescheduleSynergy/:id/:idValidator/:userIdPermission')
-  // @Permission(permissions.SUPER_ADMIN, permissions.VALIDATOR)
-  // rescheduleSynergy(
-  //   @Param('id') id: number,
-  //   @Ip() clientIp: string,
-  //   @Param('idValidator') idValidator: string,
-  // ) {
-  //   return this.synergyService.rescheduleSynergy(id, clientIp, idValidator);
-  // }
-
-  @Patch('/resolutionSynergy/:id/:idValidator/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.VALIDATOR)
+  @Patch('/resolutionSynergy/:id/:idValidator/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   resolutionSynergy(
     @Param('id') id: number,
     @Ip() clientIp: string,
     @Param('idValidator') idValidator: string,
+    @Body() resolutionSynergyDto: UpdateSynergyDto,
   ) {
-    return this.synergyService.resolutionSynergy(id, clientIp, idValidator);
+    return this.synergyService.resolutionSynergy(id, clientIp, idValidator, resolutionSynergyDto);
   }
 
-  @Delete('/deleteSynergy/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.VALIDATOR)
+  @Delete('/deleteSynergy/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   deleteSynergy(@Param('id') id: number) {
     return this.synergyService.deleteSynergy(id);
   }

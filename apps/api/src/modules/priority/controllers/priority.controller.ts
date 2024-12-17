@@ -6,40 +6,40 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
 } from '@nestjs/common';
 import { PriorityService } from '../services/priority.service';
 import { CreatePriorityDto } from '../dto/create-priority.dto';
 import { UpdatePriorityDto } from '../dto/update-priority.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { Permission } from 'src/utils/decorators/permission.decorator';
-import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RolesEnum } from 'src/utils/enums/roles.enum';
+import { Auth } from 'src/modules/auth/decorators/auth.decorator';
 
 @ApiTags('priority')
 @Controller('priority')
-@UseGuards(PermissionGuard)
+@ApiBearerAuth()
 export class PriorityController {
   constructor(private readonly priorityService: PriorityService) {}
 
-  @Post('/createPriority/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Post('/createPriority/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   createPriority(@Body() createPriorityDto: CreatePriorityDto) {
     return this.priorityService.createPriority(createPriorityDto);
   }
 
   @Get('/listPriorities/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   listPriorities() {
     return this.priorityService.findAllPriorities();
   }
 
   @Get('/findPriority/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findPriority(@Param('id') id: number) {
     return this.priorityService.findOnePriority(id);
   }
 
-  @Patch('/updatePriority/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Patch('/updatePriority/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   updateStatusPriority(
     @Param('id') id: number,
     @Body() updateStatusPriority: UpdatePriorityDto,
@@ -47,8 +47,8 @@ export class PriorityController {
     return this.priorityService.updateStatusPriority(id, updateStatusPriority);
   }
 
-  @Delete('/deletePriority/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Delete('/deletePriority/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   deletePriority(@Param('id') id: number) {
     return this.priorityService.deletePriority(id);
   }

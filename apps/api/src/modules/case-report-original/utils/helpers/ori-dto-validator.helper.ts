@@ -10,12 +10,13 @@ import { Repository } from 'typeorm';
 import { CaseType } from 'src/modules/case-type/entities/case-type.entity';
 import { CaseTypeReportEnum } from 'src/utils/enums/caseType-report.enum';
 
-export type CreateReportOriDto =
-  | CreateOriAdverseEventReportDto
-  | CreateOriComplicationsReportDto
-  | CreateOriIncidentReportDto
-  | CreateOriIndicatingUnsafeCareReportDto
-  | CreateOriRiskReportDto;
+export type CreateReportOriDto = //Discriminador que define los Dto
+
+    | CreateOriAdverseEventReportDto
+    | CreateOriComplicationsReportDto
+    | CreateOriIncidentReportDto
+    | CreateOriIndicatingUnsafeCareReportDto
+    | CreateOriRiskReportDto;
 
 export async function OriDtoValidator(
   createReportDto: any,

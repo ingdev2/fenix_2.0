@@ -12,10 +12,10 @@ export class CreateReportAnalystAssignmentDto {
   ana_validatedcase_id_fk: string;
 
   @IsNotEmpty()
-  @IsNumber()
-  ana_position_id_fk: number;
+  @IsString()
+  ana_positionname: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   ana_useranalyst_id: string;
 

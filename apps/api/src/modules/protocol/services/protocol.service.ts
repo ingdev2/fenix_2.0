@@ -1,9 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
+
 import { CreateProtocolDto } from '../dto/create-protocol.dto';
 import { UpdateProtocolDto } from '../dto/update-protocol.dto';
-import { InjectRepository } from '@nestjs/typeorm';
+
 import { Protocol } from '../entities/protocol.entity';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class ProtocolService {
@@ -106,8 +109,8 @@ export class ProtocolService {
     if (!protocolFound) {
       return new HttpException(
         `Protocolo no encontrado, favor recargar.`,
-        HttpStatus.NOT_FOUND,
-      );
+        HttpStatus.NOT_FOUND
+      )
     }
 
     const result = await this.protocolRepository.softDelete(id);

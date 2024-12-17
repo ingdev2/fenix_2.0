@@ -8,26 +8,24 @@ import {
   Patch,
   Post,
   Query,
-  UseGuards,
 } from '@nestjs/common';
 import { ResearchersService } from '../services/report-researchers-assignment.service';
 import { FilterReportResearcherAssignmentDto } from '../dto/filter-researcher-.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateReportResearcherAssignmentDto } from '../dto/create-report-researcher-assignment.dto';
 import { UpdateReportResearcherAssignmentDto } from '../dto/update-report-researcher-assignment.dto';
 import { QueryReportResearchersAssignmentDto } from '../dto/query-report-researcher-assignment.dto';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { Permission } from 'src/utils/decorators/permission.decorator';
-import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
+import { RolesEnum } from 'src/utils/enums/roles.enum';
+import { Auth } from 'src/modules/auth/decorators/auth.decorator';
 
 @ApiTags('report-researchers-assignment')
 @Controller('report-researchers-assignment')
-@UseGuards(PermissionGuard)
+@ApiBearerAuth()
 export class ReportResearchersAssignmentController {
   constructor(private readonly researchersService: ResearchersService) {}
 
-  @Get('filterResearchers/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.ANALYST)
+  @Get('filterResearchers/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   filterResearchers(@Query() query: QueryReportResearchersAssignmentDto) {
     const filter = new FilterReportResearcherAssignmentDto();
     filter.empImmediateBoss = query.empImmediateBoss;
@@ -37,12 +35,13 @@ export class ReportResearchersAssignmentController {
   }
 
   @Get('findAssignedResearch/:id')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findAssignedResearch(@Param('id') id: number) {
     return this.researchersService.findOneAssignedResearch(id);
   }
 
-  @Get('/summaryReportsMyAssignedCases/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.INVESTIGATOR)
+  @Get('/summaryReportsMyAssignedCases/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   async summaryReportsMyAssignedCases(
     @Query() query: QueryReportResearchersAssignmentDto,
   ) {
@@ -55,8 +54,8 @@ export class ReportResearchersAssignmentController {
     );
   }
 
-  @Get('/summaryReportsMyCasesByCharacterization/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.INVESTIGATOR)
+  @Get('/summaryReportsMyCasesByCharacterization/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   async summaryReportsMyCasesByCharacterization(
     @Query() query: QueryReportResearchersAssignmentDto,
   ) {
@@ -69,22 +68,24 @@ export class ReportResearchersAssignmentController {
     );
   }
 
-  @Post('assingResearcher/:idAnalyst/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.ANALYST)
+  @Post('assingResearcher/:idAnalyst/:idNumberResearcher')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   createAssingResearcher(
     @Body() createResearcherDto: CreateReportResearcherAssignmentDto,
     @Ip() clientIp: string,
     @Param('idAnalyst') idAnalyst: string,
+    @Param('idNumberResearcher') idNumberResearcher: string,
   ) {
     return this.researchersService.assingResearcher(
       createResearcherDto,
       clientIp,
       idAnalyst,
+      idNumberResearcher,
     );
   }
 
-  @Patch('reAssignResearch/:idAnalyst/:idCaseReportValidate/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.ANALYST)
+  @Patch('reAssignResearch/:idAnalyst/:idCaseReportValidate/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   updateReAssignedResearch(
     @Body() updateResearcherDto: UpdateReportResearcherAssignmentDto,
     @Ip() clientIp: string,
@@ -99,10 +100,8 @@ export class ReportResearchersAssignmentController {
     );
   }
 
-  @Patch(
-    'returnCaseToAnalyst/:idResearcher/:idCaseReportValidate/:userIdPermission',
-  )
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.INVESTIGATOR)
+  @Patch('returnCaseToAnalyst/:idResearcher/:idCaseReportValidate/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   updateReturnCaseToAnalyst(
     @Param('idResearcher') idResearcher: string,
     @Param('idCaseReportValidate') idCaseReportValidate: string,
@@ -115,8 +114,8 @@ export class ReportResearchersAssignmentController {
     );
   }
 
-  @Delete('deleteAssignedResearch/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.ANALYST)
+  @Delete('deleteAssignedResearch/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   deleteAssignedResearch(@Param('id') id: number) {
     return this.researchersService.deleteAssignedResearcher(id);
   }

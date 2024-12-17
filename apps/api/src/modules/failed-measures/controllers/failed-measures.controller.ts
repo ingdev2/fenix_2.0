@@ -6,24 +6,22 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
 } from '@nestjs/common';
 import { FailedMeasuresService } from '../services/failed-measures.service';
 import { CreateFailedMeasureDto } from '../dto/create-failed-measure.dto';
 import { UpdateFailedMeasureDto } from '../dto/update-failed-measure.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { Permission } from 'src/utils/decorators/permission.decorator';
-import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RolesEnum } from 'src/utils/enums/roles.enum';
+import { Auth } from 'src/modules/auth/decorators/auth.decorator';
 
 @ApiTags('failed-measures')
 @Controller('failed-measures')
-@UseGuards(PermissionGuard)
+@ApiBearerAuth()
 export class FailedMeasuresController {
   constructor(private readonly failedMeasuresService: FailedMeasuresService) {}
 
-  @Post('/createFailedMeasure/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Post('/createFailedMeasure/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   createFailedMeasure(@Body() createFailedMeasureDto: CreateFailedMeasureDto) {
     return this.failedMeasuresService.createFailedMeasure(
       createFailedMeasureDto,
@@ -31,17 +29,19 @@ export class FailedMeasuresController {
   }
 
   @Get('/listFailedMeasures/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   listFailedMeasures() {
     return this.failedMeasuresService.findAllFailedMeasures();
   }
 
   @Get('/findFailedMeasure/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findFailedMeasure(@Param('id') id: number) {
     return this.failedMeasuresService.findOneFailedMeasure(id);
   }
 
-  @Patch('/updateFailedMeasure/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Patch('/updateFailedMeasure/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   updateFailedMeasure(
     @Param('id') id: number,
     @Body() updateFailedMeasureDto: UpdateFailedMeasureDto,
@@ -52,8 +52,8 @@ export class FailedMeasuresController {
     );
   }
 
-  @Delete('/deleteFailedMeasure/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Delete('/deleteFailedMeasure/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   deleteFailedMeasure(@Param('id') id: number) {
     return this.failedMeasuresService.deleteFailedMeasure(id);
   }

@@ -7,8 +7,6 @@ import { CaseType } from '../case-type/entities/case-type.entity';
 import { LogModule } from '../log/log.module';
 import { CaseReportValidate } from '../case-report-validate/entities/case-report-validate.entity';
 import { MovementReport } from '../movement-report/entities/movement-report.entity';
-import { UserModule } from 'src/modules_bonnadonahub/user/user.module';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
 
 @Module({
   imports: [
@@ -19,10 +17,9 @@ import { PermissionGuard } from 'src/utils/guards/permission.guard';
       MovementReport,
     ]),
     LogModule,
-    UserModule,
   ],
   controllers: [SynergyController],
-  providers: [SynergyService, PermissionGuard],
+  providers: [SynergyService],
   exports: [SynergyService],
 })
 export class SynergyModule {}

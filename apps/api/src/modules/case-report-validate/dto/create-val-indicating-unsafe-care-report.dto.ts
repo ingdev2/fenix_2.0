@@ -6,6 +6,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  IsUUID,
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
@@ -27,7 +28,11 @@ export class CreateValIndicatingUnsafeCareReportDto {
 
   @IsString()
   @IsOptional()
-  val_cr_reporter_id: string;
+  val_cr_fullnamereporter: string;
+
+  @IsString()
+  @IsOptional()
+  val_cr_documentreporter: string;
 
   @IsNumber()
   @IsNotEmpty()
@@ -61,9 +66,9 @@ export class CreateValIndicatingUnsafeCareReportDto {
   @IsNotEmpty()
   val_cr_secondlastnamepatient: string;
 
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  val_cr_agepatient: number;
+  val_cr_agepatient: string;
 
   @IsString()
   @IsNotEmpty()
@@ -75,15 +80,19 @@ export class CreateValIndicatingUnsafeCareReportDto {
 
   @IsString()
   @IsOptional()
-  val_cr_diagnosticcode: string;
+  val_cr_diagnosticcodepatient: string;
 
   @IsString()
   @IsOptional()
-  val_cr_diagnosticdescription: string;
+  val_cr_diagnosticdescriptionpatient: string;
 
   @IsNumber()
   @IsOptional()
   val_cr_admconsecutivepatient: number;
+
+  @IsString()
+  @IsOptional()
+  val_cr_foliopatient: string;
 
   @IsNumber()
   @IsNotEmpty()
@@ -104,6 +113,14 @@ export class CreateValIndicatingUnsafeCareReportDto {
   @IsNumber()
   @IsNotEmpty()
   val_cr_event_id_fk: number;
+
+  @IsString()
+  @IsOptional()
+  val_cr_descriptionothers: string;
+  
+  @IsNumber()
+  @IsNotEmpty()
+  val_cr_risklevel_id_fk: number;
 
   @IsNotEmpty()
   @IsString()

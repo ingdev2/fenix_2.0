@@ -1,10 +1,5 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-
-require('dotenv').config();
-
 import { CaseReportOriginalModule } from './modules/case-report-original/case-report-original.module';
 import { CaseTypeModule } from './modules/case-type/case-type.module';
 import { RiskTypeModule } from './modules/risk-type/risk-type.module';
@@ -32,7 +27,6 @@ import { RoleResponseTimeModule } from './modules/role-response-time/role-respon
 import { ReasonReturnCaseModule } from './modules/reason-return-case/reason-return-case.module';
 import { RolePermissionModule } from './modules/role-permission/role-permission.module';
 import { ObservationReturnCaseModule } from './modules/observation-return-case/observation-return-case.module';
-import { UserModule } from './modules_bonnadonahub/user/user.module';
 import { ActionPlanModule } from './modules/action-plan/action-plan.module';
 import { ActionPlanActivitiesModule } from './modules/action-plan-activities/action-plan-activities.module';
 import { ResearchInstrumentModule } from './modules/research-instrument/research-instrument.module';
@@ -49,35 +43,27 @@ import { ClinicalResearchModule } from './modules/clinical-research/clinical-res
 import { ProtocolModule } from './modules/protocol/protocol.module';
 import { UnsafeActionModule } from './modules/unsafe-action/unsafe-action.module';
 import { ClinicalResearchCaseReportValidateModule } from './modules/clinical-research-case-report-validate/clinical-research-case-report-validate.module';
+import { CompressionConceptReportModule } from './modules/compression-concept-report/compression-concept-report.module';
+import { OncologyCategoryModule } from './modules/oncology-category/oncology-category.module';
+import { DocumentTypeModule } from './modules/document-type/document-type.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { ObservationCancellationCaseModule } from './modules/observation-cancellation-case/observation-cancellation-case.module';
+import { ReasonCancellationCaseModule } from './modules/reason-cancellation-case/reason-cancellation-case.module';
+
+require('dotenv').config();
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.BONNADONA_HOST,
-      port: +process.env.BONNADONA_PORT,
-      username: process.env.BONNADONA_USERNAME,
-      password: process.env.BONNADONA_PASSWORD,
-      database: process.env.BONNADONA_DATABASE,
-      entities: [__dirname + '/modules/**/entities/*.entity{.ts,.js}'],
-      synchronize: true,
-      autoLoadEntities: true,
-      logging: false,
-    }),
-    TypeOrmModule.forRoot({
-      name: 'bonnadonaHub',
-      type: 'postgres',
-      host: process.env.BONNADONA_HOST,
-      port: +process.env.BONNADONA_PORT,
-      username: process.env.BONNADONA_USERNAME,
-      password: process.env.BONNADONA_PASSWORD,
-      database: process.env.BONNADONA_DATABASE,
-      entities: [
-        __dirname + '/modules_bonnadonahub/user/entities/*.entity{.ts,.js}',
-      ],
+      host: process.env.TYPEORM_HOST,
+      port: +process.env.TYPEORM_PORT,
+      username: process.env.TYPEORM_USERNAME,
+      password: process.env.TYPEORM_PASSWORD,
+      database: process.env.TYPEORM_DATABASE,
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: false,
-      autoLoadEntities: false,
-      logging: false,
+      autoLoadEntities: true,
     }),
     CaseReportOriginalModule,
     CaseTypeModule,
@@ -106,7 +92,6 @@ import { ClinicalResearchCaseReportValidateModule } from './modules/clinical-res
     ReasonReturnCaseModule,
     RolePermissionModule,
     ObservationReturnCaseModule,
-    UserModule,
     ActionPlanModule,
     ActionPlanActivitiesModule,
     ResearchInstrumentModule,
@@ -123,8 +108,14 @@ import { ClinicalResearchCaseReportValidateModule } from './modules/clinical-res
     ProtocolModule,
     UnsafeActionModule,
     ClinicalResearchCaseReportValidateModule,
+    CompressionConceptReportModule,
+    OncologyCategoryModule,
+    DocumentTypeModule,
+    AuthModule,
+    ObservationCancellationCaseModule,
+    ReasonCancellationCaseModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}

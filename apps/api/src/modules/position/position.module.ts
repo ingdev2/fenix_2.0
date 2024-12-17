@@ -5,13 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Position } from './entities/position.entity';
 import { HttpModule } from '@nestjs/axios';
 import { HttpPositionService } from './http/http-position.service';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { UserModule } from 'src/modules_bonnadonahub/user/user.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Position]), HttpModule, UserModule],
+  imports: [TypeOrmModule.forFeature([Position]), HttpModule],
   controllers: [PositionController],
-  providers: [PositionService, HttpPositionService, PermissionGuard],
+  providers: [PositionService, HttpPositionService],
   exports: [PositionService],
 })
 export class PositionModule {}

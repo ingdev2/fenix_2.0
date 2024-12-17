@@ -6,26 +6,24 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
 } from '@nestjs/common';
 import { CharacterizationCasesService } from '../services/characterization-cases.service';
 import { CreateCharacterizationCaseDto } from '../dto/create-characterization-case.dto';
 import { UpdateCharacterizationCaseDto } from '../dto/update-characterization-case.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { Permission } from 'src/utils/decorators/permission.decorator';
-import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RolesEnum } from 'src/utils/enums/roles.enum';
+import { Auth } from 'src/modules/auth/decorators/auth.decorator';
 
 @ApiTags('characterization-case')
 @Controller('characterization-case')
-@UseGuards(PermissionGuard)
+@ApiBearerAuth()
 export class CharacterizationCasesController {
   constructor(
     private readonly characterizationCasesService: CharacterizationCasesService,
   ) {}
 
   @Post('/createCharacterizationCase/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   create(@Body() createCharacterizationCaseDto: CreateCharacterizationCaseDto) {
     return this.characterizationCasesService.createCharacterization(
       createCharacterizationCaseDto,
@@ -33,17 +31,19 @@ export class CharacterizationCasesController {
   }
 
   @Get('/listCharacterizationsCase/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   listCharacterizations() {
     return this.characterizationCasesService.findAllCharacterizations();
   }
 
   @Get('/findCharacterizationCase/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findCharacterization(@Param('id') id: number) {
     return this.characterizationCasesService.findOneCharacterization(id);
   }
 
-  @Patch('/updateCharacterizationCase/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Patch('/updateCharacterizationCase/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   updateCharacterization(
     @Param('id') id: number,
     @Body() updateCharacterizationCaseDto: UpdateCharacterizationCaseDto,
@@ -54,8 +54,8 @@ export class CharacterizationCasesController {
     );
   }
 
-  @Delete('/deleteCharacterizationCase/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Delete('/deleteCharacterizationCase/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   deleteCharacterization(@Param('id') id: number) {
     return this.characterizationCasesService.deleteCharacterization(id);
   }

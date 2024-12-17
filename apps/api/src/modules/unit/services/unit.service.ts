@@ -1,9 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
+
 import { CreateUnitDto } from '../dto/create-unit.dto';
 import { UpdateUnitDto } from '../dto/update-unit.dto';
-import { InjectRepository } from '@nestjs/typeorm';
+
 import { Unit } from '../entities/unit.entity';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class UnitService {
@@ -48,6 +51,9 @@ export class UnitService {
       where: {
         unit_status: true,
       },
+      // relations: {
+      //   event: true,
+      // },
       order: {
         unit_name: 'ASC',
       },
@@ -73,6 +79,9 @@ export class UnitService {
 
     const unit = await this.unitRepository.findOne({
       where: { id, unit_status: true },
+      // relations: {
+      //   event: true,
+      // },
     });
 
     if (!unit) {

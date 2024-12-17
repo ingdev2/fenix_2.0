@@ -3,13 +3,9 @@ import { ClinicalResearchInfluencingFactorService } from './services/clinical-re
 import { ClinicalResearchInfluencingFactorController } from './controllers/clinical-research-influencing-factor.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClinicalResearchInfluencingFactor } from './entities/clinical-research-influencing-factor.entity';
-import { UserModule } from 'src/modules_bonnadonahub/user/user.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([ClinicalResearchInfluencingFactor]),
-    UserModule,
-  ],
+  imports: [TypeOrmModule.forFeature([ClinicalResearchInfluencingFactor])],
   controllers: [ClinicalResearchInfluencingFactorController],
   providers: [ClinicalResearchInfluencingFactorService],
   exports: [ClinicalResearchInfluencingFactorService],

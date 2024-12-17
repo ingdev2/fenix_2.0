@@ -6,50 +6,51 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
 } from '@nestjs/common';
 import { EventTypeService } from '../services/event-type.service';
 import { CreateEventTypeDto } from '../dto/create-event-type.dto';
 import { UpdateEventTypeDto } from '../dto/update-event-type.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { Permission } from 'src/utils/decorators/permission.decorator';
-import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RolesEnum } from 'src/utils/enums/roles.enum';
+import { Auth } from 'src/modules/auth/decorators/auth.decorator';
 
 @ApiTags('event-type')
 @Controller('event-type')
-@UseGuards(PermissionGuard)
+@ApiBearerAuth()
 export class EventTypeController {
   constructor(private readonly eventTypeService: EventTypeService) {}
 
   @Post('/createEventType/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   createEventType(@Body() createEventTypeDto: CreateEventTypeDto) {
     return this.eventTypeService.createEventType(createEventTypeDto);
   }
 
-  @Post('/createEventTypeArray')
+  @Post('/createEventTypeArray') //es para cargar datos masivos
   createEventTypeArray(@Body() createEventTypeDto: CreateEventTypeDto[]) {
     return this.eventTypeService.createEventTypesArray(createEventTypeDto);
   }
 
   @Get('/listEventTypes/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   listEventTypes() {
     return this.eventTypeService.findAllEventTypes();
   }
 
   @Get('/findEventType/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findEventType(@Param('id') id: number) {
     return this.eventTypeService.findOneEventType(id);
   }
 
   @Get('/findEvenTypeByCaseType/:caseTypeId')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findEvenTypeByCaseType(@Param('caseTypeId') caseTypeId: number) {
     return this.eventTypeService.findEvenTypeByCaseType(caseTypeId);
   }
 
-  @Patch('/updateEventType/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Patch('/updateEventType/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   updateEventType(
     @Param('id') id: number,
     @Body() updateEventTypeDto: UpdateEventTypeDto,
@@ -57,8 +58,8 @@ export class EventTypeController {
     return this.eventTypeService.updateEventType(id, updateEventTypeDto);
   }
 
-  @Delete('/deleteEventType/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Delete('/deleteEventType/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   deleteEventType(@Param('id') id: number) {
     return this.eventTypeService.deleteEventType(id);
   }

@@ -5,11 +5,15 @@ import {
   Injectable,
   forwardRef,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
+
 import { CreateObservationReturnCaseDto } from '../dto/create-observation-return-case.dto';
 import { UpdateObservationReturnCaseDto } from '../dto/update-observation-return-case.dto';
-import { InjectRepository } from '@nestjs/typeorm';
+
 import { ObservationReturnCase } from '../entities/observation-return-case.entity';
-import { Repository } from 'typeorm';
+
 import { ReasonReturnCaseService } from 'src/modules/reason-return-case/services/reason-return-case.service';
 import { CaseReportValidateService } from 'src/modules/case-report-validate/services/case-report-validate.service';
 
@@ -26,7 +30,7 @@ export class ObservationReturnCaseService {
 
   async createObservationReturnCase(
     createObservationReturnCaseDto: CreateObservationReturnCaseDto,
-    idUser: number,
+    idUser: string,
     idCaseValidate: string,
   ) {
     if (
@@ -88,7 +92,7 @@ export class ObservationReturnCaseService {
 
     if (observationReturns.length === 0) {
       throw new HttpException(
-        `No se encontró la lista de observaciones de devolución del caso`,
+        `No se encontró la lista de observaciones de devolución de los casos`,
         HttpStatus.NOT_FOUND,
       );
     }
@@ -153,14 +157,16 @@ export class ObservationReturnCaseService {
     const observationReturnFound =
       await this.observationReturnRepository.findOneBy({ id });
 
-    if (!observationReturnFound) {
-      return new HttpException(
-        `Observación no encontrado, favor recargar.`,
-        HttpStatus.NOT_FOUND,
-      );
-    }
+      if (!observationReturnFound) {
+        return new HttpException(
+          `Observación no encontrado, favor recargar.`,
+          HttpStatus.NOT_FOUND
+        )
+      }
 
-    const result = await this.observationReturnRepository.softDelete(id);
+    const result = await this.observationReturnRepository.softDelete(
+      id,
+    );
 
     if (result.affected === 0) {
       return new HttpException(

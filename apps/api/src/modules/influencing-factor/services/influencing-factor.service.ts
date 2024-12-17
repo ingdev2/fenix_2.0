@@ -1,9 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
+
 import { CreateInfluencingFactorDto } from '../dto/create-influencing-factor.dto';
 import { UpdateInfluencingFactorDto } from '../dto/update-influencing-factor.dto';
-import { InjectRepository } from '@nestjs/typeorm';
+
 import { InfluencingFactor } from '../entities/influencing-factor.entity';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class InfluencingFactorService {

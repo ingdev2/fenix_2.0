@@ -1,9 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
+
 import { CreateFailedMeasureDto } from '../dto/create-failed-measure.dto';
 import { UpdateFailedMeasureDto } from '../dto/update-failed-measure.dto';
-import { InjectRepository } from '@nestjs/typeorm';
+
 import { FailedMeasure } from '../entities/failed-measure.entity';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class FailedMeasuresService {

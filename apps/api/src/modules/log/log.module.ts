@@ -3,13 +3,11 @@ import { LogService } from './services/log.service';
 import { LogController } from './controllers/log.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Log } from './entities/log.entity';
-import { UserModule } from 'src/modules_bonnadonahub/user/user.module';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Log]), UserModule],
+  imports: [TypeOrmModule.forFeature([Log])],
   controllers: [LogController],
-  providers: [LogService, PermissionGuard],
+  providers: [LogService],
   exports: [LogService],
 })
 export class LogModule {}

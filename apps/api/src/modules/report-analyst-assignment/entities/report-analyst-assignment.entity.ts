@@ -20,7 +20,7 @@ export class ReportAnalystAssignment {
   ana_validatedcase_id_fk: string;
 
   @Column()
-  ana_position_id_fk: number;
+  ana_positionname: string;
 
   @Column({ type: 'varchar' })
   ana_useranalyst_id: string;
@@ -51,10 +51,6 @@ export class ReportAnalystAssignment {
 
   @DeleteDateColumn()
   deletedAt: Date;
-
-  @ManyToOne(() => Position, (position) => position.reportAnalystAssignment)
-  @JoinColumn({ name: 'ana_position_id_fk' })
-  position: Position;
 
   @ManyToOne(
     () => CaseReportValidate,

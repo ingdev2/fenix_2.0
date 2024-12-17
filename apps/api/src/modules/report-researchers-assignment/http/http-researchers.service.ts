@@ -1,12 +1,13 @@
-import { HttpService } from '@nestjs/axios';
+import { HttpService as NestHttpService } from '@nestjs/axios';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import axios, { AxiosResponse } from 'axios';
 import { firstValueFrom } from 'rxjs';
 
 require('dotenv').config();
 
 @Injectable()
 export class HttpResearchersService {
-  constructor(private readonly httpResearchersService: HttpService) {}
+  constructor(private readonly httpResearchersService: NestHttpService) {}
 
   async getResearchersData() {
     try {

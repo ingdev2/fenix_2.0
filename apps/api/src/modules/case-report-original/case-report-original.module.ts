@@ -18,8 +18,6 @@ import { OriginModule } from '../origin/origin.module';
 import { SubOriginModule } from '../sub-origin/sub-origin.module';
 import { RiskLevelModule } from '../risk-level/risk-level.module';
 import { UnitModule } from '../unit/unit.module';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { UserModule } from 'src/modules_bonnadonahub/user/user.module';
 
 @Module({
   imports: [
@@ -38,9 +36,8 @@ import { UserModule } from 'src/modules_bonnadonahub/user/user.module';
     SubOriginModule,
     RiskLevelModule,
     UnitModule,
-    UserModule,
   ],
   controllers: [CaseReportOriginalController],
-  providers: [CaseReportOriginalService, PermissionGuard],
+  providers: [CaseReportOriginalService],
 })
 export class CaseReportOriginalModule {}

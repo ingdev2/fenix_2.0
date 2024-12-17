@@ -1,9 +1,13 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
+
 import { CreateRolePermissionDto } from '../dto/create-role-permission.dto';
 import { UpdateRolePermissionDto } from '../dto/update-role-permission.dto';
-import { InjectRepository } from '@nestjs/typeorm';
+
 import { RolePermission } from '../entities/role-permission.entity';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class RolePermissionService {
@@ -126,12 +130,12 @@ export class RolePermissionService {
 
   async deleteRole(id: number) {
     const roleFound = await this.roleRepository.findOneBy({ id });
-
+    
     if (!roleFound) {
       return new HttpException(
         `Rol no encontrado, favor recargar.`,
-        HttpStatus.NOT_FOUND,
-      );
+        HttpStatus.NOT_FOUND
+      )
     }
 
     const result = await this.roleRepository.softDelete(id);

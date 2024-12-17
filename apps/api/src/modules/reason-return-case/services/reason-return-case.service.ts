@@ -1,9 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
+
 import { CreateReasonReturnCaseDto } from '../dto/create-reason-return-case.dto';
 import { UpdateReasonReturnCaseDto } from '../dto/update-reason-return-case.dto';
-import { InjectRepository } from '@nestjs/typeorm';
+
 import { ReasonReturnCase } from '../entities/reason-return-case.entity';
-import { Repository } from 'typeorm';
+
 import { RolePermissionService } from 'src/modules/role-permission/services/role-permission.service';
 
 @Injectable()
@@ -23,7 +28,7 @@ export class ReasonReturnCaseService {
       !createReasonReturnCaseDto.rec_r_cause ||
       !createReasonReturnCaseDto.rec_r_role_id_fk
     ) {
-      return new HttpException(
+      throw new HttpException(
         'Algunos datos del motivo de devolución son requeridos.',
         HttpStatus.BAD_REQUEST,
       );
@@ -38,7 +43,7 @@ export class ReasonReturnCaseService {
     });
 
     if (findReasonReturnCase) {
-      return new HttpException(
+      throw new HttpException(
         `El motivo de devolución para este rol ya existe.`,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
@@ -117,7 +122,7 @@ export class ReasonReturnCaseService {
     );
 
     if (result.affected === 0) {
-      return new HttpException(
+      throw new HttpException(
         `No se pudo actualizar el motivo de devolución.`,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
@@ -133,16 +138,16 @@ export class ReasonReturnCaseService {
     const reasonFound = await this.reasonReturnCaseRepository.findOneBy({ id });
 
     if (!reasonFound) {
-      return new HttpException(
+      throw new HttpException(
         `Razón devolución de caso no encontrado, favor recargar.`,
-        HttpStatus.NOT_FOUND,
-      );
+        HttpStatus.NOT_FOUND
+      )
     }
 
     const result = await this.reasonReturnCaseRepository.softDelete(id);
 
     if (result.affected === 0) {
-      return new HttpException(
+      throw new HttpException(
         `No se pudo eliminar el motivo de devolución.`,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );

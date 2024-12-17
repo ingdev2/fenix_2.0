@@ -1,16 +1,20 @@
-import { HttpService } from '@nestjs/axios';
+import { HttpService as NestHttpService } from '@nestjs/axios';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { AxiosResponse } from 'axios';
 import { firstValueFrom } from 'rxjs';
 
 require('dotenv').config();
 
 @Injectable()
 export class HttpPatientService {
-  constructor(private readonly httpPatientService: HttpService) {}
+  constructor(private readonly httpPatientService: NestHttpService) {}
 
-  async getPatientData(idNumber: string, idType: string) {
+  async getPatientData(
+    idNumber: string,
+    type: string,
+  ) {
     try {
-      const url = `${process.env.URL_PATIENTS}/${idNumber}/${idType}`;
+      const url = `${process.env.URL_PATIENTS}/${idNumber}/${type}`;
 
       const response = firstValueFrom(
         this.httpPatientService.get(url, {

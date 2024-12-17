@@ -1,9 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
+
 import { CreateDamageTypeDto } from '../dto/create-damage-type.dto';
 import { UpdateDamageTypeDto } from '../dto/update-damage-type.dto';
-import { InjectRepository } from '@nestjs/typeorm';
+
 import { DamageType } from '../entities/damage-type.entity';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class DamageTypeService {

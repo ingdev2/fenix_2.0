@@ -1,13 +1,5 @@
 import { ClinicalResearch } from 'src/modules/clinical-research/entities/clinical-research.entity';
-import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-  Entity,
-  OneToMany,
-} from 'typeorm';
+import { Column, CreateDateColumn, DeleteDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Entity, OneToMany } from 'typeorm';
 
 @Entity({ name: 'fenix_research_instrument' })
 export class ResearchInstrument {
@@ -32,9 +24,6 @@ export class ResearchInstrument {
   @DeleteDateColumn()
   deletedAt: Date;
 
-  @OneToMany(
-    () => ClinicalResearch,
-    (clinicalResearch) => clinicalResearch.researchInstrument,
-  )
+  @OneToMany(() => ClinicalResearch, (clinicalResearch) => clinicalResearch.researchInstrument)
   clinicalResearch: ClinicalResearch[];
 }

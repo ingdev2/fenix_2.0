@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class CreateReportResearcherAssignmentDto {
   @IsNotEmpty()
@@ -7,5 +7,13 @@ export class CreateReportResearcherAssignmentDto {
 
   @IsNotEmpty()
   @IsString()
+  res_positionname: string;
+
+  @IsOptional()
+  @IsString()
   res_userresearch_id: string;
+
+  @IsString()
+  @IsOptional()
+  res_justifications: string;
 }

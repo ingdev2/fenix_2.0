@@ -6,40 +6,40 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
 } from '@nestjs/common';
 import { DamageTypeService } from '../services/damage-type.service';
 import { CreateDamageTypeDto } from '../dto/create-damage-type.dto';
 import { UpdateDamageTypeDto } from '../dto/update-damage-type.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { Permission } from 'src/utils/decorators/permission.decorator';
-import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RolesEnum } from 'src/utils/enums/roles.enum';
+import { Auth } from 'src/modules/auth/decorators/auth.decorator';
 
 @ApiTags('damage-type')
 @Controller('damage-type')
-@UseGuards(PermissionGuard)
+@ApiBearerAuth()
 export class DamageTypeController {
   constructor(private readonly damageTypeService: DamageTypeService) {}
 
-  @Post('/createDamageType/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Post('/createDamageType/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   createDamageType(@Body() createDamageTypeDto: CreateDamageTypeDto) {
     return this.damageTypeService.createDamageType(createDamageTypeDto);
   }
 
   @Get('/listDamageTypes/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   listDamageTypes() {
     return this.damageTypeService.findAllDamageType();
   }
 
   @Get('/findDamageType/:id')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findDamageType(@Param('id') id: number) {
     return this.damageTypeService.findOneDamageType(id);
   }
 
-  @Patch('/updateDamageType/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Patch('/updateDamageType/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   updateDamageType(
     @Param('id') id: number,
     @Body() updateDamageTypeDto: UpdateDamageTypeDto,
@@ -47,8 +47,8 @@ export class DamageTypeController {
     return this.damageTypeService.updateDamageType(id, updateDamageTypeDto);
   }
 
-  @Delete('/deleteDamageType/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN, PermissionsEnum.PARAMETERIZER)
+  @Delete('/deleteDamageType/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   deleteDamageType(@Param('id') id: number) {
     return this.damageTypeService.deleteDamageType(id);
   }

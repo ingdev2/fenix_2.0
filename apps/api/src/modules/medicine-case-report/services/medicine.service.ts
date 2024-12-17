@@ -1,17 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { CreateMedicineDto } from '../dto/create-medicine.dto';
-import { UpdateMedicineDto } from '../dto/update-medicine.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Medicine } from '../entities/medicine.entity';
-import { QueryRunner, Repository } from 'typeorm';
 import { HttpException } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+
+import { CreateMedicineDto } from '../dto/create-medicine.dto';
+
+import { Medicine } from '../entities/medicine.entity';
+
+import { QueryRunner, Repository } from 'typeorm';
+
+import { AxiosResponse } from 'axios';
+import { lastValueFrom } from 'rxjs';
+
+require('dotenv').config();
 
 @Injectable()
 export class MedicineService {
   constructor(
     @InjectRepository(Medicine)
     private readonly medicineRepository: Repository<Medicine>,
+
+    private readonly httpMedicineService: HttpService,
   ) {}
 
   async createMedicineTransaction(
@@ -76,31 +86,26 @@ export class MedicineService {
     return medicine;
   }
 
-  async updateMedicine(id: number, updateMedicineDto: UpdateMedicineDto) {
-    if (!updateMedicineDto) {
-      throw new HttpException(
-        'Los datos para actualizar el medicamento son requeridos.',
-        HttpStatus.BAD_REQUEST,
+  async findExternalMedidicinesQuery(
+    medicine: string,
+  ): Promise<AxiosResponse<any>> {
+    const url = `${process.env.URL_MEDICINES}?medicine=${medicine}`;
+    
+    
+      const response = await lastValueFrom(
+        this.httpMedicineService.get(url, {
+          headers: {
+            'X-Authorization': process.env.X_TOKEN_VALUE_MEDICINES,
+          },
+        }),
       );
-    }
+      
+      if (response.status !== 200 || !response.data) {
+        return null;
+      }
 
-    const medicine = await this.findOneMedicine(id);
-    const result = await this.medicineRepository.update(
-      medicine.id,
-      updateMedicineDto,
-    );
-
-    if (result.affected === 0) {
-      return new HttpException(
-        `No se pudo actualizar el medicamento`,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-
-    return new HttpException(
-      `¡Datos actualizados correctamente!`,
-      HttpStatus.OK,
-    );
+      return response.data;
+    
   }
 
   async deleteMedicine(id: number) {

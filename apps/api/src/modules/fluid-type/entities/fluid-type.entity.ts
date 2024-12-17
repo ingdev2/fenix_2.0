@@ -32,9 +32,6 @@ export class FluidType {
   @DeleteDateColumn()
   deletedAt: Date;
 
-  @OneToMany(
-    () => ClinicalResearch,
-    (clinicalResearch) => clinicalResearch.fluidType,
-  )
+  @OneToMany(() => ClinicalResearch, (clinicalResearch) => clinicalResearch.fluidType)
   clinicalResearch: ClinicalResearch[];
 }

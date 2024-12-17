@@ -15,7 +15,7 @@ import {
 } from 'typeorm';
 
 @Entity({ name: 'fenix_priority' })
-export class PriorityEntity {
+export class Priority {
   @PrimaryGeneratedColumn()
   id: number;
 

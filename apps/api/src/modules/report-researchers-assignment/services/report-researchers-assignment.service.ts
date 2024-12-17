@@ -5,28 +5,33 @@ import {
   Injectable,
   forwardRef,
 } from '@nestjs/common';
-import { FilterReportResearcherAssignmentDto } from '../dto/filter-researcher-.dto';
-import { HttpResearchersService } from '../http/http-researchers.service';
-import { CreateReportResearcherAssignmentDto } from '../dto/create-report-researcher-assignment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ReportResearcherAssignment } from '../entities/report-researchers-assignment.entity';
+
 import { Repository } from 'typeorm';
-import { CaseReportValidateService } from 'src/modules/case-report-validate/services/case-report-validate.service';
-import { LogService } from 'src/modules/log/services/log.service';
-import { LogReportsEnum } from 'src/utils/enums/logs.enum';
+
+import { UpdateReportResearcherAssignmentDto } from '../dto/update-report-researcher-assignment.dto';
+import { FilterReportResearcherAssignmentDto } from '../dto/filter-researcher-.dto';
+import { CreateReportResearcherAssignmentDto } from '../dto/create-report-researcher-assignment.dto';
+
+import { ReportResearcherAssignment } from '../entities/report-researchers-assignment.entity';
 import { MovementReport } from 'src/modules/movement-report/entities/movement-report.entity';
-import { MovementReportEnum } from 'src/utils/enums/movement-report.enum';
 import { CaseReportValidate } from 'src/modules/case-report-validate/entities/case-report-validate.entity';
 import { CaseType } from 'src/modules/case-type/entities/case-type.entity';
-import { CaseTypeReportEnum } from 'src/utils/enums/caseType-report.enum';
 import { SeverityClasification } from 'src/modules/severity-clasification/entities/severity-clasification.entity';
-import { SeverityClasificationEnum } from 'src/utils/enums/severity-clasif.enum';
 import { RolePermission } from 'src/modules/role-permission/entities/role-permission.entity';
-import { UserRoles } from 'src/utils/enums/user-roles.enum';
 import { RoleResponseTime } from 'src/modules/role-response-time/entities/role-response-time.entity';
-import { SentinelTimeEnum } from 'src/utils/enums/sentinel-time.enum';
-import { UpdateReportResearcherAssignmentDto } from '../dto/update-report-researcher-assignment.dto';
 import { ReportAnalystAssignment } from 'src/modules/report-analyst-assignment/entities/report-analyst-assignment.entity';
+
+import { HttpResearchersService } from '../http/http-researchers.service';
+import { CaseReportValidateService } from 'src/modules/case-report-validate/services/case-report-validate.service';
+import { LogService } from 'src/modules/log/services/log.service';
+
+import { LogReportsEnum } from 'src/utils/enums/logs.enum';
+import { MovementReportEnum } from 'src/utils/enums/movement-report.enum';
+import { CaseTypeReportEnum } from 'src/utils/enums/caseType-report.enum';
+import { SeverityClasificationEnum } from 'src/utils/enums/severity-clasif.enum';
+import { UserRolesEnum } from 'src/utils/enums/user-roles.enum';
+import { SentinelTimeEnum } from 'src/utils/enums/sentinel-time.enum';
 
 @Injectable()
 export class ResearchersService {
@@ -83,11 +88,12 @@ export class ResearchersService {
     createResearcherDto: CreateReportResearcherAssignmentDto,
     clientIp: string,
     idAnalyst: string,
+    idNumberResearcher: string,
   ) {
     if (
       !createResearcherDto ||
-      !createResearcherDto.res_userresearch_id ||
-      !createResearcherDto.res_validatedcase_id_fk
+      !createResearcherDto.res_validatedcase_id_fk ||
+      !createResearcherDto.res_positionname
     ) {
       throw new HttpException(
         'Algunos datos para asignar investigador son requeridos.',
@@ -160,14 +166,14 @@ export class ResearchersService {
 
     const findIdRole = await this.roleRepository.findOne({
       where: {
-        role_name: UserRoles.INVESTIGATOR,
+        role_name: UserRolesEnum.INVESTIGATOR,
         role_status: true,
       },
     });
 
     if (!findIdRole) {
       throw new HttpException(
-        `El rol ${UserRoles.INVESTIGATOR} no existe.`,
+        `El rol ${UserRolesEnum.INVESTIGATOR} no existe.`,
         HttpStatus.NOT_FOUND,
       );
     }
@@ -183,10 +189,15 @@ export class ResearchersService {
 
     if (!findRoleResponseTime) {
       throw new HttpException(
-        `El tiempo de respuesta del rol ${UserRoles.INVESTIGATOR} no existe.`,
+        `El tiempo de respuesta del rol ${UserRolesEnum.INVESTIGATOR} no existe.`,
         HttpStatus.NOT_FOUND,
       );
     }
+
+    // const movementReportFound =
+    //   await this.movementReportService.findOneMovementReportByName(
+    //     movementReport.ASSIGNMENT_RESEARCHER,
+    //   );
 
     const movementReportFound = await this.movementReportRepository.findOne({
       where: {
@@ -229,6 +240,7 @@ export class ResearchersService {
     const research = this.researcherRepository.create({
       ...createResearcherDto,
       res_useranalyst_id: idAnalyst,
+      res_userresearch_id: idNumberResearcher,
       res_days: responseTime,
     });
 
@@ -472,6 +484,11 @@ export class ResearchersService {
       );
     }
 
+    // const movementReportFound =
+    //   await this.movementReportService.findOneMovementReportByName(
+    //     movementReport.REASSIGNMENT_RESEARCHER,
+    //   );
+
     const movementReportFound = await this.movementReportRepository.findOne({
       where: {
         mov_r_name: MovementReportEnum.REASSIGNMENT_RESEARCHER,
@@ -618,6 +635,11 @@ export class ResearchersService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+
+    // const movementReportFound =
+    //   await this.movementReportService.findOneMovementReportByName(
+    //     movementReport.RETURN_CASE_ANALYST,
+    //   );
 
     const movementReportFound = await this.movementReportRepository.findOne({
       where: {

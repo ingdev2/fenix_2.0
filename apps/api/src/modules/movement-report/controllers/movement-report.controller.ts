@@ -6,24 +6,22 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
 } from '@nestjs/common';
 import { MovementReportService } from '../services/movement-report.service';
 import { CreateMovementReportDto } from '../dto/create-movement-report.dto';
 import { UpdateMovementReportDto } from '../dto/update-movement-report.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { PermissionGuard } from 'src/utils/guards/permission.guard';
-import { Permission } from 'src/utils/decorators/permission.decorator';
-import { PermissionsEnum } from 'src/utils/enums/permissions.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RolesEnum } from 'src/utils/enums/roles.enum';
+import { Auth } from 'src/modules/auth/decorators/auth.decorator';
 
 @ApiTags('movement-report')
 @Controller('movement-report')
-@UseGuards(PermissionGuard)
+@ApiBearerAuth()
 export class MovementReportController {
   constructor(private readonly movementReportService: MovementReportService) {}
 
   @Post('/createMovementReport/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN)
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   createMovementReport(
     @Body() createMovementReportDto: CreateMovementReportDto,
   ) {
@@ -33,17 +31,19 @@ export class MovementReportController {
   }
 
   @Get('/listMovementReports/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   listMovementReport() {
     return this.movementReportService.findAllMovementReports();
   }
 
   @Get('/findMovementReport/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findMovementReport(@Param('id') id: number) {
     return this.movementReportService.findOneMovementReport(id);
   }
 
-  @Patch('/updateMovementReport/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN)
+  @Patch('/updateMovementReport/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   updateMovementReport(
     @Param('id') id: number,
     @Body() updateMovementReportDto: UpdateMovementReportDto,
@@ -54,8 +54,8 @@ export class MovementReportController {
     );
   }
 
-  @Delete('/deleteMovementReport/:id/:userIdPermission')
-  @Permission(PermissionsEnum.SUPER_ADMIN)
+  @Delete('/deleteMovementReport/:id/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   deleteMovementReport(@Param('id') id: number) {
     return this.movementReportService.deleteMovementReport(id);
   }

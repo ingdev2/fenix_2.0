@@ -3,7 +3,7 @@ import { CreateEventDto } from './create-event.dto';
 import { IsBoolean, IsOptional } from 'class-validator';
 
 export class UpdateEventDto extends PartialType(CreateEventDto) {
-  @IsOptional()
-  @IsBoolean()
-  eve_status?: boolean;
+    @IsOptional()
+    @IsBoolean()
+    eve_status?: boolean;
 }

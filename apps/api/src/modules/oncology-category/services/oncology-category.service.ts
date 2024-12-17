@@ -1,9 +1,13 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
+
 import { CreateOncologyCategoryDto } from '../dto/create-oncology-category.dto';
 import { UpdateOncologyCategoryDto } from '../dto/update-oncology-category.dto';
-import { InjectRepository } from '@nestjs/typeorm';
+
 import { OncologyCategory } from '../entities/oncology-category.entity';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class OncologyCategoryService {

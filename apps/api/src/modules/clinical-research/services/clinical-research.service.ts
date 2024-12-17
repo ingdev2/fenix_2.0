@@ -1,8 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateClinicalResearchDto } from '../dto/create-clinical-research.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ClinicalResearch } from '../entities/clinical-research.entity';
+
 import { DataSource, Repository } from 'typeorm';
+
+import { CreateClinicalResearchDto } from '../dto/create-clinical-research.dto';
+
+import { ClinicalResearch } from '../entities/clinical-research.entity';
+
 import { ResearchInstrumentService } from 'src/modules/research-instrument/services/research-instrument.service';
 import { DeviceTypeService } from 'src/modules/device-type/services/device-type.service';
 import { DamageTypeService } from 'src/modules/damage-type/services/damage-type.service';
@@ -215,6 +219,10 @@ export class ClinicalResearchService {
 
     return clinicalResearch;
   }
+
+  // update(id: string, updateClinicalResearchDto: UpdateClinicalResearchDto) {
+  //   return `This action updates a #${id} clinicalResearch`;
+  // }
 
   async deleteClinicalResearch(id: string) {
     const clinicalResearch = await this.findOneClinicalResearch(id);
