@@ -4,20 +4,21 @@ import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import { useSession } from "next-auth/react";
 
+import CustomDashboardLayout from "@/components/common/custom_dashboard_layout/CustomDashboardLayout";
 import ResearchInstrumentContent from "@/components/configuration/research_instrument/ResearchInstrumentContent";
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
+
+import useAuthValidation from "@/utils/hooks/use_auth_validation";
+import { useRoleValidation } from "@/utils/hooks/use_role_validation";
 
 import { setIdNumberUserSession } from "@/redux/features/user_session/userSessionSlice";
-import { RolesEnum } from "@/utils/enums/roles/roles.enum";
 
-import useAuthValidation from "@/utils/hooks/useAuthValidation";
-import { useRoleValidation } from "@/utils/hooks/useRoleValidation";
+import { RolesEnum } from "@/utils/enums/roles/roles.enum";
 
 const ResearchInstrumentParametrizationPage = () => {
   const { data: session, status } = useSession();
   const dispatch = useAppDispatch();
 
-  const { showAuthErrorMessage, authErrorMessage } = useAuthValidation();
+  useAuthValidation();
 
   const allowedRoles = [RolesEnum.COLLABORATOR];
   useRoleValidation(allowedRoles);
@@ -43,16 +44,22 @@ const ResearchInstrumentParametrizationPage = () => {
       dispatch(setIdNumberUserSession(userIdNumber));
     }
   }, [session, status, idNumberUserSessionState]);
-  
+
   return (
     <div className="homepage-research-instrument">
-      {showAuthErrorMessage && (
-        <CustomMessage
-          typeMessage="error"
-          message={authErrorMessage || "¡Usuario no autenticado!"}
-        />
-      )}
-      <ResearchInstrumentContent />
+      <CustomDashboardLayout
+        customLayoutContent={
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              flexFlow: "column wrap",
+            }}
+          >
+            <ResearchInstrumentContent />
+          </div>
+        }
+      />
     </div>
   );
 };

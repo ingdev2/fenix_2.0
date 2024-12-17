@@ -1,4 +1,4 @@
-import { RolesEnum } from "src/utils/enums/roles.enum";
+import { RolesEnum } from 'src/utils/enums/roles.enum';
 
 export interface IRole {
   id: number;

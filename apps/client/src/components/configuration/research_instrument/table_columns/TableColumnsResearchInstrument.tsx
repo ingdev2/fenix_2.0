@@ -2,10 +2,11 @@ import CustomDeletePopConfirm from "@/components/common/custom_pop_confirm/Custo
 import CustomTags from "@/components/common/custom_tags/CustomTags";
 import EditResearchInstrumentButtonComponent from "../buttons/EditResearchInstrumentButton";
 import { Flex, Space } from "antd";
-import { statusOptions } from "@/utils/enums/statusOptions.enum";
+import { StatusOptionsEnum } from "@/utils/enums/status_options.enum";
 
 const researchInstrumentNameKey: keyof ResearchInstrument = "inst_r_name";
-const researchInstrumentDescriptionKey: keyof ResearchInstrument = "inst_r_description";
+const researchInstrumentDescriptionKey: keyof ResearchInstrument =
+  "inst_r_description";
 const researchInstrumentStatusKey: keyof ResearchInstrument = "inst_r_status";
 
 interface TableColumnProps {
@@ -52,12 +53,12 @@ const TableColumnsResearchInstrument = ({
         {item ? (
           <CustomTags
             colorCustom="green"
-            labelCustom={statusOptions.ENABLED}
+            labelCustom={StatusOptionsEnum.ENABLED}
           />
         ) : (
           <CustomTags
             colorCustom="red"
-            labelCustom={statusOptions.CANCELED}
+            labelCustom={StatusOptionsEnum.CANCELED}
           />
         )}
       </Flex>

@@ -1,7 +1,7 @@
 import CustomDeletePopConfirm from "@/components/common/custom_pop_confirm/CustomDeletePopConfirm";
 import { Flex, Space, Tag } from "antd";
 import EditUnitButtonComponent from "../buttons/EditUnitButton";
-import { statusOptions } from "@/utils/enums/statusOptions.enum";
+import { StatusOptionsEnum } from "@/utils/enums/status_options.enum";
 import CustomTags from "@/components/common/custom_tags/CustomTags";
 
 const unitNameKey: keyof Unit = "unit_name";
@@ -51,12 +51,12 @@ const TableColumnsUnit = ({
         {item ? (
           <CustomTags
             colorCustom="green"
-            labelCustom={statusOptions.ENABLED}
+            labelCustom={StatusOptionsEnum.ENABLED}
           />
         ) : (
           <CustomTags
             colorCustom="red"
-            labelCustom={statusOptions.CANCELED}
+            labelCustom={StatusOptionsEnum.CANCELED}
           />
         )}
       </Flex>

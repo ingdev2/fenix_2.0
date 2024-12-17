@@ -1,4 +1,9 @@
+"use client";
+
 import React, { useState } from "react";
+
+import { useDispatch } from "react-redux";
+import { setShowMessage } from "@/redux/features/common/message/messageStateSlice";
 
 import CustomButton from "@/components/common/custom_button/CustomButton";
 import CustomModalNoContent from "@/components/common/custom_modal_no_content/CustomModalNoContent";
@@ -12,53 +17,51 @@ import {
 
 import { Form, Input } from "antd";
 import TextArea from "antd/es/input/TextArea";
+
 import { useCreateProtocolMutation } from "@/redux/apis/protocol/protocolApi";
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
 
 const CreateProtocolButtonComponent: React.FC<{
   onNewRegister: () => void;
 }> = ({ onNewRegister }) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [nameLocalState, setNameLocalState] = useState("");
+  const [descriptionLocalState, setDescriptionLocalState] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [form] = Form.useForm();
+
+  const dispatch = useDispatch();
 
   const [createProtocol, { isLoading: createdProtocolDataLoading }] =
     useCreateProtocolMutation();
 
   const handleClickClean = () => {
     form.resetFields();
-    setName("");
-    setDescription("");
+    setNameLocalState("");
+    setDescriptionLocalState("");
   };
 
   const handleClickSubmit = async () => {
     try {
       const response: any = await createProtocol({
-        prot_name: name,
-        prot_description: description,
+        prot_name: nameLocalState,
+        prot_description: descriptionLocalState,
       });
 
       if (response.data.status === 201) {
-        setShowSuccessMessage(true);
-        setSuccessMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "success", content: response.data.message })
+        );
         handleClickClean();
         setIsModalOpen(false);
         onNewRegister();
       } else {
-        setShowErrorMessage(true);
-        setErrorMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "error", content: response.data.message })
+        );
       }
     } catch (error) {
-      setShowErrorMessage(true);
-      setErrorMessage("ERROR INTERNO");
+      dispatch(setShowMessage({ type: "error", content: "ERROR INTERNO" }));
       console.error("Error al enviar el formulario", error);
     }
   };
@@ -91,12 +94,6 @@ const CreateProtocolButtonComponent: React.FC<{
         handleCancelCustomModal={() => setIsModalOpen(false)}
         contentCustomModal={
           <>
-            {showErrorMessage && (
-              <CustomMessage typeMessage="error" message={errorMessage} />
-            )}
-            {showSuccessMessage && (
-              <CustomMessage typeMessage="success" message={successMessage} />
-            )}
             <Form
               form={form}
               id="create-protocol-form"
@@ -130,10 +127,12 @@ const CreateProtocolButtonComponent: React.FC<{
                   id="input-name-protocol"
                   name="input-name-protocol"
                   className="input-name-protocol"
-                  onChange={(e) => setName(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setNameLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={name}
-                  style={{ width: "100%" }}
+                  value={nameLocalState}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 
@@ -146,10 +145,12 @@ const CreateProtocolButtonComponent: React.FC<{
                   id="textarea-description-protocol"
                   name="textarea-description-protocol"
                   className="textarea-description-protocol"
-                  onChange={(e) => setDescription(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setDescriptionLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={description || ""}
-                  style={{ width: "100%" }}
+                  value={descriptionLocalState || ""}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 

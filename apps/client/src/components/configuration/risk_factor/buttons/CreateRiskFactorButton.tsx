@@ -1,4 +1,8 @@
+"use client";
 import React, { useState } from "react";
+
+import { useDispatch } from "react-redux";
+import { setShowMessage } from "@/redux/features/common/message/messageStateSlice";
 
 import CustomButton from "@/components/common/custom_button/CustomButton";
 import CustomModalNoContent from "@/components/common/custom_modal_no_content/CustomModalNoContent";
@@ -14,52 +18,50 @@ import { Form, Input } from "antd";
 import TextArea from "antd/es/input/TextArea";
 
 import { useCreateRiskFactorMutation } from "@/redux/apis/risk_factor/riskFactorApi";
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
+import CustomMessageState from "@/components/common/custom_messages/CustomMessageState";
 
 const CreateRiskFactorButtonComponent: React.FC<{
   onNewRegister: () => void;
 }> = ({ onNewRegister }) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [nameLocalState, setNameLocalState] = useState("");
+  const [descriptionLocalState, setDescriptionLocalState] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [form] = Form.useForm();
+
+  const dispatch = useDispatch();
 
   const [createRiskFactor, { isLoading: createdRiskFactorDataLoading }] =
     useCreateRiskFactorMutation();
 
   const handleClickClean = () => {
     form.resetFields();
-    setName("");
-    setDescription("");
+    setNameLocalState("");
+    setDescriptionLocalState("");
   };
 
   const handleClickSubmit = async () => {
     try {
       const response: any = await createRiskFactor({
-        ris_f_name: name,
-        ris_f_description: description,
+        ris_f_name: nameLocalState,
+        ris_f_description: descriptionLocalState,
       });
 
       if (response.data.status === 201) {
-        setShowSuccessMessage(true);
-        setSuccessMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "success", content: response.data.message })
+        );
         handleClickClean();
         setIsModalOpen(false);
         onNewRegister();
       } else {
-        setShowErrorMessage(true);
-        setErrorMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "error", content: response.data.message })
+        );
       }
     } catch (error) {
-      setShowErrorMessage(true);
-      setErrorMessage("ERROR INTERNO");
+      dispatch(setShowMessage({ type: "error", content: "ERROR INTERNO" }));
       console.error("Error al enviar el formulario", error);
     }
   };
@@ -92,12 +94,6 @@ const CreateRiskFactorButtonComponent: React.FC<{
         handleCancelCustomModal={() => setIsModalOpen(false)}
         contentCustomModal={
           <>
-            {showErrorMessage && (
-              <CustomMessage typeMessage="error" message={errorMessage} />
-            )}
-            {showSuccessMessage && (
-              <CustomMessage typeMessage="success" message={successMessage} />
-            )}
             <Form
               form={form}
               id="create-risk-factor-form"
@@ -131,10 +127,12 @@ const CreateRiskFactorButtonComponent: React.FC<{
                   id="input-name-risk-factor"
                   name="input-name-risk-factor"
                   className="input-name-risk-factor"
-                  onChange={(e) => setName(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setNameLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={name}
-                  style={{ width: "100%" }}
+                  value={nameLocalState}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 
@@ -147,10 +145,12 @@ const CreateRiskFactorButtonComponent: React.FC<{
                   id="textarea-description-risk-factor"
                   name="textarea-description-risk-factor"
                   className="textarea-description-risk-factor"
-                  onChange={(e) => setDescription(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setDescriptionLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={description || ""}
-                  style={{ width: "100%" }}
+                  value={descriptionLocalState || ""}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 

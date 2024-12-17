@@ -1,6 +1,10 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
+import { useDispatch } from "react-redux";
+import { setShowMessage } from "@/redux/features/common/message/messageStateSlice";
+
 import CustomButton from "@/components/common/custom_button/CustomButton";
 import CustomModalNoContent from "@/components/common/custom_modal_no_content/CustomModalNoContent";
 
@@ -10,26 +14,29 @@ import { BiEdit } from "react-icons/bi";
 import { Form, Input, Select } from "antd";
 import TextArea from "antd/es/input/TextArea";
 
-import { useUpdatePriorityMutation } from "@/redux/apis/priority/priorityApi";
+import {
+  useGetPriorityByIdQuery,
+  useUpdatePriorityMutation,
+} from "@/redux/apis/priority/priorityApi";
 import { useGetAllSeverityClasificationsQuery } from "@/redux/apis/severity_clasification/severityClasificationApi";
 
 const EditPriorityButtonComponent: React.FC<{
   dataRecord: Priority;
   onRefectRegister: () => void;
 }> = ({ dataRecord, onRefectRegister }) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [severityClasificationId, setSeverityClasificationId] = useState(0);
-  const [responseTime, setResponseTime] = useState(0);
-
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [nameLocalState, setNameLocalState] = useState("");
+  const [descriptionLocalState, setDescriptionLocalState] = useState("");
+  const [
+    severityClasificationIdLocalState,
+    setSeverityClasificationIdLocalState,
+  ] = useState(0);
+  const [responseTimeLocalState, setResponseTimeLocalState] = useState(0);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [form] = Form.useForm();
+
+  const dispatch = useDispatch();
 
   const [updatePriority, { isLoading: updatePriorityDataLoading }] =
     useUpdatePriorityMutation();
@@ -42,21 +49,31 @@ const EditPriorityButtonComponent: React.FC<{
     refetch: allSeverityClasificationsDataRefetch,
   } = useGetAllSeverityClasificationsQuery(null);
 
+  const {
+    data: priorityData,
+    isFetching: priorityDataFetching,
+    isLoading: priorityDataLoading,
+    error: priorityDataError,
+    refetch: priorityDataRefetch,
+  } = useGetPriorityByIdQuery(dataRecord.id);
+
   useEffect(() => {
-    if (isModalOpen) {
-      setName(dataRecord.prior_name);
-      setDescription(dataRecord.prior_description);
-      setSeverityClasificationId(dataRecord.prior_severityclasif_id_fk);
-      setResponseTime(dataRecord.prior_responsetime);
+    if (isModalOpen && priorityData) {
+      setNameLocalState(priorityData.prior_name);
+      setDescriptionLocalState(priorityData.prior_description);
+      setSeverityClasificationIdLocalState(
+        priorityData.prior_severityclasif_id_fk
+      );
+      setResponseTimeLocalState(priorityData.prior_responsetime);
 
       form.setFieldsValue({
-        fieldName: dataRecord.prior_name,
-        fieldDescription: dataRecord.prior_description,
-        fieldSeverityClasificationId: dataRecord.prior_severityclasif_id_fk,
-        fieldResponseTime: dataRecord.prior_responsetime,
+        fieldName: priorityData.prior_name,
+        fieldDescription: priorityData.prior_description,
+        fieldSeverityClasificationId: priorityData.prior_severityclasif_id_fk,
+        fieldResponseTime: priorityData.prior_responsetime,
       });
     }
-  }, [isModalOpen, dataRecord]);
+  }, [isModalOpen, priorityData]);
 
   const areDataDifferent = (
     initialData: {
@@ -82,17 +99,17 @@ const EditPriorityButtonComponent: React.FC<{
 
   const hasChanges = () => {
     const initialData = {
-      dataName: dataRecord.prior_name,
-      dataDescription: dataRecord.prior_description,
-      dataUnitId: dataRecord.prior_severityclasif_id_fk,
-      dataResponseTime: dataRecord.prior_responsetime,
+      dataName: priorityData?.prior_name || "",
+      dataDescription: priorityData?.prior_description || "",
+      dataUnitId: priorityData?.prior_severityclasif_id_fk || 0,
+      dataResponseTime: priorityData?.prior_responsetime || 0,
     };
 
     const currentData = {
-      dataName: name,
-      dataDescription: description,
-      dataUnitId: severityClasificationId,
-      dataResponseTime: responseTime,
+      dataName: nameLocalState,
+      dataDescription: descriptionLocalState,
+      dataUnitId: severityClasificationIdLocalState,
+      dataResponseTime: responseTimeLocalState,
     };
 
     return areDataDifferent(initialData, currentData);
@@ -100,27 +117,34 @@ const EditPriorityButtonComponent: React.FC<{
 
   const handleClickSubmit = async () => {
     try {
+      console.log("name", nameLocalState);
+      console.log("description", descriptionLocalState);
+      console.log("severityClasificationId", severityClasificationIdLocalState);
+      console.log("responseTime", responseTimeLocalState);
+
       const response: any = await updatePriority({
         id: dataRecord.id,
         updatePriority: {
-          prior_name: name,
-          prior_description: description,
-          prior_severityclasif_id_fk: severityClasificationId,
-          prior_responsetime: responseTime,
+          prior_name: nameLocalState,
+          prior_description: descriptionLocalState,
+          prior_severityclasif_id_fk: severityClasificationIdLocalState,
+          prior_responsetime: responseTimeLocalState,
         },
       });
       if (response.data.status === 200) {
-        setShowSuccessMessage(true);
-        setSuccessMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "success", content: response.data.message })
+        );
         setIsModalOpen(false);
         onRefectRegister();
+        priorityDataRefetch();
       } else {
-        setShowErrorMessage(true);
-        setErrorMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "error", content: response.data.message })
+        );
       }
     } catch (error) {
-      setShowErrorMessage(true);
-      setErrorMessage("ERROR INTERNO");
+      dispatch(setShowMessage({ type: "error", content: "ERROR INTERNO" }));
       console.error("Error al enviar el formulario", error);
     }
   };
@@ -148,13 +172,6 @@ const EditPriorityButtonComponent: React.FC<{
         handleCancelCustomModal={() => setIsModalOpen(false)}
         contentCustomModal={
           <>
-            {showErrorMessage && (
-              <CustomMessage typeMessage="error" message={errorMessage} />
-            )}
-            {showSuccessMessage && (
-              <CustomMessage typeMessage="success" message={successMessage} />
-            )}
-
             <Form
               form={form}
               id="edit-priority-form"
@@ -182,8 +199,10 @@ const EditPriorityButtonComponent: React.FC<{
                   className="select-severity-clasification-id"
                   showSearch
                   placeholder={"Seleccione una opción"}
-                  onChange={(value) => setSeverityClasificationId(value)}
-                  value={severityClasificationId}
+                  onChange={(value) =>
+                    setSeverityClasificationIdLocalState(value)
+                  }
+                  value={severityClasificationIdLocalState}
                   loading={
                     allSeverityClasificationsDataLoading ||
                     allSeverityClasificationsDataFetching
@@ -231,10 +250,12 @@ const EditPriorityButtonComponent: React.FC<{
                   id="input-name-priority"
                   name="input-name-priority"
                   className="input-name-priority"
-                  onChange={(e) => setName(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setNameLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={name}
-                  style={{ width: "100%" }}
+                  value={nameLocalState}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 
@@ -267,9 +288,11 @@ const EditPriorityButtonComponent: React.FC<{
                   id="input-response-time-priority"
                   name="input-response-time-priority"
                   className="input-response-time-priority"
-                  onChange={(e) => setResponseTime(Number(e.target.value))}
-                  placeholder="Escribe..."
-                  value={responseTime}
+                  onChange={(e) =>
+                    setResponseTimeLocalState(Number(e.target.value))
+                  }
+                  placeholder="1234..."
+                  value={responseTimeLocalState}
                   style={{ width: "100%" }}
                 />
               </Form.Item>
@@ -284,10 +307,12 @@ const EditPriorityButtonComponent: React.FC<{
                   id="textarea-description-priority"
                   name="textarea-description-priority"
                   className="textarea-description-priority"
-                  onChange={(e) => setDescription(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setDescriptionLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={description || ""}
-                  style={{ width: "100%" }}
+                  value={descriptionLocalState || ""}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 

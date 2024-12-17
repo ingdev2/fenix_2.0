@@ -1,6 +1,9 @@
+"use client";
 import React, { useEffect, useState } from "react";
 
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
+import { useDispatch } from "react-redux";
+import { setShowMessage } from "@/redux/features/common/message/messageStateSlice";
+
 import CustomButton from "@/components/common/custom_button/CustomButton";
 import CustomModalNoContent from "@/components/common/custom_modal_no_content/CustomModalNoContent";
 
@@ -10,23 +13,20 @@ import { BiEdit } from "react-icons/bi";
 import { Form, Input } from "antd";
 import TextArea from "antd/es/input/TextArea";
 
-import { useUpdateOncologyCategoryMutation } from "@/redux/apis/oncology_category/oncologyCategory";
+import { useUpdateOncologyCategoryMutation } from "@/redux/apis/oncology_category/oncologyCategoryApi";
 
 const EditOncologyCategoryButtonComponent: React.FC<{
   dataRecord: OncologyCategory;
   onRefetchRegister: () => void;
 }> = ({ dataRecord, onRefetchRegister: onRefectRegister }) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [nameLocalState, setNameLocalState] = useState("");
+  const [descriptionLocalState, setDescriptionLocalState] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [form] = Form.useForm();
+
+  const dispatch = useDispatch();
 
   const [
     updateOncologyCategory,
@@ -35,8 +35,8 @@ const EditOncologyCategoryButtonComponent: React.FC<{
 
   useEffect(() => {
     if (isModalOpen) {
-      setName(dataRecord.onc_c_name);
-      setDescription(dataRecord.onc_c_description);
+      setNameLocalState(dataRecord.onc_c_name);
+      setDescriptionLocalState(dataRecord.onc_c_description);
 
       form.setFieldsValue({
         fieldName: dataRecord.onc_c_name,
@@ -62,8 +62,8 @@ const EditOncologyCategoryButtonComponent: React.FC<{
     };
 
     const currentData = {
-      dataName: name,
-      dataDescription: description,
+      dataName: nameLocalState,
+      dataDescription: descriptionLocalState,
     };
 
     return areDataDifferent(initialData, currentData);
@@ -74,22 +74,23 @@ const EditOncologyCategoryButtonComponent: React.FC<{
       const response: any = await updateOncologyCategory({
         id: dataRecord.id,
         updateOncologyCategory: {
-          onc_c_name: name,
-          onc_c_description: description,
+          onc_c_name: nameLocalState,
+          onc_c_description: descriptionLocalState,
         },
       });
       if (response.data.status === 200) {
-        setShowSuccessMessage(true);
-        setSuccessMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "success", content: response.data.message })
+        );
         setIsModalOpen(false);
         onRefectRegister();
       } else {
-        setShowErrorMessage(true);
-        setErrorMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "error", content: response.data.message })
+        );
       }
     } catch (error) {
-      setShowErrorMessage(true);
-      setErrorMessage("ERROR INTERNO");
+      dispatch(setShowMessage({ type: "error", content: "ERROR INTERNO" }));
       console.error("Error al enviar el formulario", error);
     }
   };
@@ -117,13 +118,6 @@ const EditOncologyCategoryButtonComponent: React.FC<{
         handleCancelCustomModal={() => setIsModalOpen(false)}
         contentCustomModal={
           <>
-            {showErrorMessage && (
-              <CustomMessage typeMessage="error" message={errorMessage} />
-            )}
-            {showSuccessMessage && (
-              <CustomMessage typeMessage="success" message={successMessage} />
-            )}
-
             <Form
               form={form}
               id="edit-oncology-category-form"
@@ -155,10 +149,12 @@ const EditOncologyCategoryButtonComponent: React.FC<{
                   id="input-name-oncology-category"
                   name="input-name-oncology-category"
                   className="input-name-oncology-category"
-                  onChange={(e) => setName(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setNameLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={name}
-                  style={{ width: "100%" }}
+                  value={nameLocalState}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 
@@ -171,10 +167,12 @@ const EditOncologyCategoryButtonComponent: React.FC<{
                   id="textarea-description-oncology-category"
                   name="textarea-description-oncology-category"
                   className="textarea-description-oncology-category"
-                  onChange={(e) => setDescription(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setDescriptionLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={description || ""}
-                  style={{ width: "100%" }}
+                  value={descriptionLocalState || ""}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 

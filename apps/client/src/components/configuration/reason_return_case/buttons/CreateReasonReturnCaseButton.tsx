@@ -1,4 +1,8 @@
+"use client";
 import React, { useState } from "react";
+
+import { useDispatch } from "react-redux";
+import { setShowMessage } from "@/redux/features/common/message/messageStateSlice";
 
 import CustomButton from "@/components/common/custom_button/CustomButton";
 import CustomModalNoContent from "@/components/common/custom_modal_no_content/CustomModalNoContent";
@@ -13,25 +17,21 @@ import {
 import { Form, Input, Select } from "antd";
 import TextArea from "antd/es/input/TextArea";
 
-import { useCreateReasonReturnCaseMutation } from "@/redux/apis/reason_return_case/reasonReturnCase";
+import { useCreateReasonReturnCaseMutation } from "@/redux/apis/reason_return_case/reasonReturnCaseApi";
 import { useGetAllRolesQuery } from "@/redux/apis/role/roleApi";
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
 
 const CreateReasonReturnCaseButtonComponent: React.FC<{
   onNewRegister: () => void;
 }> = ({ onNewRegister }) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [roleId, setRoleId] = useState(0);
-
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [nameLocalState, setNameLocalState] = useState("");
+  const [descriptionLocalState, setDescriptionLocalState] = useState("");
+  const [roleIdLocalState, setRoleIdLocalState] = useState(0);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [form] = Form.useForm();
+
+  const dispatch = useDispatch();
 
   const [
     createReasonReturnCase,
@@ -48,32 +48,33 @@ const CreateReasonReturnCaseButtonComponent: React.FC<{
 
   const handleClickClean = () => {
     form.resetFields();
-    setName("");
-    setDescription("");
-    setRoleId(0);
+    setNameLocalState("");
+    setDescriptionLocalState("");
+    setRoleIdLocalState(0);
   };
 
   const handleClickSubmit = async () => {
     try {
       const response: any = await createReasonReturnCase({
-        rec_r_cause: name,
-        rec_r_description: description,
-        rec_r_role_id_fk: roleId,
+        rec_r_cause: nameLocalState,
+        rec_r_description: descriptionLocalState,
+        rec_r_role_id_fk: roleIdLocalState,
       });
 
       if (response.data.status === 201) {
-        setShowSuccessMessage(true);
-        setSuccessMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "success", content: response.data.message })
+        );
         handleClickClean();
         setIsModalOpen(false);
         onNewRegister();
       } else {
-        setShowErrorMessage(true);
-        setErrorMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "error", content: response.data.message })
+        );
       }
     } catch (error) {
-      setShowErrorMessage(true);
-      setErrorMessage("ERROR INTERNO");
+      dispatch(setShowMessage({ type: "error", content: "ERROR INTERNO" }));
       console.error("Error al enviar el formulario", error);
     }
   };
@@ -106,12 +107,6 @@ const CreateReasonReturnCaseButtonComponent: React.FC<{
         handleCancelCustomModal={() => setIsModalOpen(false)}
         contentCustomModal={
           <>
-            {showErrorMessage && (
-              <CustomMessage typeMessage="error" message={errorMessage} />
-            )}
-            {showSuccessMessage && (
-              <CustomMessage typeMessage="success" message={successMessage} />
-            )}
             <Form
               form={form}
               id="create-reason-return-case-form"
@@ -143,8 +138,8 @@ const CreateReasonReturnCaseButtonComponent: React.FC<{
                   className="select-role-id"
                   showSearch
                   placeholder={"Seleccione una opción"}
-                  onChange={(value) => setRoleId(value)}
-                  value={roleId}
+                  onChange={(value) => setRoleIdLocalState(value)}
+                  value={roleIdLocalState}
                   loading={allRolesDataLoading || allRolesDataFetching}
                   allowClear
                   filterOption={(input, option) => {
@@ -189,10 +184,12 @@ const CreateReasonReturnCaseButtonComponent: React.FC<{
                   id="input-name-reason-return-case"
                   name="input-name-reason-return-case"
                   className="input-name-reason-return-case"
-                  onChange={(e) => setName(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setNameLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={name}
-                  style={{ width: "100%" }}
+                  value={nameLocalState}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 
@@ -207,10 +204,12 @@ const CreateReasonReturnCaseButtonComponent: React.FC<{
                   id="textarea-description-reason-return-case"
                   name="textarea-description-reason-return-case"
                   className="textarea-description-reason-return-case"
-                  onChange={(e) => setDescription(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setDescriptionLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Descripción de la razón de devolución"
-                  value={description || ""}
-                  style={{ width: "100%" }}
+                  value={descriptionLocalState || ""}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 

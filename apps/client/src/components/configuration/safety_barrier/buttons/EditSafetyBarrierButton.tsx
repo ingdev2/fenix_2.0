@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
+import { useDispatch } from "react-redux";
+import { setShowMessage } from "@/redux/features/common/message/messageStateSlice";
+
 import CustomButton from "@/components/common/custom_button/CustomButton";
 import CustomModalNoContent from "@/components/common/custom_modal_no_content/CustomModalNoContent";
 
@@ -16,25 +18,22 @@ const EditSafetyBarrierButtonComponent: React.FC<{
   dataRecord: SafetyBarrier;
   onRefectRegister: () => void;
 }> = ({ dataRecord, onRefectRegister }) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [nameLocalState, setNameLocalState] = useState("");
+  const [descriptionLocalState, setDescriptionLocalState] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [form] = Form.useForm();
+
+  const dispatch = useDispatch();
 
   const [updateSafetyBarrier, { isLoading: updateSafetyBarrierDataLoading }] =
     useUpdateSafetyBarrierMutation();
 
   useEffect(() => {
     if (isModalOpen) {
-      setName(dataRecord.saf_b_name);
-      setDescription(dataRecord.saf_b_description);
+      setNameLocalState(dataRecord.saf_b_name);
+      setDescriptionLocalState(dataRecord.saf_b_description);
 
       form.setFieldsValue({
         fieldName: dataRecord.saf_b_name,
@@ -60,8 +59,8 @@ const EditSafetyBarrierButtonComponent: React.FC<{
     };
 
     const currentData = {
-      dataName: name,
-      dataDescription: description,
+      dataName: nameLocalState,
+      dataDescription: descriptionLocalState,
     };
 
     return areDataDifferent(initialData, currentData);
@@ -72,22 +71,23 @@ const EditSafetyBarrierButtonComponent: React.FC<{
       const response: any = await updateSafetyBarrier({
         id: dataRecord.id,
         updateSafetyBarrier: {
-          saf_b_name: name,
-          saf_b_description: description,
+          saf_b_name: nameLocalState,
+          saf_b_description: descriptionLocalState,
         },
       });
       if (response.data.status === 200) {
-        setShowSuccessMessage(true);
-        setSuccessMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "success", content: response.data.message })
+        );
         setIsModalOpen(false);
         onRefectRegister();
       } else {
-        setShowErrorMessage(true);
-        setErrorMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "error", content: response.data.message })
+        );
       }
     } catch (error) {
-      setShowErrorMessage(true);
-      setErrorMessage("ERROR INTERNO");
+      dispatch(setShowMessage({ type: "error", content: "ERROR INTERNO" }));
       console.error("Error al enviar el formulario", error);
     }
   };
@@ -115,13 +115,6 @@ const EditSafetyBarrierButtonComponent: React.FC<{
         handleCancelCustomModal={() => setIsModalOpen(false)}
         contentCustomModal={
           <>
-            {showErrorMessage && (
-              <CustomMessage typeMessage="error" message={errorMessage} />
-            )}
-            {showSuccessMessage && (
-              <CustomMessage typeMessage="success" message={successMessage} />
-            )}
-
             <Form
               form={form}
               id="edit-safety-barrier-form"
@@ -153,10 +146,12 @@ const EditSafetyBarrierButtonComponent: React.FC<{
                   id="input-name-safety-barrier"
                   name="input-name-safety-barrier"
                   className="input-name-safety-barrier"
-                  onChange={(e) => setName(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setNameLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={name}
-                  style={{ width: "100%" }}
+                  value={nameLocalState}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 
@@ -169,10 +164,12 @@ const EditSafetyBarrierButtonComponent: React.FC<{
                   id="textarea-description-safety-barrier"
                   name="textarea-description-safety-barrier"
                   className="textarea-description-safety-barrier"
-                  onChange={(e) => setDescription(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setDescriptionLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Descripción del origen"
-                  value={description || ""}
-                  style={{ width: "100%" }}
+                  value={descriptionLocalState || ""}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 

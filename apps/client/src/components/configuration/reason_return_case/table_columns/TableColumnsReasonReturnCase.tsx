@@ -1,26 +1,28 @@
+import { Flex, Space } from "antd";
+
 import CustomDeletePopConfirm from "@/components/common/custom_pop_confirm/CustomDeletePopConfirm";
-import { Button, Flex, Space } from "antd";
-import { EditOutlined } from "@ant-design/icons";
 import CustomTags from "@/components/common/custom_tags/CustomTags";
-import { statusOptions } from "@/utils/enums/statusOptions.enum";
-import EditReasonReturnCaseButtonComponent from "../buttons/EditReasonReturnCaseBurron";
+
+import { StatusOptionsEnum } from "@/utils/enums/status_options.enum";
+
+import EditReasonReturnCaseButtonComponent from "../buttons/EditReasonReturnCaseButton";
 
 const reasonReturnCaseCauseKey: keyof ReasonReturnCase = "rec_r_cause";
 const reasonReturnCaseDescriptionKey: keyof ReasonReturnCase =
   "rec_r_description";
-const roleKey: keyof ReasonReturnCase = "role";
+const roleKey: keyof ReasonReturnCase = "rec_r_role_id_fk";
 const reasonReturnCaseStatusnKey: keyof ReasonReturnCase = "rec_r_status";
 
 interface TableColumnProps {
   handleClickDelete: (recordId: number) => void;
   onRefetchRegister: () => void;
-  ReasonReturnCaseData: ReasonReturnCase[] | undefined;
+  roleData: Role[] | undefined;
 }
 
 const TableColumnsReasonReturnCase = ({
   handleClickDelete,
   onRefetchRegister,
-  ReasonReturnCaseData,
+  roleData,
 }: TableColumnProps) => [
   {
     title: "Razón devolución de caso",
@@ -51,17 +53,15 @@ const TableColumnsReasonReturnCase = ({
     key: roleKey,
     ellipsis: true,
     width: 300,
-    filters: Array.from(
-      new Set(ReasonReturnCaseData?.map((list) => list.role?.role_name))
-    ).map((name) => ({
-      text: name || "No disponible",
-      value: name || "No disponible",
-    })),
-    onFilter: (value: any, record: any) =>
-      record.role?.role_name.includes(value as string),
-    sorter: (a: ReasonReturnCase, b: ReasonReturnCase) =>
-      a.role?.role_name.length - b.role?.role_name.length,
-    render: (item: any) => <p>{item?.role_name || "No disponible"}</p>,
+    filters:
+      roleData?.map((type) => ({
+        value: type.role_name,
+        text: type.role_name,
+      })) || [],
+    onFilter: (value: any, record: any) => {
+      return String(record.rec_r_role_id_fk) === String(value);
+    },
+    render: (type: any) => type,
   },
   {
     title: "Estado",
@@ -75,12 +75,12 @@ const TableColumnsReasonReturnCase = ({
         {item ? (
           <CustomTags
             colorCustom="green"
-            labelCustom={statusOptions.ENABLED}
+            labelCustom={StatusOptionsEnum.ENABLED}
           />
         ) : (
           <CustomTags
             colorCustom="red"
-            labelCustom={statusOptions.CANCELED}
+            labelCustom={StatusOptionsEnum.CANCELED}
           />
         )}
       </Flex>

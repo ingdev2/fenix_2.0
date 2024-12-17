@@ -2,7 +2,7 @@
 
 import React, { ReactNode, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hook";
 
 import AdminHeaderLayout from "@/components/header_layout_dashboard/AdminHeaderLayout";
 import { Button, Col, Layout, Menu, Row, theme } from "antd";
@@ -12,7 +12,7 @@ import { useMenuItems } from "@/components/items_menu_dashboard_admin/items_menu
 import {
   setSelectedKey,
   setSelectedOpenKeys,
-} from "@/redux/features/common/item_menu_selected_key/itemMenuSelectedKeySlice";
+} from "@/redux/features/common/modal/modalSlice";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -29,11 +29,9 @@ const CustomDashboardLayout: React.FC<{
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
-  const selectedKeyState = useAppSelector(
-    (state) => state.itemMenuSelectedKey.selectedKey
-  );
+  const selectedKeyState = useAppSelector((state) => state.modal.selectedKey);
   const selectedOpenKeysState = useAppSelector(
-    (state) => state.itemMenuSelectedKey.selectedOpenKeys
+    (state) => state.modal.selectedOpenKeys
   );
 
   const [collapsed, setCollapsed] = useState(false);
@@ -55,7 +53,7 @@ const CustomDashboardLayout: React.FC<{
         display: "flex",
         minWidth: "888px",
         minHeight: "100vh",
-        backgroundColor: "#013B5A",
+        backgroundColor: "#FF7700",
         margin: "0px",
         padding: "0px",
         overflow: "auto",
@@ -64,15 +62,15 @@ const CustomDashboardLayout: React.FC<{
       <Sider
         className="custom--dashboard-layout-sider"
         breakpoint="md"
-        collapsedWidth={54}
-        width={231}
+        collapsedWidth={62}
+        width={213}
         onBreakpoint={(broken) => {}}
         onCollapse={(collapsed, type) => {}}
         collapsed={collapsed}
         collapsible
         trigger={null}
         style={{
-          backgroundColor: "#013B5A",
+          backgroundColor: "#FF7700",
           margin: "0px",
           padding: "0px",
           overflow: "auto",
@@ -86,12 +84,13 @@ const CustomDashboardLayout: React.FC<{
             justifyContent: "center",
             alignContent: "center",
             alignItems: "center",
-            backgroundColor: "#f2f2f2",
-            paddingBlock: "22px",
+            backgroundColor: "#F2F2F2",
+            paddingBlock: "2px",
+            paddingInline: "7px",
             overflow: "hidden",
           }}
           onClick={() => {
-            router.replace("/create_report", { scroll: true });
+            router.replace("/dashboard", { scroll: true });
           }}
         >
           <img
@@ -100,7 +99,7 @@ const CustomDashboardLayout: React.FC<{
             }
             alt="Logo de Fénix"
             style={{
-              maxWidth: collapsed ? "45%" : "77%",
+              maxWidth: collapsed ? "145%" : "62%",
               height: "auto",
               objectFit: "contain",
             }}
@@ -112,7 +111,7 @@ const CustomDashboardLayout: React.FC<{
           mode="inline"
           items={items}
           selectedKeys={[selectedKeyState]}
-          defaultSelectedKeys={[ItemKeys.ITEM_CREATE_REPORT_KEY]}
+          defaultSelectedKeys={[ItemKeys.ITEM_DASHBOARD_KEY]}
           openKeys={selectedOpenKeysState}
           onOpenChange={handleOpenChange}
           onClick={({ key }) => handleMenuClick(key)}
@@ -167,16 +166,16 @@ const CustomDashboardLayout: React.FC<{
                 type="text"
                 icon={
                   collapsed ? (
-                    <MenuUnfoldOutlined style={{ color: "#013B5A" }} />
+                    <MenuUnfoldOutlined style={{ color: "#F7F7F7" }} />
                   ) : (
-                    <MenuFoldOutlined style={{ color: "#013B5A" }} />
+                    <MenuFoldOutlined style={{ color: "#F7F7F7" }} />
                   )
                 }
                 onClick={() => setCollapsed(!collapsed)}
                 style={{
                   width: "37px",
                   height: "37px",
-                  backgroundColor: "#00B5E8",
+                  backgroundColor: "#015E90",
                 }}
               />
             </Col>

@@ -1,22 +1,26 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
+
+import { useDispatch } from "react-redux";
+import { setShowMessage } from "@/redux/features/common/message/messageStateSlice";
 
 import CreateServiceButtonComponent from "@/components/configuration/service/buttons/CreateServiceButton";
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
+
 import CustomTableFiltersAndSorting from "@/components/common/custom_table_filters_and_sorting/CustomTableFiltersAndSorting";
+
 import TableColumnsService from "./table_columns/TableColumnsService";
 
 import {
   useDeleteServiceMutation,
   useGetAllServicesQuery,
 } from "@/redux/apis/service/serviceApi";
+import { useGetAllUnitsQuery } from "@/redux/apis/unit/unitApi";
+
+import { getNameOfUnitMap } from "@/helpers/get_name_by_id/get_name_of_unit";
 
 const ServiceContent: React.FC = () => {
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const dispatch = useDispatch();
 
   const {
     data: allServicesData,
@@ -25,24 +29,42 @@ const ServiceContent: React.FC = () => {
     error: allServicesDataError,
     refetch: allServicesDataRefetch,
   } = useGetAllServicesQuery(null);
-  
+
+  const {
+    data: allUnitsData,
+    isFetching: allUnitsDataFetching,
+    isLoading: allUnitsDataLoading,
+    error: allUnitsDataError,
+    refetch: allUnitsDataRefetch,
+  } = useGetAllUnitsQuery(null);
+
   const [deleteService] = useDeleteServiceMutation();
+
+  const unitGetName = getNameOfUnitMap(allUnitsData);
+
+  const transformedData = Array.isArray(allServicesData)
+    ? allServicesData.map((req: Service) => ({
+        ...req,
+        serv_unit_id_fk: unitGetName?.[req.serv_unit_id_fk],
+      }))
+    : [];
 
   const handleClickDelete = async (id: number) => {
     try {
       const response = await deleteService(id);
 
       if (response.data.status === 200) {
-        setShowSuccessMessage(true);
-        setSuccessMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "success", content: response.data.message })
+        );
         allServicesDataRefetch();
       } else {
-        setShowErrorMessage(true);
-        setErrorMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "error", content: response.data.message })
+        );
       }
     } catch (error) {
-      setShowErrorMessage(true);
-      setErrorMessage("ERROR INTERNO");
+      dispatch(setShowMessage({ type: "error", content: "ERROR INTERNO" }));
       console.log(error);
     } finally {
       allServicesDataRefetch();
@@ -50,24 +72,20 @@ const ServiceContent: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: "32px" }}>
-      {showErrorMessage && (
-        <CustomMessage typeMessage="error" message={errorMessage} />
-      )}
-      {showSuccessMessage && (
-        <CustomMessage typeMessage="success" message={successMessage} />
-      )}
+    <div style={{ padding: "22px" }}>
       <CustomTableFiltersAndSorting
-        dataCustomTable={allServicesData || []}
+        dataCustomTable={transformedData || []}
         onClickRechargeCustomTable={allServicesDataRefetch}
         loading={allServicesDataLoading || allServicesDataFetching}
         customButton={
-          <CreateServiceButtonComponent onNewRegister={allServicesDataRefetch} />
+          <CreateServiceButtonComponent
+            onNewRegister={allServicesDataRefetch}
+          />
         }
         columnsCustomTable={TableColumnsService({
           handleClickDelete,
           onRefetchRegister: allServicesDataRefetch,
-          serviceData: allServicesData
+          unitData: allUnitsData,
         })}
       />
     </div>

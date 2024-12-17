@@ -5,6 +5,7 @@ import React, { ReactNode } from "react";
 import type { MenuProps } from "antd";
 import { Dropdown, Space } from "antd";
 import { DownOutlined } from "@ant-design/icons";
+import { CiCircleChevDown } from "react-icons/ci";
 
 const CustomDropdown: React.FC<{
   titleCustomDropdown: string;
@@ -59,13 +60,21 @@ const CustomDropdown: React.FC<{
       placement="bottomRight"
       arrow
     >
-      <a style={{ color: "#00B5E8", fontSize: 17 }}>
+      <a
+        style={{
+          color: "#001133",
+          fontSize: 15,
+          justifyContent: "center",
+          alignContent: "center",
+          alignItems: "center",
+        }}
+      >
         <Space>
           {titleCustomDropdown}
 
           {iconCustomDropdown}
 
-          <DownOutlined style={{ color: "#f7f7f7" }} />
+          <CiCircleChevDown style={{ color: "#001133" }} />
         </Space>
       </a>
     </Dropdown>

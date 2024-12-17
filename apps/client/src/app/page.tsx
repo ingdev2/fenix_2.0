@@ -119,7 +119,7 @@ const HomePage = () => {
                   sizeCustomButton="middle"
                   styleCustomButton={{ backgroundColor: "#FF7700" }}
                   onClickCustomButton={() => {
-                    router.push("create_report", {
+                    router.push("/create_report", {
                       scroll: true,
                     });
                   }}

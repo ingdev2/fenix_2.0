@@ -1,6 +1,6 @@
 import { Button, Space, Tag } from "antd";
 import { EyeOutlined } from "@ant-design/icons";
-import { getColorByCaseType } from "@/utils/enums/caseTypeColor.enum";
+import { customTagCaseTypes } from "@/components/common/custom_tags/CustomTagsCaseType";
 
 interface TableColumnProps {}
 
@@ -44,14 +44,7 @@ const TableColumnsAssignedCases = (): TableColumnProps => [
     //   record.caseType?.cas_t_name.includes(value as string),
     // sorter: (a: ISummaryReportInterfaceItem, b: ISummaryReportInterfaceItem) =>
     //   a.caseType.cas_t_name.length - b.caseType.cas_t_name.length,
-    render: (item: any) => (
-      <Tag
-        style={{ color: "#000" }}
-        color={getColorByCaseType(item?.cas_t_name?.toUpperCase())}
-      >
-        {item?.cas_t_name || "No disponible"}
-      </Tag>
-    ),
+    render: (type: string) => customTagCaseTypes(type),
   },
   {
     title: "Suceso",

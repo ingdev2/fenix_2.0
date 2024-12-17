@@ -1,11 +1,12 @@
 import { Flex, Space } from "antd";
 import CustomDeletePopConfirm from "@/components/common/custom_pop_confirm/CustomDeletePopConfirm";
-import { statusOptions } from "@/utils/enums/statusOptions.enum";
+import { StatusOptionsEnum } from "@/utils/enums/status_options.enum";
 import CustomTags from "@/components/common/custom_tags/CustomTags";
 import EditOncologyCategoryButtonComponent from "../buttons/EditOncologyCategoryButton";
 
 const oncologyCategoryNameKey: keyof OncologyCategory = "onc_c_name";
-const oncologyCategoryDescriptionKey: keyof OncologyCategory = "onc_c_description";
+const oncologyCategoryDescriptionKey: keyof OncologyCategory =
+  "onc_c_description";
 const oncologyCategoryStatusKey: keyof OncologyCategory = "onc_c_status";
 
 interface TableColumnProps {
@@ -18,7 +19,7 @@ const TableColumnsOncologyCategory = ({
   onRefetchRegister,
 }: TableColumnProps) => [
   {
-    title: "Categoría oncológica",
+    title: "Categoría",
     dataIndex: oncologyCategoryNameKey,
     key: oncologyCategoryNameKey,
     ellipsis: true,
@@ -52,12 +53,12 @@ const TableColumnsOncologyCategory = ({
         {item ? (
           <CustomTags
             colorCustom="green"
-            labelCustom={statusOptions.ENABLED}
+            labelCustom={StatusOptionsEnum.ENABLED}
           />
         ) : (
           <CustomTags
             colorCustom="red"
-            labelCustom={statusOptions.CANCELED}
+            labelCustom={StatusOptionsEnum.CANCELED}
           />
         )}
       </Flex>

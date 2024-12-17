@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
+import CustomMessageState from "@/components/common/custom_messages/CustomMessageState";
 import CustomTableFiltersAndSorting from "@/components/common/custom_table_filters_and_sorting/CustomTableFiltersAndSorting";
 import CustomButton from "../common/custom_button/CustomButton";
 import { HiOutlineDocumentMagnifyingGlass } from "react-icons/hi2";
@@ -18,12 +18,12 @@ const RiskAnalysisContent: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState("");
 
   return (
-    <div style={{ padding: "32px" }}>
+    <div style={{ padding: "22px" }}>
       {showErrorMessage && (
-        <CustomMessage typeMessage="error" message={errorMessage} />
+        <CustomMessageState typeMessage="error" message={errorMessage} />
       )}
       {showSuccessMessage && (
-        <CustomMessage typeMessage="success" message={successMessage} />
+        <CustomMessageState typeMessage="success" message={successMessage} />
       )}
       <CustomTableFiltersAndSorting
         dataCustomTable={riskAnalysis || []}
@@ -37,7 +37,7 @@ const RiskAnalysisContent: React.FC = () => {
               titleCustomButton="Análisis grupal"
               typeCustomButton="primary"
               htmlTypeCustomButton="button"
-              iconCustomButton={<HiOutlineDocumentMagnifyingGlass  />}
+              iconCustomButton={<HiOutlineDocumentMagnifyingGlass />}
               onClickCustomButton={() => setIsModalOpen(true)}
               styleCustomButton={{
                 marginLeft: "16px",
@@ -58,13 +58,9 @@ const RiskAnalysisContent: React.FC = () => {
         minWidthCustomModalNoContent="500px"
         openCustomModalState={isModalOpen}
         closableCustomModal={true}
-        maskClosableCustomModal= {false}
+        maskClosableCustomModal={false}
         handleCancelCustomModal={() => setIsModalOpen(false)}
-        contentCustomModal={
-          <>
-            Modal análisis grupal de riesgo
-          </>
-        }
+        contentCustomModal={<>Modal análisis grupal de riesgo</>}
       />
     </div>
   );

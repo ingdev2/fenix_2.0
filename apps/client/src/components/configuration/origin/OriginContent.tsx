@@ -1,10 +1,14 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
+
+import { useDispatch } from "react-redux";
+import { setShowMessage } from "@/redux/features/common/message/messageStateSlice";
 
 import CreateOriginButtonComponent from "@/components/configuration/origin/buttons/CreateOriginButton";
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
+
 import CustomTableFiltersAndSorting from "@/components/common/custom_table_filters_and_sorting/CustomTableFiltersAndSorting";
+
 import TableColumnsOrigin from "./table_columns/TableColumnsOrigin";
 
 import {
@@ -12,11 +16,8 @@ import {
   useGetAllOriginsQuery,
 } from "@/redux/apis/origin/originApi";
 
-const OriginContent: React.FC = () => {
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+const OriginContent = () => {
+  const dispatch = useDispatch();
 
   const {
     data: allOriginsData,
@@ -33,16 +34,17 @@ const OriginContent: React.FC = () => {
       const response: any = await deleteOrigin(id);
 
       if (response.data.status === 200) {
-        setShowSuccessMessage(true);
-        setSuccessMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "success", content: response.data.message })
+        );
         allOriginsDataRefetch();
       } else {
-        setShowErrorMessage(true);
-        setErrorMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "error", content: response.data.message })
+        );
       }
     } catch (error) {
-      setShowErrorMessage(true);
-      setErrorMessage("ERROR INTERNO");
+      dispatch(setShowMessage({ type: "error", content: "ERROR INTERNO" }));
       console.log(error);
     } finally {
       allOriginsDataRefetch();
@@ -50,13 +52,7 @@ const OriginContent: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: "32px" }}>
-      {showErrorMessage && (
-        <CustomMessage typeMessage="error" message={errorMessage} />
-      )}
-      {showSuccessMessage && (
-        <CustomMessage typeMessage="success" message={successMessage} />
-      )}
+    <div style={{ padding: "22px" }}>
       <CustomTableFiltersAndSorting
         dataCustomTable={allOriginsData || []}
         onClickRechargeCustomTable={allOriginsDataRefetch}

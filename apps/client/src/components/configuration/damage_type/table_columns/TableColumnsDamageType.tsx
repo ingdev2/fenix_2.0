@@ -2,7 +2,7 @@ import CustomDeletePopConfirm from "@/components/common/custom_pop_confirm/Custo
 import CustomTags from "@/components/common/custom_tags/CustomTags";
 import EditDamageTypeButtonComponent from "../buttons/EditDamageTypeButton";
 import { Flex, Space } from "antd";
-import { statusOptions } from "@/utils/enums/statusOptions.enum";
+import { StatusOptionsEnum } from "@/utils/enums/status_options.enum";
 
 const damageTypeNameKey: keyof DamageType = "dam_t_name";
 const damageTypeDescriptionKey: keyof DamageType = "dam_t_description";
@@ -52,12 +52,12 @@ const TableColumnsDamageType = ({
         {item ? (
           <CustomTags
             colorCustom="green"
-            labelCustom={statusOptions.ENABLED}
+            labelCustom={StatusOptionsEnum.ENABLED}
           />
         ) : (
           <CustomTags
             colorCustom="red"
-            labelCustom={statusOptions.CANCELED}
+            labelCustom={StatusOptionsEnum.CANCELED}
           />
         )}
       </Flex>

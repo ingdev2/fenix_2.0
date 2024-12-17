@@ -1,24 +1,24 @@
 import CustomDeletePopConfirm from "@/components/common/custom_pop_confirm/CustomDeletePopConfirm";
 import CustomTags from "@/components/common/custom_tags/CustomTags";
 import { Flex, Space } from "antd";
-import { statusOptions } from "@/utils/enums/statusOptions.enum";
+import { StatusOptionsEnum } from "@/utils/enums/status_options.enum";
 import EditServiceButtonComponent from "../buttons/EditServiceButton";
 
 const serviceNameKey: keyof Service = "serv_name";
 const serviceDescriptionKey: keyof Service = "serv_description";
-const unitKey: keyof Service = "unit";
+const unitKey: keyof Service = "serv_unit_id_fk";
 const serviceStatusKey: keyof Service = "serv_status";
 
 interface TableColumnProps {
   handleClickDelete: (recordId: number) => void;
   onRefetchRegister: () => void;
-  serviceData: Service[] | undefined;
+  unitData: Unit[] | undefined;
 }
 
 const TableColumnsService = ({
   handleClickDelete,
   onRefetchRegister,
-  serviceData,
+  unitData,
 }: TableColumnProps) => [
   {
     title: "Servicio",
@@ -48,23 +48,15 @@ const TableColumnsService = ({
     key: unitKey,
     ellipsis: true,
     width: 300,
-    filters: Array.from(
-      new Set(serviceData?.map((list) => list.unit?.unit_name))
-    ).map((name) => ({
-      text: name || "No disponible",
-      value: name || "No disponible",
-    })),
-    // onFilter: (value: any, record: any) => {
-    //   if (value === "No disponible") {
-    //     return !record.unit?.unit_name;
-    //   }
-    //   return record.unit?.unit_name.includes(value as string);
-    // },
-    onFilter: (value: any, record: any) =>
-      record.unit?.unit_name.includes(value as string),
-    sorter: (a: Service, b: Service) =>
-      a.unit?.unit_name.length - b.unit?.unit_name.length,
-    render: (item: any) => <p>{item?.unit_name || "No disponible"}</p>,
+    filters:
+      unitData?.map((type) => ({
+        value: type.unit_name,
+        text: type.unit_name,
+      })) || [],
+    onFilter: (value: any, record: any) => {
+      return String(record.serv_unit_id_fk) === String(value);
+    },
+    render: (type: any) => type,
   },
   {
     title: "Estado",
@@ -78,12 +70,12 @@ const TableColumnsService = ({
         {item ? (
           <CustomTags
             colorCustom="green"
-            labelCustom={statusOptions.ENABLED}
+            labelCustom={StatusOptionsEnum.ENABLED}
           />
         ) : (
           <CustomTags
             colorCustom="red"
-            labelCustom={statusOptions.CANCELED}
+            labelCustom={StatusOptionsEnum.CANCELED}
           />
         )}
       </Flex>

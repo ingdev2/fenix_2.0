@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 
+import { useDispatch } from "react-redux";
+import { setShowMessage } from "@/redux/features/common/message/messageStateSlice";
+
 import CustomButton from "@/components/common/custom_button/CustomButton";
 import CustomModalNoContent from "@/components/common/custom_modal_no_content/CustomModalNoContent";
 
@@ -14,22 +17,18 @@ import { Form, Input } from "antd";
 import TextArea from "antd/es/input/TextArea";
 
 import { useCreateSeverityClasificationMutation } from "@/redux/apis/severity_clasification/severityClasificationApi";
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
 
 const CreateSeverityClasifButtonComponent: React.FC<{
   onNewRegister: () => void;
 }> = ({ onNewRegister }) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [nameLocalState, setNameLocalState] = useState("");
+  const [descriptionLocalState, setDescriptionLocalState] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [form] = Form.useForm();
+
+  const dispatch = useDispatch();
 
   const [
     createSeverityClasification,
@@ -38,30 +37,31 @@ const CreateSeverityClasifButtonComponent: React.FC<{
 
   const handleClickClean = () => {
     form.resetFields();
-    setName("");
-    setDescription("");
+    setNameLocalState("");
+    setDescriptionLocalState("");
   };
 
   const handleClickSubmit = async () => {
     try {
       const response: any = await createSeverityClasification({
-        sev_c_name: name,
-        sev_c_description: description,
+        sev_c_name: nameLocalState,
+        sev_c_description: descriptionLocalState,
       });
 
       if (response.data.status === 201) {
-        setShowSuccessMessage(true);
-        setSuccessMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "success", content: response.data.message })
+        );
         handleClickClean();
         setIsModalOpen(false);
         onNewRegister();
       } else {
-        setShowErrorMessage(true);
-        setErrorMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "error", content: response.data.message })
+        );
       }
     } catch (error) {
-      setShowErrorMessage(true);
-      setErrorMessage("ERROR INTERNO");
+      dispatch(setShowMessage({ type: "error", content: "ERROR INTERNO" }));
       console.error("Error al enviar el formulario", error);
     }
   };
@@ -94,12 +94,6 @@ const CreateSeverityClasifButtonComponent: React.FC<{
         handleCancelCustomModal={() => setIsModalOpen(false)}
         contentCustomModal={
           <>
-            {showErrorMessage && (
-              <CustomMessage typeMessage="error" message={errorMessage} />
-            )}
-            {showSuccessMessage && (
-              <CustomMessage typeMessage="success" message={successMessage} />
-            )}
             <Form
               form={form}
               id="create-severity-clasification-form"
@@ -133,10 +127,12 @@ const CreateSeverityClasifButtonComponent: React.FC<{
                   id="input-name-severity-clasification"
                   name="input-name-severity-clasification"
                   className="input-name-severity-clasification"
-                  onChange={(e) => setName(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setNameLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={name}
-                  style={{ width: "100%" }}
+                  value={nameLocalState}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 
@@ -149,10 +145,12 @@ const CreateSeverityClasifButtonComponent: React.FC<{
                   id="textarea-description-severity-clasification"
                   name="textarea-description-severity-clasification"
                   className="textarea-description-severity-clasification"
-                  onChange={(e) => setDescription(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setDescriptionLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={description || ""}
-                  style={{ width: "100%" }}
+                  value={descriptionLocalState || ""}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 

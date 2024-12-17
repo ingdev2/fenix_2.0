@@ -1,4 +1,4 @@
-+"use client";
+"use client";
 
 import React, { useEffect } from "react";
 
@@ -15,7 +15,7 @@ const CustomMessage: React.FC<{ message: string; typeMessage: NoticeType }> = ({
         type: typeMessage,
         content: message,
         duration: 5,
-        style: { fontSize: 14, marginTop: "2vh" },
+        style: { fontSize: 17, marginTop: "2vh" },
       });
 
       return () => {

@@ -1,11 +1,12 @@
 import CustomTags from "@/components/common/custom_tags/CustomTags";
 import CustomDeletePopConfirm from "@/components/common/custom_pop_confirm/CustomDeletePopConfirm";
 import { Flex, Space } from "antd";
-import { statusOptions } from "@/utils/enums/statusOptions.enum";
+import { StatusOptionsEnum } from "@/utils/enums/status_options.enum";
 import EditInfluencingFactorButtonComponent from "../buttons/EditInfluencingFactorButton";
 
 const influencingFactorNameKey: keyof InfluencingFactor = "inf_f_name";
-const influencingFactorDescriptionKey: keyof InfluencingFactor = "inf_f_description";
+const influencingFactorDescriptionKey: keyof InfluencingFactor =
+  "inf_f_description";
 const influencingFactorStatusKey: keyof InfluencingFactor = "inf_f_status";
 
 interface TableColumnProps {
@@ -52,12 +53,12 @@ const TableColumnsInfluencyFactor = ({
         {item ? (
           <CustomTags
             colorCustom="green"
-            labelCustom={statusOptions.ENABLED}
+            labelCustom={StatusOptionsEnum.ENABLED}
           />
         ) : (
           <CustomTags
             colorCustom="red"
-            labelCustom={statusOptions.CANCELED}
+            labelCustom={StatusOptionsEnum.CANCELED}
           />
         )}
       </Flex>

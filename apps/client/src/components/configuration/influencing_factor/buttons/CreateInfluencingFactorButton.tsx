@@ -1,4 +1,9 @@
+"use client";
+
 import React, { useState } from "react";
+
+import { useDispatch } from "react-redux";
+import { setShowMessage } from "@/redux/features/common/message/messageStateSlice";
 
 import CustomButton from "@/components/common/custom_button/CustomButton";
 import CustomModalNoContent from "@/components/common/custom_modal_no_content/CustomModalNoContent";
@@ -12,23 +17,19 @@ import {
 
 import { Form, Input } from "antd";
 import { useCreateInfluencingFactorMutation } from "@/redux/apis/influencing_factor/influencingFactorApi";
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
 import TextArea from "antd/es/input/TextArea";
 
 const CreateInfluencingFactorButtonComponent: React.FC<{
   onNewRegister: () => void;
 }> = ({ onNewRegister }) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [nameLocalState, setNameLocalState] = useState("");
+  const [descriptionLocalState, setDescriptionLocalState] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [form] = Form.useForm();
+
+  const dispatch = useDispatch();
 
   const [
     createInfluencingFactor,
@@ -37,30 +38,31 @@ const CreateInfluencingFactorButtonComponent: React.FC<{
 
   const handleClickClean = () => {
     form.resetFields();
-    setName("");
-    setDescription("");
+    setNameLocalState("");
+    setDescriptionLocalState("");
   };
 
   const handleClickSubmit = async () => {
     try {
       const response: any = await createInfluencingFactor({
-        inf_f_name: name,
-        inf_f_description: description,
+        inf_f_name: nameLocalState,
+        inf_f_description: descriptionLocalState,
       });
 
       if (response.data.status === 201) {
-        setShowSuccessMessage(true);
-        setSuccessMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "success", content: response.data.message })
+        );
         handleClickClean();
         setIsModalOpen(false);
         onNewRegister();
       } else {
-        setShowErrorMessage(true);
-        setErrorMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "error", content: response.data.message })
+        );
       }
     } catch (error) {
-      setShowErrorMessage(true);
-      setErrorMessage("ERROR INTERNO");
+      dispatch(setShowMessage({ type: "error", content: "ERROR INTERNO" }));
       console.error("Error al enviar el formulario", error);
     }
   };
@@ -93,12 +95,6 @@ const CreateInfluencingFactorButtonComponent: React.FC<{
         handleCancelCustomModal={() => setIsModalOpen(false)}
         contentCustomModal={
           <>
-            {showErrorMessage && (
-              <CustomMessage typeMessage="error" message={errorMessage} />
-            )}
-            {showSuccessMessage && (
-              <CustomMessage typeMessage="success" message={successMessage} />
-            )}
             <Form
               form={form}
               id="create-influencing-factor-form"
@@ -132,10 +128,12 @@ const CreateInfluencingFactorButtonComponent: React.FC<{
                   id="input-name-influencing-factor"
                   name="input-name-influencing-factor"
                   className="input-name-influencing-factor"
-                  onChange={(e) => setName(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setNameLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={name}
-                  style={{ width: "100%" }}
+                  value={nameLocalState}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 
@@ -148,10 +146,12 @@ const CreateInfluencingFactorButtonComponent: React.FC<{
                   id="textarea-description-influencing-factor"
                   name="textarea-description-influencing-factor"
                   className="textarea-description-influencing-factor"
-                  onChange={(e) => setDescription(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setDescriptionLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={description || ""}
-                  style={{ width: "100%" }}
+                  value={descriptionLocalState || ""}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 

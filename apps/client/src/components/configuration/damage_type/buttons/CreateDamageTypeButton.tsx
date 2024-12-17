@@ -1,4 +1,9 @@
+"use client";
+
 import React, { useState } from "react";
+
+import { useDispatch } from "react-redux";
+import { setShowMessage } from "@/redux/features/common/message/messageStateSlice";
 
 import CustomButton from "@/components/common/custom_button/CustomButton";
 import CustomModalNoContent from "@/components/common/custom_modal_no_content/CustomModalNoContent";
@@ -12,8 +17,8 @@ import {
 
 import { Form, Input } from "antd";
 import TextArea from "antd/es/input/TextArea";
+
 import { useCreateDamageTypeMutation } from "@/redux/apis/damage_type/damageTypeApi";
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
 
 interface ButtonProps {
   onNewRegister: () => void;
@@ -22,47 +27,45 @@ interface ButtonProps {
 const CreateDamageTypeButtonComponent: React.FC<ButtonProps> = ({
   onNewRegister,
 }) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [nameLocalStorage, setNameLocalStorage] = useState("");
+  const [descriptionLocalStorage, setDescriptionLocalStorage] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [form] = Form.useForm();
+
+  const dispatch = useDispatch();
 
   const [createDamageType, { isLoading: createdDamageTypeDataLoading }] =
     useCreateDamageTypeMutation();
 
   const handleClickClean = () => {
     form.resetFields();
-    setName("");
-    setDescription("");
+    setNameLocalStorage("");
+    setDescriptionLocalStorage("");
   };
 
   const handleClickSubmit = async () => {
     try {
       const response: any = await createDamageType({
-        dam_t_name: name,
-        dam_t_description: description,
+        dam_t_name: nameLocalStorage,
+        dam_t_description: descriptionLocalStorage,
       });
 
       if (response.data.status === 201) {
-        setShowSuccessMessage(true);
-        setSuccessMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "success", content: response.data.message })
+        );
         handleClickClean();
         setIsModalOpen(false);
         onNewRegister();
       } else {
-        setShowErrorMessage(true);
-        setErrorMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "error", content: response.data.message })
+        );
       }
     } catch (error) {
-      setShowErrorMessage(true);
-      setErrorMessage("ERROR INTERNO");
+      dispatch(setShowMessage({ type: "error", content: "ERROR INTERNO" }));
       console.error("Error al enviar el formulario", error);
     }
   };
@@ -95,12 +98,6 @@ const CreateDamageTypeButtonComponent: React.FC<ButtonProps> = ({
         handleCancelCustomModal={() => setIsModalOpen(false)}
         contentCustomModal={
           <>
-            {showErrorMessage && (
-              <CustomMessage typeMessage="error" message={errorMessage} />
-            )}
-            {showSuccessMessage && (
-              <CustomMessage typeMessage="success" message={successMessage} />
-            )}
             <Form
               form={form}
               id="create-damage-type-form"
@@ -134,10 +131,12 @@ const CreateDamageTypeButtonComponent: React.FC<ButtonProps> = ({
                   id="input-name-damage-type"
                   name="input-name-damage-type"
                   className="input-name-damage-type"
-                  onChange={(e) => setName(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setNameLocalStorage(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={name}
-                  style={{ width: "100%" }}
+                  value={nameLocalStorage}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 
@@ -150,10 +149,12 @@ const CreateDamageTypeButtonComponent: React.FC<ButtonProps> = ({
                   id="textarea-description-damage-type"
                   name="textarea-description-damage-type"
                   className="textarea-description-damage-type"
-                  onChange={(e) => setDescription(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setDescriptionLocalStorage(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={description || ""}
-                  style={{ width: "100%" }}
+                  value={descriptionLocalStorage || ""}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 

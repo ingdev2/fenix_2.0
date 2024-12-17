@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-
 import { Tag } from "antd";
 
 interface CustomTag {
@@ -29,9 +28,9 @@ const CustomTags: React.FC<CustomTag> = ({
       className={classNameCustom}
       key={labelCustom}
       color={colorCustom}
-      style={{ ...stylesCustom, padding: "4px 22px", borderRadius: "31px" }}
+      style={{ ...stylesCustom }}
     >
-      <div style={{ display: "flex", gap: "13px" }}>
+      <div style={{ display: "flex", gap: "10px" }}>
         {iconCustom}
         {labelCustom}
         {numberCustom}

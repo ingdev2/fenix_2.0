@@ -1,20 +1,24 @@
 "use client";
 
 import React, { useEffect } from "react";
-import SummaryReportReviewContent from "@/components/summary_report_review/SummaryReportReviewContent";
-import { useSession } from "next-auth/react";
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
-import useAuthValidation from "@/utils/hooks/useAuthValidation";
-import { RolesEnum } from "@/utils/enums/roles/roles.enum";
-import { useRoleValidation } from "@/utils/hooks/useRoleValidation";
+import { useSession } from "next-auth/react";
+
+import CustomDashboardLayout from "@/components/common/custom_dashboard_layout/CustomDashboardLayout";
+import SummaryReportReviewContent from "@/components/summary_report_review/SummaryReportReviewContent";
+
+import useAuthValidation from "@/utils/hooks/use_auth_validation";
+import { useRoleValidation } from "@/utils/hooks/use_role_validation";
+
 import { setIdNumberUserSession } from "@/redux/features/user_session/userSessionSlice";
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
+
+import { RolesEnum } from "@/utils/enums/roles/roles.enum";
 
 const SummaryReportReviewPage = () => {
   const { data: session, status } = useSession();
   const dispatch = useAppDispatch();
 
-  const { showAuthErrorMessage, authErrorMessage } = useAuthValidation();
+  useAuthValidation();
 
   const allowedRoles = [RolesEnum.COLLABORATOR];
   useRoleValidation(allowedRoles);
@@ -43,13 +47,19 @@ const SummaryReportReviewPage = () => {
 
   return (
     <div className={"homepage-summary-review"}>
-      {showAuthErrorMessage && (
-        <CustomMessage
-          typeMessage="error"
-          message={authErrorMessage || "¡Usuario no autenticado!"}
-        />
-      )}
-      <SummaryReportReviewContent />
+      <CustomDashboardLayout
+        customLayoutContent={
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              flexFlow: "column wrap",
+            }}
+          >
+            <SummaryReportReviewContent />
+          </div>
+        }
+      />
     </div>
   );
 };

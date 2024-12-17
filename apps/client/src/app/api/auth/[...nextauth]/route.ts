@@ -20,14 +20,14 @@ async function refreshAccessToken(token: any) {
     const refreshedTokens = await response.json();
 
     if (!response.ok) {
-      throw refreshedTokens;
+      throw new Error("No se pudo refrescar el token.");
     }
 
     return {
       ...token,
-      accessToken: refreshedTokens.access_token,
-      refreshToken: refreshedTokens.refresh_token ?? token.refreshToken,
-      accessTokenExpires:
+      access_token: refreshedTokens.access_token,
+      refresh_token: refreshedTokens.refresh_token,
+      access_token_expires_in:
         Date.now() + refreshedTokens.access_token_expires_in * 1000,
     };
   } catch (error) {
@@ -43,6 +43,7 @@ const handler = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async jwt({ token, user, account }) {
+      console.log("token", token);
       if (account && user && token) {
         return {
           ...token,
@@ -62,8 +63,8 @@ const handler = NextAuth({
           if (!refreshedToken.error) {
             return {
               ...token,
-              access_token: refreshedToken.accessToken,
-              access_token_expires_in: refreshedToken.accessTokenExpires,
+              access_token: refreshedToken.access_token,
+              access_token_expires_in: refreshedToken.access_token_expires_in,
             };
           } else {
             return {};

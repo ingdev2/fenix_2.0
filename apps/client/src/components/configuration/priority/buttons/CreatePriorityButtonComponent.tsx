@@ -1,4 +1,12 @@
+"use client";
+
 import React, { useState } from "react";
+
+import { useDispatch } from "react-redux";
+import { setShowMessage } from "@/redux/features/common/message/messageStateSlice";
+
+import CustomButton from "@/components/common/custom_button/CustomButton";
+import CustomModalNoContent from "@/components/common/custom_modal_no_content/CustomModalNoContent";
 
 import {
   PlusOutlined,
@@ -8,31 +16,27 @@ import {
 } from "@ant-design/icons";
 
 import { Form, Input, Select } from "antd";
-
-import CustomButton from "@/components/common/custom_button/CustomButton";
-import CustomModalNoContent from "@/components/common/custom_modal_no_content/CustomModalNoContent";
+import TextArea from "antd/es/input/TextArea";
 
 import { useCreatePriorityMutation } from "@/redux/apis/priority/priorityApi";
 import { useGetAllSeverityClasificationsQuery } from "@/redux/apis/severity_clasification/severityClasificationApi";
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
-import TextArea from "antd/es/input/TextArea";
 
 const CreatePriorityButtonComponent: React.FC<{
   onNewRegister: () => void;
 }> = ({ onNewRegister }) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [severityClasificationId, setSeverityClasificationId] = useState(0);
-  const [responseTime, setResponseTime] = useState("");
-
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [nameLocalState, setNameLocalState] = useState("");
+  const [descriptionLocalState, setDescriptionLocalState] = useState("");
+  const [
+    severityClasificationIdLocalState,
+    setSeverityClasificationIdLocalState,
+  ] = useState(0);
+  const [responseTimeLocalState, setResponseTimeLocalState] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [form] = Form.useForm();
+
+  const dispatch = useDispatch();
 
   const [createPriority, { isLoading: createdPriorityDataLoading }] =
     useCreatePriorityMutation();
@@ -47,34 +51,35 @@ const CreatePriorityButtonComponent: React.FC<{
 
   const handleClickClean = () => {
     form.resetFields();
-    setName("");
-    setDescription("");
-    setSeverityClasificationId(0);
-    setResponseTime("");
+    setNameLocalState("");
+    setDescriptionLocalState("");
+    setSeverityClasificationIdLocalState(0);
+    setResponseTimeLocalState("");
   };
 
   const handleClickSubmit = async () => {
     try {
       const response: any = await createPriority({
-        prior_name: name,
-        prior_description: description,
-        prior_severityclasif_id_fk: severityClasificationId,
-        prior_responsetime: Number(responseTime),
+        prior_name: nameLocalState,
+        prior_description: descriptionLocalState,
+        prior_severityclasif_id_fk: severityClasificationIdLocalState,
+        prior_responsetime: Number(responseTimeLocalState),
       });
 
       if (response.data.status === 201) {
-        setShowSuccessMessage(true);
-        setSuccessMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "success", content: response.data.message })
+        );
         handleClickClean();
         setIsModalOpen(false);
         onNewRegister();
       } else {
-        setShowErrorMessage(true);
-        setErrorMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "error", content: response.data.message })
+        );
       }
     } catch (error) {
-      setShowErrorMessage(true);
-      setErrorMessage("ERROR INTERNO");
+      dispatch(setShowMessage({ type: "error", content: "ERROR INTERNO" }));
       console.error("Error al enviar el formulario", error);
     }
   };
@@ -107,12 +112,6 @@ const CreatePriorityButtonComponent: React.FC<{
         handleCancelCustomModal={() => setIsModalOpen(false)}
         contentCustomModal={
           <>
-            {showErrorMessage && (
-              <CustomMessage typeMessage="error" message={errorMessage} />
-            )}
-            {showSuccessMessage && (
-              <CustomMessage typeMessage="success" message={successMessage} />
-            )}
             <Form
               form={form}
               id="create-priority-form"
@@ -144,8 +143,10 @@ const CreatePriorityButtonComponent: React.FC<{
                   className="select-severity-clasification-id"
                   showSearch
                   placeholder={"Seleccione una opción"}
-                  onChange={(value) => setSeverityClasificationId(value)}
-                  value={severityClasificationId}
+                  onChange={(value) =>
+                    setSeverityClasificationIdLocalState(value)
+                  }
+                  value={severityClasificationIdLocalState}
                   loading={
                     allSeverityClasificationsDataLoading ||
                     allSeverityClasificationsDataFetching
@@ -193,10 +194,12 @@ const CreatePriorityButtonComponent: React.FC<{
                   id="input-name-priority"
                   name="input-name-priority"
                   className="input-name-priority"
-                  onChange={(e) => setName(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setNameLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={name}
-                  style={{ width: "100%" }}
+                  value={nameLocalState}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 
@@ -227,9 +230,9 @@ const CreatePriorityButtonComponent: React.FC<{
                   id="input-response-time-priority"
                   name="input-response-time-priority"
                   className="input-response-time-priority"
-                  onChange={(e) => setResponseTime(e.target.value)}
-                  placeholder="Escribe..."
-                  value={responseTime}
+                  onChange={(e) => setResponseTimeLocalState(e.target.value)}
+                  placeholder="1234..."
+                  value={responseTimeLocalState}
                   style={{ width: "100%" }}
                 />
               </Form.Item>
@@ -245,10 +248,12 @@ const CreatePriorityButtonComponent: React.FC<{
                   id="textarea-description-priority"
                   name="textarea-description-priority"
                   className="textarea-description-priority"
-                  onChange={(e) => setDescription(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setDescriptionLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={description || ""}
-                  style={{ width: "100%" }}
+                  value={descriptionLocalState || ""}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 

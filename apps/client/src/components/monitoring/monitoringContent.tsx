@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
+import CustomMessageState from "@/components/common/custom_messages/CustomMessageState";
 import CustomTableFiltersAndSorting from "@/components/common/custom_table_filters_and_sorting/CustomTableFiltersAndSorting";
 import CustomTags from "../common/custom_tags/CustomTags";
 import { BiSolidLock, BiSolidLockOpen } from "react-icons/bi";
@@ -17,12 +17,12 @@ const MonitoringContent: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState("");
 
   return (
-    <div style={{ padding: "32px" }}>
+    <div style={{ padding: "22px" }}>
       {showErrorMessage && (
-        <CustomMessage typeMessage="error" message={errorMessage} />
+        <CustomMessageState typeMessage="error" message={errorMessage} />
       )}
       {showSuccessMessage && (
-        <CustomMessage typeMessage="success" message={successMessage} />
+        <CustomMessageState typeMessage="success" message={successMessage} />
       )}
       <CustomTableFiltersAndSorting
         dataCustomTable={monitoring || []}

@@ -1,6 +1,10 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
+import { useDispatch } from "react-redux";
+import { setShowMessage } from "@/redux/features/common/message/messageStateSlice";
+
 import CustomButton from "@/components/common/custom_button/CustomButton";
 import CustomModalNoContent from "@/components/common/custom_modal_no_content/CustomModalNoContent";
 
@@ -16,25 +20,22 @@ const EditFluidTypeButtonComponent: React.FC<{
   dataRecord: FluidType;
   onRefectRegister: () => void;
 }> = ({ dataRecord, onRefectRegister }) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [nameLocalState, setNameLocalState] = useState("");
+  const [descriptionLocalState, setDescriptionLocalState] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [form] = Form.useForm();
+
+  const dispatch = useDispatch();
 
   const [updateFluidType, { isLoading: updateFluidTypeDataLoading }] =
     useUpdateFluidTypeMutation();
 
   useEffect(() => {
     if (isModalOpen) {
-      setName(dataRecord.flu_t_name);
-      setDescription(dataRecord.flu_t_description);
+      setNameLocalState(dataRecord.flu_t_name);
+      setDescriptionLocalState(dataRecord.flu_t_description);
 
       form.setFieldsValue({
         fieldName: dataRecord.flu_t_name,
@@ -60,8 +61,8 @@ const EditFluidTypeButtonComponent: React.FC<{
     };
 
     const currentData = {
-      dataName: name,
-      dataDescription: description,
+      dataName: nameLocalState,
+      dataDescription: descriptionLocalState,
     };
 
     return areDataDifferent(initialData, currentData);
@@ -72,22 +73,23 @@ const EditFluidTypeButtonComponent: React.FC<{
       const response: any = await updateFluidType({
         id: dataRecord.id,
         updateFluidType: {
-          flu_t_name: name,
-          flu_t_description: description,
+          flu_t_name: nameLocalState,
+          flu_t_description: descriptionLocalState,
         },
       });
       if (response.data.status === 200) {
-        setShowSuccessMessage(true);
-        setSuccessMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "success", content: response.data.message })
+        );
         setIsModalOpen(false);
         onRefectRegister();
       } else {
-        setShowErrorMessage(true);
-        setErrorMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "error", content: response.data.message })
+        );
       }
     } catch (error) {
-      setShowErrorMessage(true);
-      setErrorMessage("ERROR INTERNO");
+      dispatch(setShowMessage({ type: "error", content: "ERROR INTERNO" }));
       console.error("Error al enviar el formulario", error);
     }
   };
@@ -115,13 +117,6 @@ const EditFluidTypeButtonComponent: React.FC<{
         handleCancelCustomModal={() => setIsModalOpen(false)}
         contentCustomModal={
           <>
-            {showErrorMessage && (
-              <CustomMessage typeMessage="error" message={errorMessage} />
-            )}
-            {showSuccessMessage && (
-              <CustomMessage typeMessage="success" message={successMessage} />
-            )}
-
             <Form
               form={form}
               id="edit-fluid-type-form"
@@ -153,10 +148,12 @@ const EditFluidTypeButtonComponent: React.FC<{
                   id="input-name-fluid-type"
                   name="input-name-fluid-type"
                   className="input-name-fluid-type"
-                  onChange={(e) => setName(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setNameLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={name}
-                  style={{ width: "100%" }}
+                  value={nameLocalState}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 
@@ -169,10 +166,12 @@ const EditFluidTypeButtonComponent: React.FC<{
                   id="textarea-description-fluid-type"
                   name="textarea-description-fluid-type"
                   className="textarea-description-fluid-type"
-                  onChange={(e) => setDescription(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setDescriptionLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Descripción del tipo de fluido"
-                  value={description || ""}
-                  style={{ width: "100%" }}
+                  value={descriptionLocalState || ""}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 

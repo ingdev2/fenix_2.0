@@ -1,10 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
+
+import { useDispatch } from "react-redux";
+import { setShowMessage } from "@/redux/features/common/message/messageStateSlice";
 
 import CreateMovementReportButtonComponent from "@/components/configuration/movement_report/buttons/CreateMovementReportButton";
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
+
 import CustomTableFiltersAndSorting from "@/components/common/custom_table_filters_and_sorting/CustomTableFiltersAndSorting";
+
 import TableColumnsMovementReport from "./table_columns/TableColumnsMovementReport";
 
 import {
@@ -12,11 +16,8 @@ import {
   useGetAllMovementReportsQuery,
 } from "@/redux/apis/movement_report/movementReportApi";
 
-const MovementReportContent: React.FC = () => {
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+const MovementReportContent = () => {
+  const dispatch = useDispatch();
 
   const {
     data: allMovementReportsData,
@@ -33,28 +34,25 @@ const MovementReportContent: React.FC = () => {
       const response = await deleteMovementReport(id);
 
       if (response.data.status === 200) {
-        setShowSuccessMessage(true);
-        setSuccessMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "success", content: response.data.message })
+        );
         allMovementReportsDataRefetch();
       } else {
-        setShowErrorMessage(true);
-        setErrorMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "error", content: response.data.message })
+        );
       }
     } catch (error) {
-      console.log(error);
+      dispatch(setShowMessage({ type: "error", content: "ERROR INTERNO" }));
+      console.log("Error: ", error);
     } finally {
       allMovementReportsDataRefetch();
     }
   };
 
   return (
-    <div style={{ padding: "32px" }}>
-      {showErrorMessage && (
-        <CustomMessage typeMessage="error" message={errorMessage} />
-      )}
-      {showSuccessMessage && (
-        <CustomMessage typeMessage="success" message={successMessage} />
-      )}
+    <div style={{ padding: "22px" }}>
       <CustomTableFiltersAndSorting
         dataCustomTable={allMovementReportsData || []}
         onClickRechargeCustomTable={allMovementReportsDataRefetch}

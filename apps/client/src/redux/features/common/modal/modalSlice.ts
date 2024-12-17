@@ -1,4 +1,4 @@
-import { ItemKeys } from "@/components/layout/dashboard/sidebar/enums/item_names_and_keys.enums";
+import { ItemKeys } from "@/components/common/custom_dashboard_layout/enums/item_names_and_keys.enums";
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {

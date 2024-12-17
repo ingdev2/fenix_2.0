@@ -1,4 +1,9 @@
+"use client";
+
 import React, { useState } from "react";
+
+import { useDispatch } from "react-redux";
+import { setShowMessage } from "@/redux/features/common/message/messageStateSlice";
 
 import CustomButton from "@/components/common/custom_button/CustomButton";
 import CustomModalNoContent from "@/components/common/custom_modal_no_content/CustomModalNoContent";
@@ -14,23 +19,20 @@ import { Form, Input } from "antd";
 import TextArea from "antd/es/input/TextArea";
 
 import { useCreateMovementReportMutation } from "@/redux/apis/movement_report/movementReportApi";
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
+import CustomMessageState from "@/components/common/custom_messages/CustomMessageState";
 
 const CreateMovementReportButtonComponent: React.FC<{
   onNewRegister: () => void;
 }> = ({ onNewRegister }) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [time, setTime] = useState("");
-
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [nameLocalState, setNameLocalState] = useState("");
+  const [descriptionLocalState, setDescriptionLocalState] = useState("");
+  const [timeLocalState, setTimeLocalState] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [form] = Form.useForm();
+
+  const dispatch = useDispatch();
 
   const [
     createMovementReport,
@@ -39,32 +41,33 @@ const CreateMovementReportButtonComponent: React.FC<{
 
   const handleClickClean = () => {
     form.resetFields();
-    setName("");
-    setDescription("");
-    setTime("");
+    setNameLocalState("");
+    setDescriptionLocalState("");
+    setTimeLocalState("");
   };
 
   const handleClickSubmit = async () => {
     try {
       const response: any = await createMovementReport({
-        mov_r_name: name,
-        mov_r_description: description,
-        mov_r_time: Number(time),
+        mov_r_name: nameLocalState,
+        mov_r_description: descriptionLocalState,
+        mov_r_time: Number(timeLocalState),
       });
 
       if (response.data.status === 201) {
-        setShowSuccessMessage(true);
-        setSuccessMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "success", content: response.data.message })
+        );
         handleClickClean();
         setIsModalOpen(false);
         onNewRegister();
       } else {
-        setShowErrorMessage(true);
-        setErrorMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "error", content: response.data.message })
+        );
       }
     } catch (error) {
-      setShowErrorMessage(true);
-      setErrorMessage("ERROR INTERNO");
+      dispatch(setShowMessage({ type: "error", content: "ERROR INTERNO" }));
       console.error("Error al enviar el formulario", error);
     }
   };
@@ -97,12 +100,6 @@ const CreateMovementReportButtonComponent: React.FC<{
         handleCancelCustomModal={() => setIsModalOpen(false)}
         contentCustomModal={
           <>
-            {showErrorMessage && (
-              <CustomMessage typeMessage="error" message={errorMessage} />
-            )}
-            {showSuccessMessage && (
-              <CustomMessage typeMessage="success" message={successMessage} />
-            )}
             <Form
               form={form}
               id="create-movement-meport-form"
@@ -136,10 +133,12 @@ const CreateMovementReportButtonComponent: React.FC<{
                   id="input-name-movement-meport"
                   name="input-name-movement-meport"
                   className="input-name-movement-meport"
-                  onChange={(e) => setName(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setNameLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={name}
-                  style={{ width: "100%" }}
+                  value={nameLocalState}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 
@@ -167,9 +166,9 @@ const CreateMovementReportButtonComponent: React.FC<{
                   id="input-time-movement-meport"
                   name="input-time-movement-meport"
                   className="input-time-movement-meport"
-                  onChange={(e) => setTime(e.target.value)}
-                  placeholder="tiempo del movimiento"
-                  value={time}
+                  onChange={(e) => setTimeLocalState(e.target.value)}
+                  placeholder="1234..."
+                  value={timeLocalState}
                   style={{ width: "100%" }}
                 />
               </Form.Item>
@@ -183,10 +182,12 @@ const CreateMovementReportButtonComponent: React.FC<{
                   id="textarea-description-movement-meport"
                   name="textarea-description-movement-meport"
                   className="textarea-description-movement-meport"
-                  onChange={(e) => setDescription(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setDescriptionLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={description || ""}
-                  style={{ width: "100%" }}
+                  value={descriptionLocalState || ""}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 

@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 
+import { useDispatch } from "react-redux";
+import { setShowMessage } from "@/redux/features/common/message/messageStateSlice";
+
 import CustomButton from "@/components/common/custom_button/CustomButton";
 import CustomModalNoContent from "@/components/common/custom_modal_no_content/CustomModalNoContent";
 
@@ -13,56 +16,50 @@ import {
 import { Form, Input } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { useCreateSafetyBarrierMutation } from "@/redux/apis/safety_barrier/safetyBarrierApi";
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
-
-interface ButtonProps {
-  onNewRegister: () => void;
-}
+import CustomMessageState from "@/components/common/custom_messages/CustomMessageState";
 
 const CreateSafetyBarrierButtonComponent: React.FC<{
   onNewRegister: () => void;
 }> = ({ onNewRegister }) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [nameLocalState, setNameLocalState] = useState("");
+  const [descriptionLocalState, setDescriptionLocalState] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [form] = Form.useForm();
+
+  const dispatch = useDispatch();
 
   const [createSafetyBarrier, { isLoading: createdSafetyBarrierDataLoading }] =
     useCreateSafetyBarrierMutation();
 
   const handleClickClean = () => {
     form.resetFields();
-    setName("");
-    setDescription("");
+    setNameLocalState("");
+    setDescriptionLocalState("");
   };
 
   const handleClickSubmit = async () => {
     try {
       const response: any = await createSafetyBarrier({
-        saf_b_name: name,
-        saf_b_description: description,
+        saf_b_name: nameLocalState,
+        saf_b_description: descriptionLocalState,
       });
 
       if (response.data.status === 201) {
-        setShowSuccessMessage(true);
-        setSuccessMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "success", content: response.data.message })
+        );
         handleClickClean();
         setIsModalOpen(false);
         onNewRegister();
       } else {
-        setShowErrorMessage(true);
-        setErrorMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "error", content: response.data.message })
+        );
       }
     } catch (error) {
-      setShowErrorMessage(true);
-      setErrorMessage("ERROR INTERNO");
+      dispatch(setShowMessage({ type: "error", content: "ERROR INTERNO" }));
       console.error("Error al enviar el formulario", error);
     }
   };
@@ -95,12 +92,6 @@ const CreateSafetyBarrierButtonComponent: React.FC<{
         handleCancelCustomModal={() => setIsModalOpen(false)}
         contentCustomModal={
           <>
-            {showErrorMessage && (
-              <CustomMessage typeMessage="error" message={errorMessage} />
-            )}
-            {showSuccessMessage && (
-              <CustomMessage typeMessage="success" message={successMessage} />
-            )}
             <Form
               form={form}
               id="create-safety-barrier-form"
@@ -134,10 +125,12 @@ const CreateSafetyBarrierButtonComponent: React.FC<{
                   id="input-name-safety-barrier"
                   name="input-name-safety-barrier"
                   className="input-name-safety-barrier"
-                  onChange={(e) => setName(e.target.value.toUpperCase())}
-                  placeholder="Nombre de la barrera de seguridad"
-                  value={name}
-                  style={{ width: "100%" }}
+                  onChange={(e) =>
+                    setNameLocalState(e.target.value.toUpperCase())
+                  }
+                  placeholder="Escribe..."
+                  value={nameLocalState}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 
@@ -150,10 +143,12 @@ const CreateSafetyBarrierButtonComponent: React.FC<{
                   id="textarea-description-safety-barrier"
                   name="textarea-description-safety-barrier"
                   className="textarea-description-safety-barrier"
-                  onChange={(e) => setDescription(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setDescriptionLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={description || ""}
-                  style={{ width: "100%" }}
+                  value={descriptionLocalState || ""}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 

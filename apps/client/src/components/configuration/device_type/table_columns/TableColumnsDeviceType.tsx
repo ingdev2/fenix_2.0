@@ -2,7 +2,7 @@ import CustomDeletePopConfirm from "@/components/common/custom_pop_confirm/Custo
 import CustomTags from "@/components/common/custom_tags/CustomTags";
 import EditDeviceTypeButtonComponent from "../buttons/EditDeviceTypeButton";
 import { Flex, Space } from "antd";
-import { statusOptions } from "@/utils/enums/statusOptions.enum";
+import { StatusOptionsEnum } from "@/utils/enums/status_options.enum";
 
 const deviceTypeNameKey: keyof DeviceType = "dev_t_name";
 const deviceTypeDescriptionKey: keyof DeviceType = "dev_t_description";
@@ -50,12 +50,12 @@ const TableColumnsDeviceType = ({
         {item ? (
           <CustomTags
             colorCustom="green"
-            labelCustom={statusOptions.ENABLED}
+            labelCustom={StatusOptionsEnum.ENABLED}
           />
         ) : (
           <CustomTags
             colorCustom="red"
-            labelCustom={statusOptions.CANCELED}
+            labelCustom={StatusOptionsEnum.CANCELED}
           />
         )}
       </Flex>

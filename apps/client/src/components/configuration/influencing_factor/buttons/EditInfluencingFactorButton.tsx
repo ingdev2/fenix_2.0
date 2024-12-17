@@ -1,6 +1,10 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
+import { useDispatch } from "react-redux";
+import { setShowMessage } from "@/redux/features/common/message/messageStateSlice";
+
 import CustomButton from "@/components/common/custom_button/CustomButton";
 import CustomModalNoContent from "@/components/common/custom_modal_no_content/CustomModalNoContent";
 
@@ -16,17 +20,14 @@ const EditInfluencingFactorButtonComponent: React.FC<{
   dataRecord: InfluencingFactor;
   onRefectRegister: () => void;
 }> = ({ dataRecord, onRefectRegister }) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [nameLocalState, setNameLocalState] = useState("");
+  const [descriptionLocalState, setDescriptionLocalState] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [form] = Form.useForm();
+
+  const dispatch = useDispatch();
 
   const [
     updateInfluencingFactor,
@@ -35,8 +36,8 @@ const EditInfluencingFactorButtonComponent: React.FC<{
 
   useEffect(() => {
     if (isModalOpen) {
-      setName(dataRecord.inf_f_name);
-      setDescription(dataRecord.inf_f_description);
+      setNameLocalState(dataRecord.inf_f_name);
+      setDescriptionLocalState(dataRecord.inf_f_description);
 
       form.setFieldsValue({
         fieldName: dataRecord.inf_f_name,
@@ -62,8 +63,8 @@ const EditInfluencingFactorButtonComponent: React.FC<{
     };
 
     const currentData = {
-      dataName: name,
-      dataDescription: description,
+      dataName: nameLocalState,
+      dataDescription: descriptionLocalState,
     };
 
     return areDataDifferent(initialData, currentData);
@@ -74,22 +75,23 @@ const EditInfluencingFactorButtonComponent: React.FC<{
       const response: any = await updateInfluencingFactor({
         id: dataRecord.id,
         updateInfluencingFactor: {
-          inf_f_name: name,
-          inf_f_description: description,
+          inf_f_name: nameLocalState,
+          inf_f_description: descriptionLocalState,
         },
       });
       if (response.data.status === 200) {
-        setShowSuccessMessage(true);
-        setSuccessMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "success", content: response.data.message })
+        );
         setIsModalOpen(false);
         onRefectRegister();
       } else {
-        setShowErrorMessage(true);
-        setErrorMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "error", content: response.data.message })
+        );
       }
     } catch (error) {
-      setShowErrorMessage(true);
-      setErrorMessage("ERROR INTERNO");
+      dispatch(setShowMessage({ type: "error", content: "ERROR INTERNO" }));
       console.error("Error al enviar el formulario", error);
     }
   };
@@ -117,13 +119,6 @@ const EditInfluencingFactorButtonComponent: React.FC<{
         handleCancelCustomModal={() => setIsModalOpen(false)}
         contentCustomModal={
           <>
-            {showErrorMessage && (
-              <CustomMessage typeMessage="error" message={errorMessage} />
-            )}
-            {showSuccessMessage && (
-              <CustomMessage typeMessage="success" message={successMessage} />
-            )}
-
             <Form
               form={form}
               id="edit-influencing-factor-form"
@@ -155,10 +150,12 @@ const EditInfluencingFactorButtonComponent: React.FC<{
                   id="input-name-influencing-factor"
                   name="input-name-influencing-factor"
                   className="input-name-influencing-factor"
-                  onChange={(e) => setName(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setNameLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={name}
-                  style={{ width: "100%" }}
+                  value={nameLocalState}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 
@@ -171,10 +168,12 @@ const EditInfluencingFactorButtonComponent: React.FC<{
                   id="textarea-description-influencing-factor"
                   name="textarea-description-influencing-factor"
                   className="textarea-description-influencing-factor"
-                  onChange={(e) => setDescription(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setDescriptionLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={description || ""}
-                  style={{ width: "100%" }}
+                  value={descriptionLocalState || ""}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 

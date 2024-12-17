@@ -4,6 +4,10 @@ import React from "react";
 
 import { DatePicker } from "antd";
 import dayjs from "dayjs";
+import "dayjs/locale/es";
+import locale from "antd/es/date-picker/locale/es_ES";
+
+dayjs.locale("es");
 
 const CustomDatePicker: React.FC<{
   onChangeDateCustomDatePicker: (
@@ -30,6 +34,7 @@ const CustomDatePicker: React.FC<{
       size="small"
       allowClear
       onChange={onChangeDateCustomDatePicker}
+      locale={locale}
       popupStyle={{
         alignItems: "center",
         alignContent: "center",

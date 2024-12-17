@@ -5,10 +5,10 @@ const initialState: IUserSession = {
   id: "",
   name: "",
   user_id_type: 0,
-  id_number: "",
+  id_number: 0,
   principal_email: "",
   role: [],
-  permissions: [],
+  permission: [],
 };
 
 export const userSessionSlice = createSlice({
@@ -34,16 +34,16 @@ export const userSessionSlice = createSlice({
       state.role = action.payload;
     },
     setPermissionsUserSession: (state, action) => {
-      state.permissions = action.payload;
+      state.permission = action.payload;
     },
     setDefaultValuesUserSession: (state) => {
       state.id = "";
       state.name = "";
       state.user_id_type = 0;
-      state.id_number = "";
+      state.id_number = 0;
       state.principal_email = "";
       state.role = [];
-      state.permissions = [];
+      state.permission = [];
     },
   },
 });

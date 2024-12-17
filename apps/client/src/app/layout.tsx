@@ -7,6 +7,7 @@ import { ConfigProvider } from "antd";
 import themeConfig from "@/theme/themeConfig";
 import es_ES from "antd/locale/es_ES";
 import { Providers } from "@/redux/providers";
+import SessionAuthProvider from "@/context/SessionAuthProvider";
 import "./globals.css";
 
 const nunito = Nunito({ subsets: ["latin"], weight: ["400", "700"] });
@@ -26,9 +27,11 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
         <Providers>
           <main className="container-main-app">
             <AntdRegistry>
-              <ConfigProvider theme={themeConfig} locale={es_ES}>
-                {children}
-              </ConfigProvider>
+              <SessionAuthProvider>
+                <ConfigProvider theme={themeConfig} locale={es_ES}>
+                  {children}
+                </ConfigProvider>
+              </SessionAuthProvider>
             </AntdRegistry>
           </main>
         </Providers>

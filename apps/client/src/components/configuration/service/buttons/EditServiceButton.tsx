@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
+import { useDispatch } from "react-redux";
+import { setShowMessage } from "@/redux/features/common/message/messageStateSlice";
+
 import CustomButton from "@/components/common/custom_button/CustomButton";
 import CustomModalNoContent from "@/components/common/custom_modal_no_content/CustomModalNoContent";
 
@@ -10,28 +12,36 @@ import { BiEdit } from "react-icons/bi";
 import { Form, Input, Select } from "antd";
 import TextArea from "antd/es/input/TextArea";
 
-import { useUpdateServiceMutation } from "@/redux/apis/service/serviceApi";
+import {
+  useGetServiceByIdQuery,
+  useUpdateServiceMutation,
+} from "@/redux/apis/service/serviceApi";
 import { useGetAllUnitsQuery } from "@/redux/apis/unit/unitApi";
 
 const EditServiceButtonComponent: React.FC<{
   dataRecord: Service;
   onRefectRegister: () => void;
 }> = ({ dataRecord, onRefectRegister }) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [unitId, setUnitId] = useState(0);
-
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [nameLocalState, setNameLocalState] = useState("");
+  const [descriptionLocalState, setDescriptionLocalState] = useState("");
+  const [unitIdLocalState, setUnitIdLocalState] = useState(0);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [form] = Form.useForm();
 
+  const dispatch = useDispatch();
+
   const [updateService, { isLoading: updateServiceDataLoading }] =
     useUpdateServiceMutation();
+
+  const {
+    data: ServiceData,
+    isFetching: ServiceDataFetching,
+    isLoading: ServiceDataLoading,
+    error: ServiceDataError,
+    refetch: ServiceDataRefetch,
+  } = useGetServiceByIdQuery(dataRecord.id);
 
   const {
     data: allUnitsData,
@@ -42,18 +52,18 @@ const EditServiceButtonComponent: React.FC<{
   } = useGetAllUnitsQuery(null);
 
   useEffect(() => {
-    if (isModalOpen) {
-      setName(dataRecord.serv_name);
-      setDescription(dataRecord.serv_description);
-      setUnitId(dataRecord.serv_unit_id_fk);
+    if (isModalOpen && ServiceData) {
+      setNameLocalState(ServiceData.serv_name);
+      setDescriptionLocalState(ServiceData.serv_description);
+      setUnitIdLocalState(ServiceData.serv_unit_id_fk);
 
       form.setFieldsValue({
-        fieldName: dataRecord.serv_name,
-        fieldDescription: dataRecord.serv_description,
-        fieldUnitId: dataRecord.serv_unit_id_fk,
+        fieldName: ServiceData.serv_name,
+        fieldDescription: ServiceData.serv_description,
+        fieldUnitId: ServiceData.serv_unit_id_fk,
       });
     }
-  }, [isModalOpen, dataRecord]);
+  }, [isModalOpen, ServiceData]);
 
   const areDataDifferent = (
     initialData: {
@@ -76,15 +86,15 @@ const EditServiceButtonComponent: React.FC<{
 
   const hasChanges = () => {
     const initialData = {
-      dataName: dataRecord.serv_name,
-      dataDescription: dataRecord.serv_description,
-      dataUnitId: dataRecord.serv_unit_id_fk,
+      dataName: ServiceData?.serv_name || "",
+      dataDescription: ServiceData?.serv_description || "",
+      dataUnitId: ServiceData?.serv_unit_id_fk || 0,
     };
 
     const currentData = {
-      dataName: name,
-      dataDescription: description,
-      dataUnitId: unitId,
+      dataName: nameLocalState,
+      dataDescription: descriptionLocalState,
+      dataUnitId: unitIdLocalState,
     };
 
     return areDataDifferent(initialData, currentData);
@@ -95,23 +105,25 @@ const EditServiceButtonComponent: React.FC<{
       const response: any = await updateService({
         id: dataRecord.id,
         updateService: {
-          serv_name: name,
-          serv_description: description,
-          serv_unit_id_fk: unitId,
+          serv_name: nameLocalState,
+          serv_description: descriptionLocalState,
+          serv_unit_id_fk: unitIdLocalState,
         },
       });
       if (response.data.status === 200) {
-        setShowSuccessMessage(true);
-        setSuccessMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "success", content: response.data.message })
+        );
         setIsModalOpen(false);
         onRefectRegister();
+        ServiceDataRefetch();
       } else {
-        setShowErrorMessage(true);
-        setErrorMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "error", content: response.data.message })
+        );
       }
     } catch (error) {
-      setShowErrorMessage(true);
-      setErrorMessage("ERROR INTERNO");
+      dispatch(setShowMessage({ type: "error", content: "ERROR INTERNO" }));
       console.error("Error al enviar el formulario", error);
     }
   };
@@ -139,13 +151,6 @@ const EditServiceButtonComponent: React.FC<{
         handleCancelCustomModal={() => setIsModalOpen(false)}
         contentCustomModal={
           <>
-            {showErrorMessage && (
-              <CustomMessage typeMessage="error" message={errorMessage} />
-            )}
-            {showSuccessMessage && (
-              <CustomMessage typeMessage="success" message={successMessage} />
-            )}
-
             <Form
               form={form}
               id="edit-service-form"
@@ -175,8 +180,8 @@ const EditServiceButtonComponent: React.FC<{
                   className="select-unit-id"
                   showSearch
                   placeholder={"Seleccione una opción"}
-                  onChange={(value) => setUnitId(value)}
-                  value={unitId}
+                  onChange={(value) => setUnitIdLocalState(value)}
+                  value={unitIdLocalState}
                   loading={allUnitsDataLoading || allUnitsDataFetching}
                   allowClear
                   filterOption={(input, option) => {
@@ -223,10 +228,12 @@ const EditServiceButtonComponent: React.FC<{
                   id="input-name-service"
                   name="input-name-service"
                   className="input-name-service"
-                  onChange={(e) => setName(e.target.value.toUpperCase())}
-                  placeholder="Nombre del origen"
-                  value={name}
-                  style={{ width: "100%" }}
+                  onChange={(e) =>
+                    setNameLocalState(e.target.value.toUpperCase())
+                  }
+                  placeholder="Escribe..."
+                  value={nameLocalState}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 
@@ -240,10 +247,12 @@ const EditServiceButtonComponent: React.FC<{
                   id="textarea-description-service"
                   name="textarea-description-service"
                   className="textarea-description-service"
-                  onChange={(e) => setDescription(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setDescriptionLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={description || ""}
-                  style={{ width: "100%" }}
+                  value={descriptionLocalState || ""}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 

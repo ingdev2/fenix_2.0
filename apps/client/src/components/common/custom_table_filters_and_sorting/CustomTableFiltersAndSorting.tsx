@@ -19,6 +19,7 @@ import type {
 } from "antd";
 import CustomButton from "../custom_button/CustomButton";
 import { FaBroom, FaFilter, FaRegWindowClose, FaSearch } from "react-icons/fa";
+import { LuFilterX } from "react-icons/lu";
 
 type OnChange = NonNullable<TableProps<CaseReportValidate>["onChange"]>;
 type Filters = Parameters<OnChange>[1];
@@ -201,10 +202,17 @@ const CustomTableFiltersAndSorting: React.FC<{
     onFilter: (value, record) => {
       const recordValue = record[dataIndex];
       if (recordValue !== null && recordValue !== undefined) {
-        return recordValue
+        const normalizedValue = (value as string)
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
+        const normalizedRecordValue = recordValue
           .toString()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
+
+        return normalizedRecordValue
           .toUpperCase()
-          .includes((value as string).toUpperCase());
+          .includes(normalizedValue.toUpperCase());
       }
       return false;
     },
@@ -246,135 +254,150 @@ const CustomTableFiltersAndSorting: React.FC<{
   });
 
   return (
-    <>
-      <Row justify="center">
-        <Col span={24} style={{ maxWidth: "1000px", width: "100%" }}>
-          <Row style={{ marginBottom: "16px", marginTop: "-20px" }}>
-            <Col
-              span={24}
-              style={{
-                display: "flex",
-                justifyContent: "right",
-                alignItems: "center",
+    <Row
+      justify="center"
+      style={{
+        width: "450px",
+        minWidth: "100%",
+        justifyContent: "center",
+        alignContent: "center",
+        alignItems: "center",
+        padding: "0px",
+        marginBlock: "13px",
+        marginInline: "0px",
+      }}
+    >
+      <Col span={24} style={{ width: "100%" }}>
+        <Row style={{ marginBottom: "16px", marginTop: "-20px" }}>
+          <Col
+            span={24}
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <CustomButton
+              classNameCustomButton="recharge-button"
+              idCustomButton="recharge-button"
+              titleCustomButton="Recargar"
+              typeCustomButton="primary"
+              htmlTypeCustomButton="button"
+              iconCustomButton={
+                !loading ? <ReloadOutlined /> : <LoadingOutlined />
+              }
+              onClickCustomButton={onClickRechargeCustomTable}
+              styleCustomButton={{
+                background: "#002140",
+                color: "#ffffff",
+                borderRadius: "16px",
               }}
-            >
-              <CustomButton
-                classNameCustomButton="recharge-button"
-                idCustomButton="recharge-button"
-                titleCustomButton="Recargar"
-                typeCustomButton="primary"
-                htmlTypeCustomButton="button"
-                iconCustomButton={
-                  !loading ? <ReloadOutlined /> : <LoadingOutlined />
-                }
-                onClickCustomButton={onClickRechargeCustomTable}
-                styleCustomButton={{
-                  background: "#002140",
-                  color: "#ffffff",
-                  borderRadius: "16px",
-                }}
-                iconPositionCustomButton="end"
-                sizeCustomButton="small"
-                disabledCustomButton={loading}
-              />
-              <CustomButton
-                classNameCustomButton="remove-filters-button"
-                idCustomButton="remove-filters-button"
-                titleCustomButton="Quitar filtros"
-                typeCustomButton="primary"
-                htmlTypeCustomButton="button"
-                iconCustomButton={<FilterOutlined />}
-                onClickCustomButton={() => {
-                  clearFilters();
-                }}
-                styleCustomButton={{
-                  marginLeft: "16px",
-                  background: "#6C757D",
-                  color: "#ffffff",
-                  borderRadius: "16px",
-                }}
-                iconPositionCustomButton="end"
-                sizeCustomButton="small"
-              />
-              <CustomButton
-                classNameCustomButton="remove-order-button"
-                idCustomButton="remove-order-button"
-                titleCustomButton="Quitar orden"
-                typeCustomButton="primary"
-                htmlTypeCustomButton="button"
-                iconCustomButton={<SortAscendingOutlined />}
-                onClickCustomButton={() => {
-                  clearSorting();
-                }}
-                styleCustomButton={{
-                  marginLeft: "16px",
-                  background: "#868E96",
-                  color: "#ffffff",
-                  borderRadius: "16px",
-                }}
-                iconPositionCustomButton="end"
-                sizeCustomButton="small"
-              />
-              <CustomButton
-                classNameCustomButton="clean-all-button"
-                idCustomButton="clean-all-button"
-                titleCustomButton="Limpiar todo"
-                typeCustomButton="primary"
-                htmlTypeCustomButton="button"
-                iconCustomButton={<CloseCircleOutlined />}
-                onClickCustomButton={() => {
-                  clearAll();
-                }}
-                styleCustomButton={{
-                  marginLeft: "16px",
-                  background: "#FF7F50",
-                  color: "#ffffff",
-                  borderRadius: "16px",
-                }}
-                iconPositionCustomButton="end"
-                sizeCustomButton="small"
-              />
-              {customButton}
-            </Col>
-            {customTag}
-          </Row>
-          <Table
-            columns={columns}
-            dataSource={dataCustomTable}
-            onChange={handleChange}
-            bordered
-            rowKey={(record) => record.id}
-            size={"small"}
-            loading={loading}
-            locale={{
-              emptyText: loading ? (
-                <Skeleton active />
-              ) : (
-                <Empty description="No hay nada para mostrar... " />
-              ),
-            }}
-            pagination={{
-              size: "small",
-              position: ["bottomCenter"],
-              showQuickJumper: true,
-              style: {
-                margin: "0px",
-                paddingTop: "13px",
-              },
-              showTotal: (total) => `Total ${total} registros`,
-              locale: {
-                jump_to: "Ir a",
-                page: "Página",
-                items_per_page: "/ Página",
-              },
-            }}
-            scroll={{
-              x: 900,
-            }}
-          />
-        </Col>
-      </Row>
-    </>
+              iconPositionCustomButton="end"
+              sizeCustomButton="small"
+              disabledCustomButton={loading}
+            />
+            <CustomButton
+              classNameCustomButton="remove-filters-button"
+              idCustomButton="remove-filters-button"
+              titleCustomButton="Quitar filtros"
+              typeCustomButton="primary"
+              htmlTypeCustomButton="button"
+              iconCustomButton={<LuFilterX />}
+              onClickCustomButton={() => {
+                clearFilters();
+              }}
+              styleCustomButton={{
+                marginLeft: "16px",
+                background: "#6C757D",
+                color: "#ffffff",
+                borderRadius: "16px",
+              }}
+              iconPositionCustomButton="end"
+              sizeCustomButton="small"
+            />
+            <CustomButton
+              classNameCustomButton="remove-order-button"
+              idCustomButton="remove-order-button"
+              titleCustomButton="Quitar orden"
+              typeCustomButton="primary"
+              htmlTypeCustomButton="button"
+              iconCustomButton={<SortAscendingOutlined />}
+              onClickCustomButton={() => {
+                clearSorting();
+              }}
+              styleCustomButton={{
+                marginLeft: "16px",
+                background: "#868E96",
+                color: "#ffffff",
+                borderRadius: "16px",
+              }}
+              iconPositionCustomButton="end"
+              sizeCustomButton="small"
+            />
+            <CustomButton
+              classNameCustomButton="clean-all-button"
+              idCustomButton="clean-all-button"
+              titleCustomButton="Limpiar todo"
+              typeCustomButton="primary"
+              htmlTypeCustomButton="button"
+              iconCustomButton={<CloseCircleOutlined />}
+              onClickCustomButton={() => {
+                clearAll();
+              }}
+              styleCustomButton={{
+                marginLeft: "16px",
+                background: "#FF7F50",
+                color: "#ffffff",
+                borderRadius: "16px",
+              }}
+              iconPositionCustomButton="end"
+              sizeCustomButton="small"
+            />
+            {customButton}
+          </Col>
+          {customTag}
+        </Row>
+        <Table
+          columns={columns}
+          dataSource={dataCustomTable}
+          onChange={handleChange}
+          bordered
+          rowKey={(record) => record.id}
+          size={"small"}
+          loading={loading}
+          locale={{
+            emptyText: loading ? (
+              <Skeleton active />
+            ) : (
+              <Empty description="No hay nada para mostrar... " />
+            ),
+            filterReset: "Resetear",
+            filterConfirm: "Aplicar",
+            triggerAsc: "Haga clic para ordenar en orden ascendente",
+            triggerDesc: "Haga clic para ordenar en orden descendente",
+            cancelSort: "Haga clic para cancelar",
+          }}
+          pagination={{
+            size: "small",
+            position: ["bottomCenter"],
+            showQuickJumper: true,
+            style: {
+              margin: "0px",
+              paddingTop: "13px",
+            },
+            showTotal: (total) => `Total ${total} registro(s)`,
+            locale: {
+              jump_to: "Ir a",
+              page: "Página",
+              items_per_page: "/ Página",
+            },
+          }}
+          scroll={{
+            x: 900,
+          }}
+        />
+      </Col>
+    </Row>
   );
 };
 

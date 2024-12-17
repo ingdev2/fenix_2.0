@@ -2,12 +2,14 @@ import CustomDeletePopConfirm from "@/components/common/custom_pop_confirm/Custo
 import { Button, Flex, Space } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import CustomTags from "@/components/common/custom_tags/CustomTags";
-import { statusOptions } from "@/utils/enums/statusOptions.enum";
+import { StatusOptionsEnum } from "@/utils/enums/status_options.enum";
 import EditCharacterizationCaseButtonComponent from "../buttons/EditCharacterizationCaseButton";
 
 const characterizationCaseNameKey: keyof CharacterizationCase = "cha_c_name";
-const characterizationCaseDescriptionKey: keyof CharacterizationCase = "cha_c_description"
-const characterizationCaseStatusKey: keyof CharacterizationCase = "cha_c_status"
+const characterizationCaseDescriptionKey: keyof CharacterizationCase =
+  "cha_c_description";
+const characterizationCaseStatusKey: keyof CharacterizationCase =
+  "cha_c_status";
 
 interface TableColumnProps {
   handleClickDelete: (recordId: number) => void;
@@ -53,12 +55,12 @@ const TableColumnsCharacterizationCase = ({
         {item ? (
           <CustomTags
             colorCustom="green"
-            labelCustom={statusOptions.ENABLED}
+            labelCustom={StatusOptionsEnum.ENABLED}
           />
         ) : (
           <CustomTags
             colorCustom="red"
-            labelCustom={statusOptions.CANCELED}
+            labelCustom={StatusOptionsEnum.CANCELED}
           />
         )}
       </Flex>

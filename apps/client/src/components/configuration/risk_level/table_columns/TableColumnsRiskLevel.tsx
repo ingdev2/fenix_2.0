@@ -1,13 +1,12 @@
 import CustomDeletePopConfirm from "@/components/common/custom_pop_confirm/CustomDeletePopConfirm";
 import { Flex, Space } from "antd";
 import CustomTags from "@/components/common/custom_tags/CustomTags";
-import { statusOptions } from "@/utils/enums/statusOptions.enum";
+import { StatusOptionsEnum } from "@/utils/enums/status_options.enum";
 import EditRiskLevelButtonComponent from "../buttons/EditRiskLevelButton";
 
 const riskLevelNameKey: keyof RiskLevel = "ris_l_name";
 const riskLevelDescriptionKey: keyof RiskLevel = "ris_l_description";
 const riskLevelStatusKey: keyof RiskLevel = "ris_l_status";
-
 
 interface TableColumnProps {
   handleClickDelete: (recordId: number) => void;
@@ -53,12 +52,12 @@ const TableColumnsRiskLevel = ({
         {item ? (
           <CustomTags
             colorCustom="green"
-            labelCustom={statusOptions.ENABLED}
+            labelCustom={StatusOptionsEnum.ENABLED}
           />
         ) : (
           <CustomTags
             colorCustom="red"
-            labelCustom={statusOptions.CANCELED}
+            labelCustom={StatusOptionsEnum.CANCELED}
           />
         )}
       </Flex>
@@ -73,7 +72,7 @@ const TableColumnsRiskLevel = ({
     fixed: "right" as "right",
     render: (_: any, record: RiskLevel) => (
       <Space size={"small"}>
-        <EditRiskLevelButtonComponent 
+        <EditRiskLevelButtonComponent
           dataRecord={record}
           onRefectRegister={onRefetchRegister}
         />

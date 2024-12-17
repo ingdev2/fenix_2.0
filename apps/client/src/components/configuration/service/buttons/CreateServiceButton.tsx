@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 
+import { useDispatch } from "react-redux";
+import { setShowMessage } from "@/redux/features/common/message/messageStateSlice";
+
 import CustomButton from "@/components/common/custom_button/CustomButton";
 import CustomModalNoContent from "@/components/common/custom_modal_no_content/CustomModalNoContent";
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
 
 import {
   PlusOutlined,
@@ -20,18 +22,15 @@ import { useGetAllUnitsQuery } from "@/redux/apis/unit/unitApi";
 const CreateServiceButtonComponent: React.FC<{ onNewRegister: () => void }> = ({
   onNewRegister,
 }) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [unitId, setUnitId] = useState(0);
-
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [nameLocalState, setNameLocalState] = useState("");
+  const [descriptionLocalState, setDescriptionLocalState] = useState("");
+  const [unitIdLocalState, setUnitIdLocalState] = useState(0);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [form] = Form.useForm();
+
+  const dispatch = useDispatch();
 
   const [createService, { isLoading: createdServiceDataLoading }] =
     useCreateServiceMutation();
@@ -46,32 +45,33 @@ const CreateServiceButtonComponent: React.FC<{ onNewRegister: () => void }> = ({
 
   const handleClickClean = () => {
     form.resetFields();
-    setName("");
-    setDescription("");
-    setUnitId(0);
+    setNameLocalState("");
+    setDescriptionLocalState("");
+    setUnitIdLocalState(0);
   };
 
   const handleClickSubmit = async () => {
     try {
       const response: any = await createService({
-        serv_name: name,
-        serv_description: description,
-        serv_unit_id_fk: unitId,
+        serv_name: nameLocalState,
+        serv_description: descriptionLocalState,
+        serv_unit_id_fk: unitIdLocalState,
       });
 
       if (response.data.status === 201) {
-        setShowSuccessMessage(true);
-        setSuccessMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "success", content: response.data.message })
+        );
         handleClickClean();
         setIsModalOpen(false);
         onNewRegister();
       } else {
-        setShowErrorMessage(true);
-        setErrorMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "error", content: response.data.message })
+        );
       }
     } catch (error) {
-      setShowErrorMessage(true);
-      setErrorMessage("ERROR INTERNO");
+      dispatch(setShowMessage({ type: "error", content: "ERROR INTERNO" }));
       console.error("Error al enviar el formulario", error);
     }
   };
@@ -104,12 +104,6 @@ const CreateServiceButtonComponent: React.FC<{ onNewRegister: () => void }> = ({
         handleCancelCustomModal={() => setIsModalOpen(false)}
         contentCustomModal={
           <>
-            {showErrorMessage && (
-              <CustomMessage typeMessage="error" message={errorMessage} />
-            )}
-            {showSuccessMessage && (
-              <CustomMessage typeMessage="success" message={successMessage} />
-            )}
             <Form
               form={form}
               id="create-service-form"
@@ -141,8 +135,8 @@ const CreateServiceButtonComponent: React.FC<{ onNewRegister: () => void }> = ({
                   className="select-unit-id"
                   showSearch
                   placeholder={"Seleccione una opción"}
-                  onChange={(value) => setUnitId(value)}
-                  value={unitId}
+                  onChange={(value) => setUnitIdLocalState(value)}
+                  value={unitIdLocalState}
                   loading={allUnitsDataLoading || allUnitsDataFetching}
                   allowClear
                   filterOption={(input, option) => {
@@ -185,10 +179,12 @@ const CreateServiceButtonComponent: React.FC<{ onNewRegister: () => void }> = ({
                   id="input-name-service"
                   name="input-name-service"
                   className="input-name-service"
-                  onChange={(e) => setName(e.target.value.toUpperCase())}
-                  placeholder="Nombre del servicio"
-                  value={name}
-                  style={{ width: "100%" }}
+                  onChange={(e) =>
+                    setNameLocalState(e.target.value.toUpperCase())
+                  }
+                  placeholder="Escribe..."
+                  value={nameLocalState}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 
@@ -201,10 +197,12 @@ const CreateServiceButtonComponent: React.FC<{ onNewRegister: () => void }> = ({
                   id="textarea-description-service"
                   name="textarea-description-service"
                   className="textarea-description-service"
-                  onChange={(e) => setDescription(e.target.value.toUpperCase())}
-                  placeholder="Descripción del servicio"
-                  value={description || ""}
-                  style={{ width: "100%" }}
+                  onChange={(e) =>
+                    setDescriptionLocalState(e.target.value.toUpperCase())
+                  }
+                  placeholder="Escribe..."
+                  value={descriptionLocalState || ""}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 

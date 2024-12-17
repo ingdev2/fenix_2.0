@@ -1,12 +1,26 @@
-import React from 'react'
-import MonitoringContent from '@/components/monitoring/monitoringContent'
+import React from "react";
+
+import CustomDashboardLayout from "@/components/common/custom_dashboard_layout/CustomDashboardLayout";
+import MonitoringContent from "@/components/monitoring/monitoringContent";
 
 const MonitoringPage: React.FC = () => {
   return (
     <div className="homepage-monitoring">
-      <MonitoringContent />
+      <CustomDashboardLayout
+        customLayoutContent={
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              flexFlow: "column wrap",
+            }}
+          >
+            <MonitoringContent />
+          </div>
+        }
+      />
     </div>
-  )
-}
+  );
+};
 
-export default MonitoringPage
+export default MonitoringPage;

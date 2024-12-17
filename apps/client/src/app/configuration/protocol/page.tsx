@@ -4,20 +4,21 @@ import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import { useSession } from "next-auth/react";
 
+import CustomDashboardLayout from "@/components/common/custom_dashboard_layout/CustomDashboardLayout";
 import ProtocolContent from "@/components/configuration/protocol/ProtocolContent";
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
+
+import useAuthValidation from "@/utils/hooks/use_auth_validation";
+import { useRoleValidation } from "@/utils/hooks/use_role_validation";
 
 import { setIdNumberUserSession } from "@/redux/features/user_session/userSessionSlice";
-import { RolesEnum } from "@/utils/enums/roles/roles.enum";
 
-import useAuthValidation from "@/utils/hooks/useAuthValidation";
-import { useRoleValidation } from "@/utils/hooks/useRoleValidation";
+import { RolesEnum } from "@/utils/enums/roles/roles.enum";
 
 const ProtocolParametrizationPage = () => {
   const { data: session, status } = useSession();
   const dispatch = useAppDispatch();
 
-  const { showAuthErrorMessage, authErrorMessage } = useAuthValidation();
+  useAuthValidation();
 
   const allowedRoles = [RolesEnum.COLLABORATOR];
   useRoleValidation(allowedRoles);
@@ -46,13 +47,19 @@ const ProtocolParametrizationPage = () => {
 
   return (
     <div className="homepage-protocol">
-      {showAuthErrorMessage && (
-        <CustomMessage
-          typeMessage="error"
-          message={authErrorMessage || "¡Usuario no autenticado!"}
-        />
-      )}
-      <ProtocolContent />
+      <CustomDashboardLayout
+        customLayoutContent={
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              flexFlow: "column wrap",
+            }}
+          >
+            <ProtocolContent />
+          </div>
+        }
+      />
     </div>
   );
 };

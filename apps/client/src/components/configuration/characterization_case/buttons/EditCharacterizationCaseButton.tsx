@@ -1,6 +1,10 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
+import { useDispatch } from "react-redux";
+import { setShowMessage } from "@/redux/features/common/message/messageStateSlice";
+
 import CustomButton from "@/components/common/custom_button/CustomButton";
 import CustomModalNoContent from "@/components/common/custom_modal_no_content/CustomModalNoContent";
 
@@ -16,17 +20,14 @@ const EditCharacterizationCaseButtonComponent: React.FC<{
   dataRecord: CharacterizationCase;
   onRefectRegister: () => void;
 }> = ({ dataRecord, onRefectRegister }) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [nameLocalState, setNameLocalState] = useState("");
+  const [descriptionLocalState, setDescriptionLocalState] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [form] = Form.useForm();
+
+  const dispatch = useDispatch();
 
   const [
     updateCharacterizationCase,
@@ -35,8 +36,8 @@ const EditCharacterizationCaseButtonComponent: React.FC<{
 
   useEffect(() => {
     if (isModalOpen) {
-      setName(dataRecord.cha_c_name);
-      setDescription(dataRecord.cha_c_description);
+      setNameLocalState(dataRecord.cha_c_name);
+      setDescriptionLocalState(dataRecord.cha_c_description);
 
       form.setFieldsValue({
         fieldName: dataRecord.cha_c_name,
@@ -62,8 +63,8 @@ const EditCharacterizationCaseButtonComponent: React.FC<{
     };
 
     const currentData = {
-      dataName: name,
-      dataDescription: description,
+      dataName: nameLocalState,
+      dataDescription: descriptionLocalState,
     };
 
     return areDataDifferent(initialData, currentData);
@@ -74,22 +75,23 @@ const EditCharacterizationCaseButtonComponent: React.FC<{
       const response: any = await updateCharacterizationCase({
         id: dataRecord.id,
         updateCharacterizationCase: {
-          cha_c_name: name,
-          cha_c_description: description,
+          cha_c_name: nameLocalState,
+          cha_c_description: descriptionLocalState,
         },
       });
       if (response.data.status === 200) {
-        setShowSuccessMessage(true);
-        setSuccessMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "success", content: response.data.message })
+        );
         setIsModalOpen(false);
         onRefectRegister();
       } else {
-        setShowErrorMessage(true);
-        setErrorMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "error", content: response.data.message })
+        );
       }
     } catch (error) {
-      setShowErrorMessage(true);
-      setErrorMessage("ERROR INTERNO");
+      dispatch(setShowMessage({ type: "error", content: "ERROR INTERNO" }));
       console.error("Error al enviar el formulario", error);
     }
   };
@@ -117,13 +119,6 @@ const EditCharacterizationCaseButtonComponent: React.FC<{
         handleCancelCustomModal={() => setIsModalOpen(false)}
         contentCustomModal={
           <>
-            {showErrorMessage && (
-              <CustomMessage typeMessage="error" message={errorMessage} />
-            )}
-            {showSuccessMessage && (
-              <CustomMessage typeMessage="success" message={successMessage} />
-            )}
-
             <Form
               form={form}
               id="edit-characterization case-form"
@@ -155,10 +150,12 @@ const EditCharacterizationCaseButtonComponent: React.FC<{
                   id="input-name-characterization case"
                   name="input-name-characterization case"
                   className="input-name-characterization case"
-                  onChange={(e) => setName(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setNameLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={name}
-                  style={{ width: "100%" }}
+                  value={nameLocalState}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 
@@ -171,10 +168,12 @@ const EditCharacterizationCaseButtonComponent: React.FC<{
                   id="textarea-description-characterization case"
                   name="textarea-description-characterization case"
                   className="textarea-description-characterization case"
-                  onChange={(e) => setDescription(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setDescriptionLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={description || ""}
-                  style={{ width: "100%" }}
+                  value={descriptionLocalState || ""}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 

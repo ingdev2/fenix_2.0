@@ -1,123 +1,165 @@
-import { getColorByCaseType } from "@/utils/enums/caseTypeColor.enum";
-import { Button, Space, Tag } from "antd";
+import { Button, Space } from "antd";
+
 import { EyeOutlined } from "@ant-design/icons";
 
+import { customTagCaseTypes } from "@/components/common/custom_tags/CustomTagsCaseType";
+import { FaAngleDoubleUp } from "react-icons/fa";
+
+const eventNameKey: keyof CaseReportValidate = "val_cr_event_id_fk";
+const CaseTypeNameKey: keyof CaseReportValidate = "val_cr_casetype_id_fk";
+const PriorityNameKey: keyof CaseReportValidate = "val_cr_priority_id_fk";
+const MovementReportNameKey: keyof CaseReportValidate =
+  "val_cr_statusmovement_id_fk";
+const Synergy: keyof CaseReportValidate = "synergy";
+
 interface TableColumnProps {
-  // handleClickSeeMore: (Record: ISummaryReportInterfaceItem) => void;
-  //   summaryReports: ISummaryReportInterfaceItem[] | undefined;
+  caseTypeData: CaseType[] | undefined;
+  eventData: Events[] | undefined;
+  priorityData: Priority[] | undefined;
+  movementReportData: MovementReport[] | undefined;
+  handleToRedirectToReportSummary: any;
 }
 
-const TableColumnsSummaryReports = (): 
-//   {
-//       handleClickSeeMore,
-//   }
-TableColumnProps => [
+const TableColumnsSummaryReports = ({
+  caseTypeData,
+  eventData,
+  priorityData,
+  movementReportData,
+  handleToRedirectToReportSummary,
+}: TableColumnProps) => [
+  {
+    title: "Estado",
+    dataIndex: MovementReportNameKey,
+    key: MovementReportNameKey,
+    width: 200,
+    filters:
+      movementReportData?.map((type) => ({
+        value: type.mov_r_name,
+        text: type.mov_r_name,
+      })) || [],
+    onFilter: (value: any, record: any) => {
+      return String(record.val_cr_statusmovement_id_fk) === String(value);
+    },
+    ellipsis: true,
+    render: (type: string) => type,
+  },
   {
     title: "Código",
     dataIndex: "val_cr_filingnumber",
     key: "val_cr_filingnumber",
     width: 100,
-    // sorter: (a: ISummaryReportInterfaceItem, b: ISummaryReportInterfaceItem) =>
-    //   a.val_cr_filingnumber.length - b.val_cr_filingnumber.length,
+    ellipsis: true,
     searchable: true,
+    sorter: (a: CaseReportValidate, b: CaseReportValidate) =>
+      a.val_cr_filingnumber.length - b.val_cr_filingnumber.length,
   },
   {
     title: "Fecha",
-    dataIndex: "createdAt",
-    key: "createdAt",
-    width: 90,
+    dataIndex: "val_cr_dateofcase",
+    key: "val_cr_dateofcase",
+    width: 100,
+    ellipsis: true,
+    searchable: true,
   },
   {
     title: "Documento",
     dataIndex: "val_cr_documentpatient",
     key: "val_cr_documentpatient",
     width: 120,
-    // sorter: (
-    //   a: ISummaryReportInterfaceItem,
-    //   b: ISummaryReportInterfaceItem
-    // ) => {
-    //   const aValue = a.val_cr_documentpatient || "";
-    //   const bValue = b.val_cr_documentpatient || "";
-    //   return aValue.length - bValue.length;
-    // },
+    ellipsis: true,
     searchable: true,
+    sorter: (a: CaseReportValidate, b: CaseReportValidate) =>
+      (a.val_cr_documentpatient ?? "").length -
+      (b.val_cr_documentpatient ?? "").length,
   },
   {
     title: "Tipo de caso",
-    dataIndex: "caseType",
-    key: "caseType",
-    width: 200,
-    // filters: Array.from(
-    //   new Set(summaryReports.map((report) => report.caseType?.cas_t_name))
-    // ).map((name) => ({
-    //   text: name || "No disponible",
-    //   value: name || "No disponible",
-    // })),
-    // onFilter: (value: any, record: any) =>
-    //   record.caseType?.cas_t_name.includes(value as string),
-    // sorter: (a: ISummaryReportInterfaceItem, b: ISummaryReportInterfaceItem) =>
-    //   a.caseType.cas_t_name.length - b.caseType.cas_t_name.length,
-    render: (item: any) => (
-      <Tag
-        style={{ color: "#000" }}
-        color={getColorByCaseType(item?.cas_t_name?.toUpperCase())}
-      >
-        {item?.cas_t_name || "No disponible"}
-      </Tag>
-    ),
+    dataIndex: CaseTypeNameKey,
+    key: CaseTypeNameKey,
+    width: 180,
+    filters:
+      caseTypeData?.map((type) => ({
+        value: type.cas_t_name,
+        text: type.cas_t_name,
+      })) || [],
+    onFilter: (value: any, record: any) => {
+      return String(record.val_cr_casetype_id_fk) === String(value);
+    },
+    ellipsis: true,
+    render: (type: string) => customTagCaseTypes(type),
   },
   {
     title: "Suceso",
-    dataIndex: "event",
-    key: "event",
-    // filters: Array.from(
-    //   new Set(summaryReports.map((report) => report.event?.eve_name))
-    // ).map((name) => ({
-    //   text: name || "No disponible",
-    //   value: name || "No disponible",
-    // })),
-    // onFilter: (value: any, record: any) =>
-    //   record.event?.eve_name.includes(value as string),
-    // sorter: (a: ISummaryReportInterfaceItem, b: ISummaryReportInterfaceItem) =>
-    //   a.event.eve_name.length - b.event.eve_name.length,
-    render: (item: any) => <p>{item?.eve_name || "No disponible"}</p>,
+    dataIndex: eventNameKey,
+    key: eventNameKey,
+    width: 240,
+    // filters:
+    //   eventData?.map((type) => ({
+    //     value: type.eve_name,
+    //     text: type.eve_name,
+    //   })) || [],
+    // onFilter: (value: any, record: any) => {
+    //   return String(record.val_cr_event_id_fk) === String(value);
+    // },
+    ellipsis: true,
+    render: (type: string) => type,
   },
   {
     title: "Prioridad",
-    dataIndex: "priority",
-    key: "priority",
+    dataIndex: PriorityNameKey,
+    key: PriorityNameKey,
     width: 100,
-    // filters: Array.from(
-    //   new Set(summaryReports.map((report) => report.priority?.prior_name))
-    // ).map((name) => ({
-    //   text: name || "No disponible",
-    //   value: name || "No disponible",
-    // })),
-    // onFilter: (value: any, record: any) =>
-    //   record.priority?.prior_name.includes(value as string),
-    // sorter: (a: ISummaryReportInterfaceItem, b: ISummaryReportInterfaceItem) =>
-    //   a.priority.prior_name.length - b.priority.prior_name.length,
-    render: (item: any) => <p>{item?.prior_name || "No disponible"}</p>,
-  },
-    {
-      title: "Acciones",
-      dataIndex: "actions",
-      key: "actions",
-      fixed: "right",
-      width: 70,
-      render: (_: any, record: any) => (
-        <Space size="small">
-          <Button
-            size="small"
-            type="primary"
-            title="Detalles"
-            shape="circle"
-            icon={<EyeOutlined />}
-            style={{ background: "#6F42C1", color: "#ffffff" }}
-          />
-        </Space>
-      ),
+    filters:
+      priorityData?.map((type) => ({
+        value: type.prior_name,
+        text: type.prior_name,
+      })) || [],
+    onFilter: (value: any, record: any) => {
+      return String(record.val_cr_priority_id_fk) === String(value);
     },
+    ellipsis: true,
+    render: (type: string) => type,
+  },
+  {
+    title: "Sinergia",
+    dataIndex: Synergy,
+    key: Synergy,
+    width: 70,
+    ellipsis: true,
+    render: (synergy: Synergy[]) =>
+      synergy && synergy.length > 0 ? (
+        <div style={{ textAlign: "center" }}>
+          <FaAngleDoubleUp
+            style={{ color: "green", fontSize: "20px" }}
+            title="En sinergia"
+          />
+        </div>
+      ) : null,
+  },
+  {
+    title: "Acciones",
+    dataIndex: "actions",
+    key: "actions",
+    fixed: "right" as "right",
+    ellipsis: true,
+    width: 70,
+    render: (_: any, record: CaseReportValidate) => (
+      <Space size="small">
+        <Button
+          size="small"
+          type="primary"
+          title="Detalles"
+          shape="circle"
+          icon={<EyeOutlined />}
+          style={{
+            background: "#6F42C1",
+            color: "#ffffff",
+          }}
+          onClick={() => handleToRedirectToReportSummary(record.id)}
+        />
+      </Space>
+    ),
+  },
 ];
 
 export default TableColumnsSummaryReports;

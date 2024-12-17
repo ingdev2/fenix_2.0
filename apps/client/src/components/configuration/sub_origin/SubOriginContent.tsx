@@ -2,21 +2,25 @@
 
 import React, { useState } from "react";
 
+import { useDispatch } from "react-redux";
+import { setShowMessage } from "@/redux/features/common/message/messageStateSlice";
+
 import CreateSubOriginButtonComponent from "@/components/configuration/sub_origin/buttons/CreateSubOriginButton";
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
+
 import CustomTableFiltersAndSorting from "@/components/common/custom_table_filters_and_sorting/CustomTableFiltersAndSorting";
+
 import TableColumnsSubOrigin from "./table_columns/TableColumnsSubOrigin";
 
 import {
   useDeleteSubOriginMutation,
   useGetAllSubOriginsQuery,
 } from "@/redux/apis/sub_origin/subOriginApi";
+import { useGetAllOriginsQuery } from "@/redux/apis/origin/originApi";
+
+import { getNameOfOriginMap } from "@/helpers/get_name_by_id/get_name_of_origin";
 
 const SubOriginContent: React.FC = () => {
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const dispatch = useDispatch();
 
   const {
     data: allSubOriginsData,
@@ -26,38 +30,50 @@ const SubOriginContent: React.FC = () => {
     refetch: allSubOriginsDataRefetch,
   } = useGetAllSubOriginsQuery(null);
 
+  const {
+    data: allOriginsData,
+    isFetching: allOriginsDataFetching,
+    isLoading: allOriginsDataLoading,
+    error: allOriginsDataError,
+    refetch: allOriginsDataRefetch,
+  } = useGetAllOriginsQuery(null);
+
   const [deleteSubOrigin] = useDeleteSubOriginMutation();
+
+  const originGetName = getNameOfOriginMap(allOriginsData);
+
+  const transformedData = Array.isArray(allSubOriginsData)
+    ? allSubOriginsData.map((req: SubOrigin) => ({
+        ...req,
+        sub_o_origin_id_fk: originGetName?.[req.sub_o_origin_id_fk],
+      }))
+    : [];
 
   const handleClickDelete = async (id: number) => {
     try {
       const response = await deleteSubOrigin(id);
 
       if (response.data.status === 200) {
-        setShowSuccessMessage(true);
-        setSuccessMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "success", content: response.data.message })
+        );
         allSubOriginsDataRefetch();
       } else {
-        setShowErrorMessage(true);
-        setErrorMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "error", content: response.data.message })
+        );
       }
     } catch (error) {
-      setShowErrorMessage(true);
-      setErrorMessage("ERROR INTERNO");
+      dispatch(setShowMessage({ type: "error", content: "ERROR INTERNO" }));
       console.log(error);
     } finally {
       allSubOriginsDataRefetch();
     }
   };
   return (
-    <div style={{ padding: "32px" }}>
-      {showErrorMessage && (
-        <CustomMessage typeMessage="error" message={errorMessage} />
-      )}
-      {showSuccessMessage && (
-        <CustomMessage typeMessage="success" message={successMessage} />
-      )}
+    <div style={{ padding: "22px" }}>
       <CustomTableFiltersAndSorting
-        dataCustomTable={allSubOriginsData || []}
+        dataCustomTable={transformedData || []}
         onClickRechargeCustomTable={allSubOriginsDataRefetch}
         loading={allSubOriginsDataLoading || allSubOriginsDataFetching}
         customButton={
@@ -68,7 +84,7 @@ const SubOriginContent: React.FC = () => {
         columnsCustomTable={TableColumnsSubOrigin({
           handleClickDelete,
           onRefetchRegister: allSubOriginsDataRefetch,
-          subOriginData: allSubOriginsData
+          originData: allOriginsData,
         })}
       />
     </div>

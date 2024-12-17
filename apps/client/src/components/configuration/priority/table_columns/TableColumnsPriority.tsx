@@ -2,25 +2,25 @@ import CustomDeletePopConfirm from "@/components/common/custom_pop_confirm/Custo
 import { Button, Flex, Space } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import CustomTags from "@/components/common/custom_tags/CustomTags";
-import { statusOptions } from "@/utils/enums/statusOptions.enum";
+import { StatusOptionsEnum } from "@/utils/enums/status_options.enum";
 import EditPriorityButtonComponent from "../buttons/EditPriorityButton";
 
 const priorityNameKey: keyof Priority = "prior_name";
 const priorityDescriptionKey: keyof Priority = "prior_description";
 const priorityResponseTimeKey: keyof Priority = "prior_responsetime";
-const severityClasificationKey: keyof Priority = "severityClasification";
+const severityClasificationKey: keyof Priority = "prior_severityclasif_id_fk";
 const priorityStatusKey: keyof Priority = "prior_status";
 
 interface TableColumnProps {
   handleClickDelete: (recordId: number) => void;
   onRefetchRegister: () => void;
-  priorityData: Priority[] | undefined;
+  severityClasificationData: SeverityClasification[] | undefined;
 }
 
 const TableColumnsPriority = ({
   handleClickDelete,
   onRefetchRegister,
-  priorityData,
+  severityClasificationData,
 }: TableColumnProps) => [
   {
     title: "Prioridad",
@@ -58,20 +58,14 @@ const TableColumnsPriority = ({
     key: severityClasificationKey,
     ellipsis: true,
     width: 295,
-    filters: Array.from(
-      new Set(
-        priorityData?.map((list) => list.severityClasification?.sev_c_name)
-      )
-    ).map((name) => ({
-      text: name || "No disponible",
-      value: name || "No disponible",
+    filters: severityClasificationData?.map((type) => ({
+      value: type.sev_c_name,
+      text: type.sev_c_name,
     })),
-    onFilter: (value: any, record: any) =>
-      record.severityClasification?.sev_c_name.includes(value as string),
-    sorter: (a: Priority, b: Priority) =>
-      a.severityClasification?.sev_c_name.length -
-      b.severityClasification?.sev_c_name.length,
-    render: (item: any) => <p>{item?.sev_c_name || "No disponible"}</p>,
+    onFilter: (value: any, record: any) => {
+      return String(record.prior_severityclasif_id_fk) === String(value);
+    },
+    render: (type: any) => type,
   },
   {
     title: "Estado",
@@ -85,12 +79,12 @@ const TableColumnsPriority = ({
         {item ? (
           <CustomTags
             colorCustom="green"
-            labelCustom={statusOptions.ENABLED}
+            labelCustom={StatusOptionsEnum.ENABLED}
           />
         ) : (
           <CustomTags
             colorCustom="red"
-            labelCustom={statusOptions.CANCELED}
+            labelCustom={StatusOptionsEnum.CANCELED}
           />
         )}
       </Flex>

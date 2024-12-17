@@ -1,19 +1,24 @@
 "use client";
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
-import CreateReportContent from "@/components/create_report/CreateReportContent";
-import { setIdNumberUserSession } from "@/redux/features/user_session/userSessionSlice";
-import { useAppDispatch, useAppSelector } from "@/redux/hook";
-import { RolesEnum } from "@/utils/enums/roles/roles.enum";
-import useAuthValidation from "@/utils/hooks/useAuthValidation";
-import { useRoleValidation } from "@/utils/hooks/useRoleValidation";
-import { useSession } from "next-auth/react";
+
 import React, { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "@/redux/hook";
+import { useSession } from "next-auth/react";
+
+import CustomDashboardLayout from "@/components/common/custom_dashboard_layout/CustomDashboardLayout";
+import CreateReportContent from "@/components/create_report/CreateReportContent";
+
+import useAuthValidation from "@/utils/hooks/use_auth_validation";
+import { useRoleValidation } from "@/utils/hooks/use_role_validation";
+
+import { setIdNumberUserSession } from "@/redux/features/user_session/userSessionSlice";
+
+import { RolesEnum } from "@/utils/enums/roles/roles.enum";
 
 const CreateReportPage: React.FC = () => {
   const { data: session, status } = useSession();
   const dispatch = useAppDispatch();
 
-  const { showAuthErrorMessage, authErrorMessage } = useAuthValidation();
+  useAuthValidation();
 
   const allowedRoles = [RolesEnum.COLLABORATOR];
   useRoleValidation(allowedRoles);
@@ -39,16 +44,22 @@ const CreateReportPage: React.FC = () => {
       dispatch(setIdNumberUserSession(userIdNumber));
     }
   }, [session, status, idNumberUserSessionState]);
-  
+
   return (
     <div className="homepage-create-report">
-      {showAuthErrorMessage && (
-        <CustomMessage
-          typeMessage="error"
-          message={authErrorMessage || "¡Usuario no autenticado!"}
-        />
-      )}
-      <CreateReportContent />
+      <CustomDashboardLayout
+        customLayoutContent={
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              flexFlow: "column wrap",
+            }}
+          >
+            <CreateReportContent />
+          </div>
+        }
+      />
     </div>
   );
 };

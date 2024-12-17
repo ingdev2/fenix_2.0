@@ -2,28 +2,47 @@
 
 import React from "react";
 
-import CustomTag from "./CustomTag";
-import { caseTypeReport } from "@/utils/enums/caseTypeColor.enum";
+import { CaseTypeReportEnum } from "@/utils/enums/case_type_color.enum";
 import CustomTags from "./CustomTags";
 
 export const customTagCaseTypes = (statusName: string | undefined) => {
   switch (statusName) {
-    case caseTypeReport.RISK:
-      return <CustomTags colorCustom="red" labelCustom={caseTypeReport.RISK} />;
-
-    case caseTypeReport.ADVERSE_EVENT:
-      return <CustomTag color="cyan" label={caseTypeReport.ADVERSE_EVENT} />;
-
-    case caseTypeReport.INCIDENT:
-      return <CustomTag color="orange" label={caseTypeReport.INCIDENT} />;
-
-    case caseTypeReport.INDICATING_UNSAFE_CARE:
+    case CaseTypeReportEnum.RISK:
       return (
-        <CustomTag color="lime" label={caseTypeReport.INDICATING_UNSAFE_CARE} />
+        <CustomTags colorCustom="red" labelCustom={CaseTypeReportEnum.RISK} />
       );
 
-    case caseTypeReport.COMPLICATIONS:
-      return <CustomTag color="pink" label={caseTypeReport.COMPLICATIONS} />;
+    case CaseTypeReportEnum.ADVERSE_EVENT:
+      return (
+        <CustomTags
+          colorCustom="cyan"
+          labelCustom={CaseTypeReportEnum.ADVERSE_EVENT}
+        />
+      );
+
+    case CaseTypeReportEnum.INCIDENT:
+      return (
+        <CustomTags
+          colorCustom="orange"
+          labelCustom={CaseTypeReportEnum.INCIDENT}
+        />
+      );
+
+    case CaseTypeReportEnum.INDICATING_UNSAFE_CARE:
+      return (
+        <CustomTags
+          colorCustom="lime"
+          labelCustom={CaseTypeReportEnum.INDICATING_UNSAFE_CARE}
+        />
+      );
+
+    case CaseTypeReportEnum.COMPLICATIONS:
+      return (
+        <CustomTags
+          colorCustom="pink"
+          labelCustom={CaseTypeReportEnum.COMPLICATIONS}
+        />
+      );
 
     default:
       return null;

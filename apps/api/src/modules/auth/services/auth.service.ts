@@ -4,7 +4,6 @@ import { JwtService } from '@nestjs/jwt';
 
 import { Payload } from '../interfaces/payload.interface';
 import { Tokens } from '../interfaces/tokens.interface';
-import { IUserSession } from 'src/utils/interfaces/auth/user.interface';
 
 @Injectable()
 export class AuthService {
@@ -18,15 +17,14 @@ export class AuthService {
     return expiresInInSeconds;
   }
 
-  private async generateTokens(user: Partial<IUserSession>): Promise<Tokens> {
-    const jwtUserPayload: Payload = {
-      sub: user.id,
+  private async generateTokens(user): Promise<Tokens> {
+    const jwtUserPayload = {
+      sub: user.sub,
       name: user.name,
-      principal_email: user.principal_email,
       user_id_type: user.user_id_type,
       id_number: user.id_number,
+      email: user.email,
       role: user.role,
-      permissions: user.permissions,
     };
 
     const [accessToken, refreshToken, accessTokenExpiresIn] = await Promise.all(
@@ -54,18 +52,17 @@ export class AuthService {
 
   async refreshToken(refreshToken: string): Promise<any> {
     try {
-      const user: Partial<IUserSession> = this.jwtService.verify(refreshToken, {
+      const user = this.jwtService.verify(refreshToken, {
         secret: process.env.JWT_CONSTANTS_SECRET,
       });
 
       const payload: Payload = {
-        sub: user.id,
+        sub: user.sub,
         name: user.name,
-        principal_email: user.principal_email,
         user_id_type: user.user_id_type,
         id_number: user.id_number,
+        email: user.email,
         role: user.role,
-        permissions: user.permissions,
       };
 
       const { access_token, refresh_token, access_token_expires_in } =

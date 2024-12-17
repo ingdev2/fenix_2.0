@@ -1,10 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
+
+import { useDispatch } from "react-redux";
+import { setShowMessage } from "@/redux/features/common/message/messageStateSlice";
 
 import CreateDamageTypeButtonComponent from "./buttons/CreateDamageTypeButton";
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
+
 import CustomTableFiltersAndSorting from "@/components/common/custom_table_filters_and_sorting/CustomTableFiltersAndSorting";
+
 import TableColumnsDamageType from "./table_columns/TableColumnsDamageType";
 
 import {
@@ -12,11 +16,8 @@ import {
   useGetAllDamageTypesQuery,
 } from "@/redux/apis/damage_type/damageTypeApi";
 
-const DamageTypeContent: React.FC = () => {
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+const DamageTypeContent = () => {
+  const dispatch = useDispatch();
 
   const {
     data: allDamageTypesData,
@@ -32,17 +33,18 @@ const DamageTypeContent: React.FC = () => {
     try {
       const response: any = await deleteDamageType(id);
 
-      if (response.status === 200) {
-        setShowSuccessMessage(true);
-        setSuccessMessage(response.message);
+      if (response.data.status === 200) {
+        dispatch(
+          setShowMessage({ type: "success", content: response.data.message })
+        );
         allDamageTypesDataRefetch();
       } else {
-        setShowErrorMessage(true);
-        setErrorMessage(response.message);
+        dispatch(
+          setShowMessage({ type: "error", content: response.data.message })
+        );
       }
     } catch (error) {
-      setShowErrorMessage(true);
-      setErrorMessage("ERROR INTERNO");
+      dispatch(setShowMessage({ type: "error", content: "ERROR INTERNO" }));
       console.log(error);
     } finally {
       allDamageTypesDataRefetch();
@@ -50,13 +52,7 @@ const DamageTypeContent: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: "32px" }}>
-      {showErrorMessage && (
-        <CustomMessage typeMessage="error" message={errorMessage} />
-      )}
-      {showSuccessMessage && (
-        <CustomMessage typeMessage="success" message={successMessage} />
-      )}
+    <div style={{ padding: "22px" }}>
       <CustomTableFiltersAndSorting
         dataCustomTable={allDamageTypesData || []}
         onClickRechargeCustomTable={allDamageTypesDataRefetch}

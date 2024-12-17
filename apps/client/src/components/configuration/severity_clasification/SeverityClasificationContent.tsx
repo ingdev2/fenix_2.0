@@ -1,9 +1,11 @@
 "use client";
+import React from "react";
 
-import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { setShowMessage } from "@/redux/features/common/message/messageStateSlice";
 
 import CreateSeverityClasifButtonComponent from "@/components/configuration/severity_clasification/buttons/CreateSeverityClasificationButton";
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
+
 import CustomTableFiltersAndSorting from "@/components/common/custom_table_filters_and_sorting/CustomTableFiltersAndSorting";
 import TableColumnsSeverityClasification from "./table_columns/TableColumnsSeverityClasification";
 
@@ -13,10 +15,7 @@ import {
 } from "@/redux/apis/severity_clasification/severityClasificationApi";
 
 const SeverityClasificationContent: React.FC = () => {
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const dispatch = useDispatch();
 
   const {
     data: allSeverityClasificationData,
@@ -34,29 +33,24 @@ const SeverityClasificationContent: React.FC = () => {
       const response: any = await deleteSeverityClasification(id);
 
       if (response.data.status === 200) {
-        setShowSuccessMessage(true);
-        setSuccessMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "success", content: response.data.message })
+        );
         allSeverityClasificationDataRefetch();
       } else {
-        setShowErrorMessage(true);
-        setErrorMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "error", content: response.data.message })
+        );
       }
     } catch (error) {
-      setShowErrorMessage(true);
-      setErrorMessage("ERROR INTERNO");
+      dispatch(setShowMessage({ type: "error", content: "ERROR INTERNO" }));
       console.log("Error :", error);
     } finally {
       allSeverityClasificationDataRefetch();
     }
   };
   return (
-    <div style={{ padding: "32px" }}>
-      {showErrorMessage && (
-        <CustomMessage typeMessage="error" message={errorMessage} />
-      )}
-      {showSuccessMessage && (
-        <CustomMessage typeMessage="success" message={successMessage} />
-      )}
+    <div style={{ padding: "22px" }}>
       <CustomTableFiltersAndSorting
         dataCustomTable={allSeverityClasificationData || []}
         onClickRechargeCustomTable={allSeverityClasificationDataRefetch}
@@ -71,7 +65,7 @@ const SeverityClasificationContent: React.FC = () => {
         }
         columnsCustomTable={TableColumnsSeverityClasification({
           handleClickDelete,
-          onRefetchRegister: allSeverityClasificationDataRefetch
+          onRefetchRegister: allSeverityClasificationDataRefetch,
         })}
       />
     </div>

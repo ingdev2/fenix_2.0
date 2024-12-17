@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
+import { useDispatch } from "react-redux";
+import { setShowMessage } from "@/redux/features/common/message/messageStateSlice";
+
 import CustomButton from "@/components/common/custom_button/CustomButton";
 import CustomModalNoContent from "@/components/common/custom_modal_no_content/CustomModalNoContent";
 
@@ -11,27 +13,35 @@ import { Form, Input, Select } from "antd";
 import TextArea from "antd/es/input/TextArea";
 
 import { useGetAllOriginsQuery } from "@/redux/apis/origin/originApi";
-import { useUpdateSubOriginMutation } from "@/redux/apis/sub_origin/subOriginApi";
+import {
+  useGetSubOriginByIdQuery,
+  useUpdateSubOriginMutation,
+} from "@/redux/apis/sub_origin/subOriginApi";
 
 const EditSubOriginButtonComponent: React.FC<{
   dataRecord: SubOrigin;
   onRefectRegister: () => void;
 }> = ({ dataRecord, onRefectRegister }) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [originId, setOriginId] = useState(0);
-
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [nameLocalState, setNameLocalState] = useState("");
+  const [descriptionLocalState, setDescriptionLocalState] = useState("");
+  const [originIdLocalState, setOriginIdLocalState] = useState(0);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [form] = Form.useForm();
 
+  const dispatch = useDispatch();
+
   const [updateSubOrigin, { isLoading: updateSubOriginDataLoading }] =
     useUpdateSubOriginMutation();
+
+  const {
+    data: SubOriginData,
+    isFetching: SubOriginDataFetching,
+    isLoading: SubOriginDataLoading,
+    error: SubOriginDataError,
+    refetch: SubOriginDataRefetch,
+  } = useGetSubOriginByIdQuery(dataRecord.id);
 
   const {
     data: allOriginsData,
@@ -42,18 +52,18 @@ const EditSubOriginButtonComponent: React.FC<{
   } = useGetAllOriginsQuery(null);
 
   useEffect(() => {
-    if (isModalOpen) {
-      setName(dataRecord.sub_o_name);
-      setDescription(dataRecord.sub_o_description);
-      setOriginId(dataRecord.sub_o_origin_id_fk);
+    if (isModalOpen && SubOriginData) {
+      setNameLocalState(SubOriginData.sub_o_name);
+      setDescriptionLocalState(SubOriginData.sub_o_description);
+      setOriginIdLocalState(SubOriginData.sub_o_origin_id_fk);
 
       form.setFieldsValue({
-        fieldName: dataRecord.sub_o_name,
-        fieldDescription: dataRecord.sub_o_description,
-        fieldOriginId: dataRecord.sub_o_origin_id_fk,
+        fieldName: SubOriginData.sub_o_name,
+        fieldDescription: SubOriginData.sub_o_description,
+        fieldOriginId: SubOriginData.sub_o_origin_id_fk,
       });
     }
-  }, [isModalOpen, dataRecord]);
+  }, [isModalOpen, SubOriginData]);
 
   const areDataDifferent = (
     initialData: {
@@ -76,15 +86,15 @@ const EditSubOriginButtonComponent: React.FC<{
 
   const hasChanges = () => {
     const initialData = {
-      dataName: dataRecord.sub_o_name,
-      dataDescription: dataRecord.sub_o_description,
-      dataOriginId: dataRecord.sub_o_origin_id_fk,
+      dataName: SubOriginData?.sub_o_name || "",
+      dataDescription: SubOriginData?.sub_o_description || "",
+      dataOriginId: SubOriginData?.sub_o_origin_id_fk || 0,
     };
 
     const currentData = {
-      dataName: name,
-      dataDescription: description,
-      dataOriginId: originId,
+      dataName: nameLocalState,
+      dataDescription: descriptionLocalState,
+      dataOriginId: originIdLocalState,
     };
 
     return areDataDifferent(initialData, currentData);
@@ -95,23 +105,25 @@ const EditSubOriginButtonComponent: React.FC<{
       const response: any = await updateSubOrigin({
         id: dataRecord.id,
         updateSubOrigin: {
-          sub_o_name: name,
-          sub_o_description: description,
-          sub_o_origin_id_fk: originId,
+          sub_o_name: nameLocalState,
+          sub_o_description: descriptionLocalState,
+          sub_o_origin_id_fk: originIdLocalState,
         },
       });
       if (response.data.status === 200) {
-        setShowSuccessMessage(true);
-        setSuccessMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "success", content: response.data.message })
+        );
         setIsModalOpen(false);
         onRefectRegister();
+        SubOriginDataRefetch();
       } else {
-        setShowErrorMessage(true);
-        setErrorMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "error", content: response.data.message })
+        );
       }
     } catch (error) {
-      setShowErrorMessage(true);
-      setErrorMessage("ERROR INTERNO");
+      dispatch(setShowMessage({ type: "error", content: "ERROR INTERNO" }));
       console.error("Error al enviar el formulario", error);
     }
   };
@@ -139,13 +151,6 @@ const EditSubOriginButtonComponent: React.FC<{
         handleCancelCustomModal={() => setIsModalOpen(false)}
         contentCustomModal={
           <>
-            {showErrorMessage && (
-              <CustomMessage typeMessage="error" message={errorMessage} />
-            )}
-            {showSuccessMessage && (
-              <CustomMessage typeMessage="success" message={successMessage} />
-            )}
-
             <Form
               form={form}
               id="edit-sub-origin-form"
@@ -175,8 +180,8 @@ const EditSubOriginButtonComponent: React.FC<{
                   className="select-origin-id"
                   showSearch
                   placeholder={"Seleccione origen"}
-                  onChange={(value) => setOriginId(value)}
-                  value={originId}
+                  onChange={(value) => setOriginIdLocalState(value)}
+                  value={originIdLocalState}
                   loading={allOriginsDataLoading || allOriginsDataFetching}
                   allowClear
                   filterOption={(input, option) => {
@@ -221,10 +226,12 @@ const EditSubOriginButtonComponent: React.FC<{
                   id="input-name-sub-origin"
                   name="input-name-sub-origin"
                   className="input-name-sub-origin"
-                  onChange={(e) => setName(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setNameLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={name}
-                  style={{ width: "100%" }}
+                  value={nameLocalState}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 
@@ -239,10 +246,12 @@ const EditSubOriginButtonComponent: React.FC<{
                   id="textarea-description-sub-origin"
                   name="textarea-description-sub-origin"
                   className="textarea-description-sub-origin"
-                  onChange={(e) => setDescription(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setDescriptionLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={description || ""}
-                  style={{ width: "100%" }}
+                  value={descriptionLocalState || ""}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 

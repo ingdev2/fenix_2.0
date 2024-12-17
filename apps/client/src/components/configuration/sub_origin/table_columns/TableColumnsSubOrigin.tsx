@@ -1,24 +1,24 @@
 import CustomDeletePopConfirm from "@/components/common/custom_pop_confirm/CustomDeletePopConfirm";
 import { Flex, Space } from "antd";
 import CustomTags from "@/components/common/custom_tags/CustomTags";
-import { statusOptions } from "@/utils/enums/statusOptions.enum";
+import { StatusOptionsEnum } from "@/utils/enums/status_options.enum";
 import EditSubOriginButtonComponent from "../buttons/EditSubOriginButton";
 
 const subOriginNameKey: keyof SubOrigin = "sub_o_name";
 const subOriginDescriptionKey: keyof SubOrigin = "sub_o_description";
-const originKey: keyof SubOrigin = "origin";
+const originKey: keyof SubOrigin = "sub_o_origin_id_fk";
 const subOriginStatusKey: keyof SubOrigin = "sub_o_status";
 
 interface TableColumnProps {
   handleClickDelete: (recordId: number) => void;
   onRefetchRegister: () => void;
-  subOriginData: SubOrigin[] | undefined;
+  originData: Origin[] | undefined;
 }
 
 const TableColumnsSubOrigin = ({
   handleClickDelete,
   onRefetchRegister,
-  subOriginData,
+  originData,
 }: TableColumnProps) => [
   {
     title: "Sub Origen",
@@ -49,17 +49,14 @@ const TableColumnsSubOrigin = ({
     key: originKey,
     ellipsis: true,
     width: 300,
-    filters: Array.from(
-      new Set(subOriginData?.map((list) => list.origin?.orig_name))
-    ).map((name) => ({
-      text: name || "No disponible",
-      value: name || "No disponible",
+    filters: originData?.map((type) => ({
+      value: type.orig_name,
+      text: type.orig_name,
     })),
-    onFilter: (value: any, record: any) =>
-      record.origin?.orig_name.includes(value as string),
-    sorter: (a: SubOrigin, b: SubOrigin) =>
-      a.origin?.orig_name.length - b.origin?.orig_name.length,
-    render: (item: any) => <p>{item?.orig_name || "No disponible"}</p>,
+    onFilter: (value: any, record: any) => {
+      return String(record.sub_o_origin_id_fk) === String(value);
+    },
+    render: (type: any) => type,
   },
   {
     title: "Estado",
@@ -73,12 +70,12 @@ const TableColumnsSubOrigin = ({
         {item ? (
           <CustomTags
             colorCustom="green"
-            labelCustom={statusOptions.ENABLED}
+            labelCustom={StatusOptionsEnum.ENABLED}
           />
         ) : (
           <CustomTags
             colorCustom="red"
-            labelCustom={statusOptions.CANCELED}
+            labelCustom={StatusOptionsEnum.CANCELED}
           />
         )}
       </Flex>

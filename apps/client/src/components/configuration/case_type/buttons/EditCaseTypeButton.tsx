@@ -1,6 +1,10 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
+import { useDispatch } from "react-redux";
+import { setShowMessage } from "@/redux/features/common/message/messageStateSlice";
+
 import CustomButton from "@/components/common/custom_button/CustomButton";
 import CustomModalNoContent from "@/components/common/custom_modal_no_content/CustomModalNoContent";
 
@@ -9,31 +13,29 @@ import { BiEdit } from "react-icons/bi";
 
 import { Form, Input } from "antd";
 import TextArea from "antd/es/input/TextArea";
+
 import { useUpdateCaseTypeMutation } from "@/redux/apis/case_type/caseTypeApi";
 
 const EditCaseTypeButtonComponent: React.FC<{
   dataRecord: CaseType;
   onRefetchRegister: () => void;
 }> = ({ dataRecord, onRefetchRegister }) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [nameLocalState, setNameLocalState] = useState("");
+  const [descriptionLocalState, setDescriptionLocalState] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [form] = Form.useForm();
+
+  const dispatch = useDispatch();
 
   const [updateCaseType, { isLoading: updateCaseTypeDataLoading }] =
     useUpdateCaseTypeMutation();
 
   useEffect(() => {
     if (isModalOpen) {
-      setName(dataRecord.cas_t_name);
-      setDescription(dataRecord.cas_t_description);
+      setNameLocalState(dataRecord.cas_t_name);
+      setDescriptionLocalState(dataRecord.cas_t_description);
 
       form.setFieldsValue({
         fieldName: dataRecord.cas_t_name,
@@ -59,8 +61,8 @@ const EditCaseTypeButtonComponent: React.FC<{
     };
 
     const currentData = {
-      dataName: name,
-      dataDescription: description,
+      dataName: nameLocalState,
+      dataDescription: descriptionLocalState,
     };
 
     return areDataDifferent(initialData, currentData);
@@ -71,22 +73,23 @@ const EditCaseTypeButtonComponent: React.FC<{
       const response: any = await updateCaseType({
         id: dataRecord.id,
         updateCaseType: {
-          cas_t_name: name,
-          cas_t_description: description,
+          cas_t_name: nameLocalState,
+          cas_t_description: descriptionLocalState,
         },
       });
       if (response.data.status === 200) {
-        setShowSuccessMessage(true);
-        setSuccessMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "success", content: response.data.message })
+        );
         setIsModalOpen(false);
         onRefetchRegister();
       } else {
-        setShowErrorMessage(true);
-        setErrorMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "error", content: response.data.message })
+        );
       }
     } catch (error) {
-      setShowErrorMessage(true);
-      setErrorMessage("ERROR INTERNO");
+      dispatch(setShowMessage({ type: "error", content: "ERROR INTERNO" }));
       console.error("Error al enviar el formulario", error);
     }
   };
@@ -114,13 +117,6 @@ const EditCaseTypeButtonComponent: React.FC<{
         handleCancelCustomModal={() => setIsModalOpen(false)}
         contentCustomModal={
           <>
-            {showErrorMessage && (
-              <CustomMessage typeMessage="error" message={errorMessage} />
-            )}
-            {showSuccessMessage && (
-              <CustomMessage typeMessage="success" message={successMessage} />
-            )}
-
             <Form
               form={form}
               id="edit-case-type-form"
@@ -154,10 +150,12 @@ const EditCaseTypeButtonComponent: React.FC<{
                   id="input-name-case-type"
                   name="input-name-case-type"
                   className="input-name-case-type"
-                  onChange={(e) => setName(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setNameLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={name}
-                  style={{ width: "100%" }}
+                  value={nameLocalState}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 
@@ -170,10 +168,12 @@ const EditCaseTypeButtonComponent: React.FC<{
                   id="text-area-description-case-type"
                   name="text-area-description-case-type"
                   className="text-area-description-case-type"
-                  onChange={(e) => setDescription(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setDescriptionLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Descripción del tipo de caso"
-                  value={description || ""}
-                  style={{ width: "100%" }}
+                  value={descriptionLocalState || ""}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 

@@ -15,30 +15,14 @@ const CustomDeletePopConfirm: React.FC<DeletePopConfirmProps> = ({
   title,
   description,
 }) => {
-  const [open, setOpen] = useState(false);
-
-  const showPopConfirm = () => {
-    setOpen(true);
-  };
-
-  const handleOk = async () => {
-    onConfirm();
-    setOpen(false);
-  };
-
-  const handleCancel = () => {
-    setOpen(false);
-  };
-
   return (
     <Popconfirm
       title={title}
       description={description}
-      open={open}
-      onConfirm={handleOk}
-      onCancel={handleCancel}
+      onConfirm={() => onConfirm()}
       okText={"Si"}
       cancelText={"Cancelar"}
+      trigger="click"
     >
       <Button
         size={"small"}
@@ -46,7 +30,6 @@ const CustomDeletePopConfirm: React.FC<DeletePopConfirmProps> = ({
         shape="circle"
         icon={<DeleteOutlined />}
         style={{ background: "#ff4d4f", color: "#ffffff" }}
-        onClick={showPopConfirm}
       />
     </Popconfirm>
   );

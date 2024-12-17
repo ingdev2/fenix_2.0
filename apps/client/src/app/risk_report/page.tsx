@@ -1,10 +1,24 @@
-import RiskContent from "@/components/case_reports/risk/riskContent";
 import React from "react";
+
+import CustomDashboardLayout from "@/components/common/custom_dashboard_layout/CustomDashboardLayout";
+import RiskContent from "@/components/case_reports/risk/riskContent";
 
 const RiskReportPage: React.FC = () => {
   return (
     <div className="homepage-risk-report">
-      <RiskContent />
+      <CustomDashboardLayout
+        customLayoutContent={
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              flexFlow: "column wrap",
+            }}
+          >
+            <RiskContent />
+          </div>
+        }
+      />
     </div>
   );
 };

@@ -2,7 +2,7 @@ import CustomDeletePopConfirm from "@/components/common/custom_pop_confirm/Custo
 import CustomTags from "@/components/common/custom_tags/CustomTags";
 import { Flex, Space } from "antd";
 import EditRoleButtonComponent from "../buttons/EditRoleButton";
-import { statusOptions } from "@/utils/enums/statusOptions.enum";
+import { StatusOptionsEnum } from "@/utils/enums/status_options.enum";
 
 const roleNameKey: keyof Role = "role_name";
 const roleDescriptionKey: keyof Role = "role_description";
@@ -52,12 +52,12 @@ const TableColumnsRole = ({
         {item ? (
           <CustomTags
             colorCustom="green"
-            labelCustom={statusOptions.ENABLED}
+            labelCustom={StatusOptionsEnum.ENABLED}
           />
         ) : (
           <CustomTags
             colorCustom="red"
-            labelCustom={statusOptions.CANCELED}
+            labelCustom={StatusOptionsEnum.CANCELED}
           />
         )}
       </Flex>

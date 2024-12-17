@@ -17,7 +17,7 @@ import {
 import { SearchOutlined } from "@ant-design/icons";
 import { findOneReportValidateByConsecutive } from "@/api/dashboard";
 import { IReportSearchItem } from "@/redux/utils/interfaces/dashboard/dashboard.interface";
-import { getColorByCaseType } from "@/utils/enums/caseTypeColor.enum";
+import { getColorByCaseType } from "@/utils/enums/case_type_color.enum";
 //import {ValidatedReports} from "@/utils/ValidatedReports";
 
 type SizeType = ConfigProviderProps["componentSize"];

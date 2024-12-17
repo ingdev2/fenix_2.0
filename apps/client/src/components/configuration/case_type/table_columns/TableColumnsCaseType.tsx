@@ -1,8 +1,11 @@
 import { Flex, Space } from "antd";
-import CustomDeletePopConfirm from "@/components/common/custom_pop_confirm/CustomDeletePopConfirm";
-import { statusOptions } from "@/utils/enums/statusOptions.enum";
-import CustomTags from "@/components/common/custom_tags/CustomTags";
+
+import { StatusOptionsEnum } from "@/utils/enums/status_options.enum";
+
 import EditCaseTypeButtonComponent from "../buttons/EditCaseTypeButton";
+
+import CustomDeletePopConfirm from "@/components/common/custom_pop_confirm/CustomDeletePopConfirm";
+import CustomTags from "@/components/common/custom_tags/CustomTags";
 
 const caseTypeNameKey: keyof CaseType = "cas_t_name";
 const caseTypeDescriptionKey: keyof CaseType = "cas_t_description";
@@ -52,12 +55,12 @@ const TableColumnsCaseType = ({
         {item ? (
           <CustomTags
             colorCustom="green"
-            labelCustom={statusOptions.ENABLED}
+            labelCustom={StatusOptionsEnum.ENABLED}
           />
         ) : (
           <CustomTags
             colorCustom="red"
-            labelCustom={statusOptions.CANCELED}
+            labelCustom={StatusOptionsEnum.CANCELED}
           />
         )}
       </Flex>

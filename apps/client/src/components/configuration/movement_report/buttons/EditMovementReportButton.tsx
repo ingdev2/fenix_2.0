@@ -1,6 +1,10 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
+import { useDispatch } from "react-redux";
+import { setShowMessage } from "@/redux/features/common/message/messageStateSlice";
+
 import CustomButton from "@/components/common/custom_button/CustomButton";
 import CustomModalNoContent from "@/components/common/custom_modal_no_content/CustomModalNoContent";
 
@@ -16,27 +20,24 @@ const EditMovementReportButtonComponent: React.FC<{
   dataRecord: MovementReport;
   onRefectRegister: () => void;
 }> = ({ dataRecord, onRefectRegister }) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [time, setTime] = useState("");
-
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [nameLocalState, setNameLocalState] = useState("");
+  const [descriptionLocalState, setDescriptionLocalState] = useState("");
+  const [timeLocalState, setTimeLocalState] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [form] = Form.useForm();
+
+  const dispatch = useDispatch();
 
   const [updateMovementReport, { isLoading: updateMovementReportDataLoading }] =
     useUpdateMovementReportMutation();
 
   useEffect(() => {
     if (isModalOpen) {
-      setName(dataRecord.mov_r_name);
-      setDescription(dataRecord.mov_r_description);
-      setTime(dataRecord.mov_r_time.toString());
+      setNameLocalState(dataRecord.mov_r_name);
+      setDescriptionLocalState(dataRecord.mov_r_description);
+      setTimeLocalState(dataRecord.mov_r_time.toString());
 
       form.setFieldsValue({
         fieldName: dataRecord.mov_r_name,
@@ -69,9 +70,9 @@ const EditMovementReportButtonComponent: React.FC<{
     };
 
     const currentData = {
-      dataName: name,
-      dataDescription: description,
-      dataTime: time,
+      dataName: nameLocalState,
+      dataDescription: descriptionLocalState,
+      dataTime: timeLocalState,
     };
 
     return areDataDifferent(initialData, currentData);
@@ -82,23 +83,24 @@ const EditMovementReportButtonComponent: React.FC<{
       const response: any = await updateMovementReport({
         id: dataRecord.id,
         updateMovementReport: {
-          mov_r_name: name,
-          mov_r_description: description,
-          mov_r_time: Number(time),
+          mov_r_name: nameLocalState,
+          mov_r_description: descriptionLocalState,
+          mov_r_time: Number(timeLocalState),
         },
       });
       if (response.data.status === 200) {
-        setShowSuccessMessage(true);
-        setSuccessMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "success", content: response.data.message })
+        );
         setIsModalOpen(false);
         onRefectRegister();
       } else {
-        setShowErrorMessage(true);
-        setErrorMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "error", content: response.data.message })
+        );
       }
     } catch (error) {
-      setShowErrorMessage(true);
-      setErrorMessage("ERROR INTERNO");
+      dispatch(setShowMessage({ type: "error", content: "ERROR INTERNO" }));
       console.error("Error al enviar el formulario", error);
     }
   };
@@ -126,13 +128,6 @@ const EditMovementReportButtonComponent: React.FC<{
         handleCancelCustomModal={() => setIsModalOpen(false)}
         contentCustomModal={
           <>
-            {showErrorMessage && (
-              <CustomMessage typeMessage="error" message={errorMessage} />
-            )}
-            {showSuccessMessage && (
-              <CustomMessage typeMessage="success" message={successMessage} />
-            )}
-
             <Form
               form={form}
               id="edit-movement-report-form"
@@ -164,10 +159,12 @@ const EditMovementReportButtonComponent: React.FC<{
                   id="input-name-movement-report"
                   name="input-name-movement-report"
                   className="input-name-movement-report"
-                  onChange={(e) => setName(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setNameLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={name}
-                  style={{ width: "100%" }}
+                  value={nameLocalState}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 
@@ -195,9 +192,9 @@ const EditMovementReportButtonComponent: React.FC<{
                   id="input-time-movement-meport"
                   name="input-time-movement-meport"
                   className="input-time-movement-meport"
-                  onChange={(e) => setTime(e.target.value)}
-                  placeholder="tiempo del movimiento"
-                  value={time}
+                  onChange={(e) => setTimeLocalState(e.target.value)}
+                  placeholder="1234..."
+                  value={timeLocalState}
                   style={{ width: "100%" }}
                 />
               </Form.Item>
@@ -211,10 +208,12 @@ const EditMovementReportButtonComponent: React.FC<{
                   id="textarea-description-movement-report"
                   name="textarea-description-movement-report"
                   className="textarea-description-movement-report"
-                  onChange={(e) => setDescription(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setDescriptionLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={description || ""}
-                  style={{ width: "100%" }}
+                  value={descriptionLocalState || ""}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 

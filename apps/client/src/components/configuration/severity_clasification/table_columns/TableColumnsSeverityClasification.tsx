@@ -2,12 +2,14 @@ import CustomDeletePopConfirm from "@/components/common/custom_pop_confirm/Custo
 import { Button, Flex, Space } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import CustomTags from "@/components/common/custom_tags/CustomTags";
-import { statusOptions } from "@/utils/enums/statusOptions.enum";
+import { StatusOptionsEnum } from "@/utils/enums/status_options.enum";
 import EditSeverityClasificationButtonComponent from "../buttons/EditSeverityClasificationButton";
 
 const severityClasificationNameKey: keyof SeverityClasification = "sev_c_name";
-const severityClasificationDescriptionKey: keyof SeverityClasification = "sev_c_description";
-const severityClasificationStatusKey: keyof SeverityClasification = "sev_c_status";
+const severityClasificationDescriptionKey: keyof SeverityClasification =
+  "sev_c_description";
+const severityClasificationStatusKey: keyof SeverityClasification =
+  "sev_c_status";
 
 interface TableColumnProps {
   handleClickDelete: (recordId: number) => void;
@@ -21,7 +23,7 @@ const TableColumnsSeverityClasification = ({
   {
     title: "Clasificación de severidad",
     dataIndex: severityClasificationNameKey,
-    key:severityClasificationNameKey,
+    key: severityClasificationNameKey,
     ellipsis: true,
     width: 350,
     searchable: true,
@@ -53,12 +55,12 @@ const TableColumnsSeverityClasification = ({
         {item ? (
           <CustomTags
             colorCustom="green"
-            labelCustom={statusOptions.ENABLED}
+            labelCustom={StatusOptionsEnum.ENABLED}
           />
         ) : (
           <CustomTags
             colorCustom="red"
-            labelCustom={statusOptions.CANCELED}
+            labelCustom={StatusOptionsEnum.CANCELED}
           />
         )}
       </Flex>
@@ -73,7 +75,7 @@ const TableColumnsSeverityClasification = ({
     fixed: "right" as "right",
     render: (_: any, record: SeverityClasification) => (
       <Space size={"small"}>
-        <EditSeverityClasificationButtonComponent 
+        <EditSeverityClasificationButtonComponent
           dataRecord={record}
           onRefectRegister={onRefetchRegister}
         />

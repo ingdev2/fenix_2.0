@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 
+import { useDispatch } from "react-redux";
+import { setShowMessage } from "@/redux/features/common/message/messageStateSlice";
+
 import CustomButton from "@/components/common/custom_button/CustomButton";
 import CustomModalNoContent from "@/components/common/custom_modal_no_content/CustomModalNoContent";
 
@@ -12,53 +15,51 @@ import {
 
 import { Form, Input } from "antd";
 import TextArea from "antd/es/input/TextArea";
+
 import { useCreateRoleMutation } from "@/redux/apis/role/roleApi";
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
 
 const CreateRoleButtonComponent: React.FC<{ onNewRegister: () => void }> = ({
   onNewRegister,
 }) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [nameLocalState, setNameLocalState] = useState("");
+  const [descriptionLocalState, setDescriptionLocalState] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [form] = Form.useForm();
+
+  const dispatch = useDispatch();
 
   const [createRole, { isLoading: createdRoleDataLoading }] =
     useCreateRoleMutation();
 
   const handleClickClean = () => {
     form.resetFields();
-    setName("");
-    setDescription("");
+    setNameLocalState("");
+    setDescriptionLocalState("");
   };
 
   const handleClickSubmit = async () => {
     try {
       const response: any = await createRole({
-        role_name: name,
-        role_description: description,
+        role_name: nameLocalState,
+        role_description: descriptionLocalState,
       });
 
       if (response.data.status === 201) {
-        setShowSuccessMessage(true);
-        setSuccessMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "success", content: response.data.message })
+        );
         handleClickClean();
         setIsModalOpen(false);
         onNewRegister();
       } else {
-        setShowErrorMessage(true);
-        setErrorMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "error", content: response.data.message })
+        );
       }
     } catch (error) {
-      setShowErrorMessage(true);
-      setErrorMessage("ERROR INTERNO");
+      dispatch(setShowMessage({ type: "error", content: "ERROR INTERNO" }));
       console.error("Error al enviar el formulario", error);
     }
   };
@@ -91,12 +92,6 @@ const CreateRoleButtonComponent: React.FC<{ onNewRegister: () => void }> = ({
         handleCancelCustomModal={() => setIsModalOpen(false)}
         contentCustomModal={
           <>
-            {showErrorMessage && (
-              <CustomMessage typeMessage="error" message={errorMessage} />
-            )}
-            {showSuccessMessage && (
-              <CustomMessage typeMessage="success" message={successMessage} />
-            )}
             <Form
               form={form}
               id="create-role-form"
@@ -130,10 +125,12 @@ const CreateRoleButtonComponent: React.FC<{ onNewRegister: () => void }> = ({
                   id="input-name-role"
                   name="input-name-role"
                   className="input-name-role"
-                  onChange={(e) => setName(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setNameLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={name}
-                  style={{ width: "100%" }}
+                  value={nameLocalState}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 
@@ -146,9 +143,11 @@ const CreateRoleButtonComponent: React.FC<{ onNewRegister: () => void }> = ({
                   id="textarea-description-role"
                   name="textarea-description-role"
                   className="textarea-description-role"
-                  onChange={(e) => setDescription(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setDescriptionLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={description || ""}
+                  value={descriptionLocalState || ""}
                   style={{ width: "100%" }}
                 />
               </Form.Item>

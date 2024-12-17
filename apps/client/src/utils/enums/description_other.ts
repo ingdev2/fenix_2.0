@@ -1,0 +1,4 @@
+export enum DescriptionOtherEnum {
+  DESCRIPTION_EVENT_RISK_OTHER = "RIESGO OTROS",
+  DESCRIPTION_EVENT_OTHER = "OTROS",
+}

@@ -1,8 +1,12 @@
+"use client";
+
 import React, { useState } from "react";
+
+import { useDispatch } from "react-redux";
+import { setShowMessage } from "@/redux/features/common/message/messageStateSlice";
 
 import CustomButton from "@/components/common/custom_button/CustomButton";
 import CustomModalNoContent from "@/components/common/custom_modal_no_content/CustomModalNoContent";
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
 
 import {
   PlusOutlined,
@@ -13,6 +17,7 @@ import {
 
 import { Form, Input } from "antd";
 import TextArea from "antd/es/input/TextArea";
+
 import { useCreateDeviceTypeMutation } from "@/redux/apis/device_type/deviceTypeApi";
 
 interface ButtonProps {
@@ -22,47 +27,45 @@ interface ButtonProps {
 const CreateDeviceTypeButtonComponent: React.FC<ButtonProps> = ({
   onNewRegister,
 }) => {
-  const [name, setName] = useState("");
+  const [nameLocalState, setNameLocalState] = useState("");
   const [description, setDescription] = useState("");
-
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [form] = Form.useForm();
+
+  const dispatch = useDispatch();
 
   const [createDeviceType, { isLoading: createdDeviceTypeDataLoading }] =
     useCreateDeviceTypeMutation();
 
   const handleClickClean = () => {
     form.resetFields();
-    setName("");
+    setNameLocalState("");
     setDescription("");
   };
 
   const handleClickSubmit = async () => {
     try {
       const response: any = await createDeviceType({
-        dev_t_name: name,
+        dev_t_name: nameLocalState,
         dev_t_description: description,
       });
 
       if (response.data.status === 201) {
-        setShowSuccessMessage(true);
-        setSuccessMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "success", content: response.data.message })
+        );
         handleClickClean();
         setIsModalOpen(false);
         onNewRegister();
       } else {
-        setShowErrorMessage(true);
-        setErrorMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "error", content: response.data.message })
+        );
       }
     } catch (error) {
-      setShowErrorMessage(true);
-      setErrorMessage("ERROR INTERNO");
+      dispatch(setShowMessage({ type: "error", content: "ERROR INTERNO" }));
       console.error("Error al enviar el formulario", error);
     }
   };
@@ -95,12 +98,6 @@ const CreateDeviceTypeButtonComponent: React.FC<ButtonProps> = ({
         handleCancelCustomModal={() => setIsModalOpen(false)}
         contentCustomModal={
           <>
-            {showErrorMessage && (
-              <CustomMessage typeMessage="error" message={errorMessage} />
-            )}
-            {showSuccessMessage && (
-              <CustomMessage typeMessage="success" message={successMessage} />
-            )}
             <Form
               form={form}
               id="create-device-type-form"
@@ -134,10 +131,12 @@ const CreateDeviceTypeButtonComponent: React.FC<ButtonProps> = ({
                   id="input-name-device-type"
                   name="input-name-device-type"
                   className="input-name-device-type"
-                  onChange={(e) => setName(e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    setNameLocalState(e.target.value.toUpperCase())
+                  }
                   placeholder="Escribe..."
-                  value={name}
-                  style={{ width: "100%" }}
+                  value={nameLocalState}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 
@@ -153,15 +152,17 @@ const CreateDeviceTypeButtonComponent: React.FC<ButtonProps> = ({
                   onChange={(e) => setDescription(e.target.value.toUpperCase())}
                   placeholder="Escribe..."
                   value={description || ""}
-                  style={{ width: "100%" }}
+                  style={{ width: "100%", textTransform: "uppercase" }}
                 />
               </Form.Item>
 
-              <Form.Item style={{
+              <Form.Item
+                style={{
                   textAlign: "center",
                   marginTop: "16px",
                   marginBottom: "-10px",
-                }}>
+                }}
+              >
                 <CustomButton
                   classNameCustomButton="clean-device-type-button"
                   idCustomButton="clean-device-type-button"

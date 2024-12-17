@@ -1,22 +1,26 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
+
+import { useDispatch } from "react-redux";
+import { setShowMessage } from "@/redux/features/common/message/messageStateSlice";
+
+import { getNameOfSeverityClasificationMap } from "@/helpers/get_name_by_id/get_name_of_severity_clasification";
 
 import CreatePriorityButtonComponent from "@/components/configuration/priority/buttons/CreatePriorityButtonComponent";
-import CustomMessage from "@/components/common/custom_messages/CustomMessage";
+
 import CustomTableFiltersAndSorting from "@/components/common/custom_table_filters_and_sorting/CustomTableFiltersAndSorting";
+
 import TableColumnsPriority from "./table_columns/TableColumnsPriority";
 
 import {
   useDeletePriorityMutation,
   useGetAllPrioritiesQuery,
 } from "@/redux/apis/priority/priorityApi";
+import { useGetAllSeverityClasificationsQuery } from "@/redux/apis/severity_clasification/severityClasificationApi";
 
-const PriorityContent: React.FC = () => {
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+const PriorityContent = () => {
+  const dispatch = useDispatch();
 
   const {
     data: allPrioritiesData,
@@ -26,23 +30,44 @@ const PriorityContent: React.FC = () => {
     refetch: allPrioritiesDataRefetch,
   } = useGetAllPrioritiesQuery(null);
 
+  const {
+    data: allSeverityClasificationsData,
+    isFetching: allSeverityClasificationsDataFetching,
+    isLoading: allSeverityClasificationsDataLoading,
+    error: allSeverityClasificationsDataError,
+    refetch: allSeverityClasificationsDataRefetch,
+  } = useGetAllSeverityClasificationsQuery(null);
+
   const [deletePriority] = useDeletePriorityMutation();
+
+  const severityClasificationGetName = getNameOfSeverityClasificationMap(
+    allSeverityClasificationsData
+  );
+
+  const transformedData = Array.isArray(allPrioritiesData)
+    ? allPrioritiesData.map((req: Priority) => ({
+        ...req,
+        prior_severityclasif_id_fk:
+          severityClasificationGetName?.[req.prior_severityclasif_id_fk],
+      }))
+    : [];
 
   const handleClickDelete = async (id: number) => {
     try {
       const response = await deletePriority(id);
 
       if (response.data.status === 200) {
-        setShowSuccessMessage(true);
-        setSuccessMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "success", content: response.data.message })
+        );
         allPrioritiesDataRefetch();
       } else {
-        setShowErrorMessage(true);
-        setErrorMessage(response.data.message);
+        dispatch(
+          setShowMessage({ type: "error", content: response.data.message })
+        );
       }
     } catch (error) {
-      setShowErrorMessage(true);
-      setErrorMessage("ERROR INTERNO");
+      dispatch(setShowMessage({ type: "error", content: "ERROR INTERNO" }));
       console.log(error);
     } finally {
       allPrioritiesDataRefetch();
@@ -50,15 +75,9 @@ const PriorityContent: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: "32px" }}>
-      {showErrorMessage && (
-        <CustomMessage typeMessage="error" message={errorMessage} />
-      )}
-      {showSuccessMessage && (
-        <CustomMessage typeMessage="success" message={successMessage} />
-      )}
+    <div style={{ padding: "22px" }}>
       <CustomTableFiltersAndSorting
-        dataCustomTable={allPrioritiesData || []}
+        dataCustomTable={transformedData || []}
         onClickRechargeCustomTable={allPrioritiesDataRefetch}
         loading={allPrioritiesDataLoading || allPrioritiesDataFetching}
         customButton={
@@ -69,7 +88,7 @@ const PriorityContent: React.FC = () => {
         columnsCustomTable={TableColumnsPriority({
           handleClickDelete,
           onRefetchRegister: allPrioritiesDataRefetch,
-          priorityData: allPrioritiesData
+          severityClasificationData: allSeverityClasificationsData,
         })}
       />
     </div>

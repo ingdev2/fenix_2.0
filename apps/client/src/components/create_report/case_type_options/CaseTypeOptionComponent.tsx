@@ -1,7 +1,8 @@
 "use client";
-
 import React, { useState } from "react";
+
 import { useRouter } from "next/navigation";
+
 import { useDispatch } from "react-redux";
 
 import { Card, Col, Row, Space } from "antd";
@@ -9,6 +10,7 @@ import styles from "./CaseTypeOptionComponent.module.css";
 import { subtitleStyleCss, titleStyleCss } from "@/theme/text_styles";
 import { FaCirclePlus } from "react-icons/fa6";
 import { LuFileQuestion } from "react-icons/lu";
+import { TbMoodSad } from "react-icons/tb";
 
 import CustomTags from "@/components/common/custom_tags/CustomTags";
 import CustomButton from "@/components/common/custom_button/CustomButton";
@@ -18,24 +20,32 @@ import CustomModalNoContent from "@/components/common/custom_modal_no_content/Cu
 import { useGetAllCaseTypesQuery } from "@/redux/apis/case_type/caseTypeApi";
 import { useCreateCompressionConceptReportMutation } from "@/redux/apis/compression_concept_report/compressionConceptReportApi";
 
-import { setIdOfCaseType } from "@/redux/features/common/change_of_case_type/changeOfCaseTypeSlice";
+import { CaseTypeReportEnum } from "@/utils/enums/case_type_color.enum";
 
-import { caseTypeReport } from "@/utils/enums/caseTypeColor.enum";
+import {
+  setIdOfCaseType,
+  setIdOfCaseTypeAdverseEvent,
+  setIdOfCaseTypeIncident,
+  setIdOfCaseTypeIndicationsUnsafeCare,
+  setIdOfCaseTypeRisk,
+} from "@/redux/features/global/changeOfCaseTypeSlice";
+import { useAppSelector } from "@/redux/hook";
 
 const CaseTypeOptionComponent: React.FC = () => {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const [userIdLocalState, setUserIdLocalState] = useState(
-    "77757048-2cc5-4671-8a3c-8ed4ea4c3bcd"
-  );
-
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalVisibleConfirmation, setIsModalVisibleConfirmation] =
+    useState(false);
   const [selectedCaseTypeName, setSelectedCaseTypeName] = useState<
     string | null
   >(null);
   const [selectedCaseTypeId, setSelectedCaseTypeId] = useState<number | null>(
     null
+  );
+
+  const idNumberUserSessionState = useAppSelector(
+    (state) => state.userSession.id_number
   );
 
   const [
@@ -57,7 +67,7 @@ const CaseTypeOptionComponent: React.FC = () => {
     if (!isConfirmConceptCaseTypeReport) {
       try {
         await createCompressionConceptReport({
-          comp_c_user_id: userIdLocalState,
+          comp_c_user_id: idNumberUserSessionState,
           comp_c_casetype_id_fk: selectedCaseTypeId,
         });
       } catch (error) {
@@ -67,31 +77,27 @@ const CaseTypeOptionComponent: React.FC = () => {
 
     if (selectedCaseTypeName) {
       switch (selectedCaseTypeName) {
-        case caseTypeReport.ADVERSE_EVENT:
+        case CaseTypeReportEnum.ADVERSE_EVENT:
+          dispatch(setIdOfCaseTypeAdverseEvent(selectedCaseTypeId));
           router.push(`/adverse_event_report`);
           break;
-
-        case caseTypeReport.INCIDENT:
+        case CaseTypeReportEnum.INCIDENT:
+          dispatch(setIdOfCaseTypeIncident(selectedCaseTypeId));
           router.push(`/incident_report`);
           break;
-
-        case caseTypeReport.RISK:
+        case CaseTypeReportEnum.RISK:
+          dispatch(setIdOfCaseTypeRisk(selectedCaseTypeId));
           router.push(`/risk_report`);
           break;
-
-        case caseTypeReport.INDICATING_UNSAFE_CARE:
+        case CaseTypeReportEnum.INDICATING_UNSAFE_CARE:
+          dispatch(setIdOfCaseTypeIndicationsUnsafeCare(selectedCaseTypeId));
           router.push(`/indications_unsafe_care_report`);
           break;
-
-        case caseTypeReport.COMPLICATIONS:
-          router.push(`/complications_report`);
-          break;
-
         default:
           break;
       }
     }
-    setIsModalVisible(false);
+    setIsModalVisibleConfirmation(false);
   };
 
   return (
@@ -100,19 +106,22 @@ const CaseTypeOptionComponent: React.FC = () => {
         labelCustom="Elige que tipo de caso deseas reportar"
         colorCustom="orange"
         stylesCustom={{
-          ...titleStyleCss,
           color: "#f28322",
-          marginBottom: "22px",
+          padding: "3px 10px",
+          borderRadius: "32px",
+          fontSize: "12px",
+          fontWeight: "bold",
+          marginBottom: "32px",
         }}
       />
-
-      <Row gutter={[24, 24]} style={{ justifyContent: "center" }}>
+      <Row gutter={[16, 16]} style={{ justifyContent: "center" }}>
         {allCaseTypesDataLoading || allCaseTypesDataFetching ? (
           <CustomSpin />
         ) : (
           <>
-            {allCaseTypesData?.length
-              ? allCaseTypesData?.map((caseTypeData, index) => (
+            {allCaseTypesData ? (
+              <>
+                {allCaseTypesData?.map((caseTypeData, index) => (
                   <Col key={index} xs={24} sm={12} md={8} lg={5}>
                     <Card id="case-type-options-card" className={styles.card}>
                       <div
@@ -125,12 +134,12 @@ const CaseTypeOptionComponent: React.FC = () => {
                           alt={caseTypeData.cas_t_name}
                           className={styles.icon}
                         />
-                        <p
+                        <h2
                           id="case-type-options-card-titles"
                           className={styles.textTitle}
                         >
                           {caseTypeData.cas_t_name}
-                        </p>
+                        </h2>
                         <p
                           id="case-type-options-card-body"
                           className={styles.textBody}
@@ -138,10 +147,7 @@ const CaseTypeOptionComponent: React.FC = () => {
                           {caseTypeData.cas_t_description}
                         </p>
                       </div>
-
                       <CustomButton
-                        sizeCustomButton={"middle"}
-                        iconPositionCustomButton={"start"}
                         classNameCustomButton={styles.cardButton}
                         idCustomButton="open-modal-confirmation-concept-report-button"
                         titleCustomButton="Crear reporte"
@@ -149,17 +155,52 @@ const CaseTypeOptionComponent: React.FC = () => {
                         htmlTypeCustomButton="button"
                         iconCustomButton={<FaCirclePlus />}
                         onClickCustomButton={() => {
-                          setIsModalVisible(true);
+                          setIsModalVisibleConfirmation(true);
                           setSelectedCaseTypeId(caseTypeData.id);
                           setSelectedCaseTypeName(caseTypeData.cas_t_name);
 
-                          dispatch(setIdOfCaseType(caseTypeData.id));
+                          // dispatch(setIdOfCaseType(caseTypeData.id));
                         }}
+                        iconPositionCustomButton={"start"}
+                        sizeCustomButton={"small"}
                       />
                     </Card>
                   </Col>
-                ))
-              : null}
+                ))}
+              </>
+            ) : (
+              <>
+                <Card
+                  id="case-type-empty-card"
+                  style={{
+                    textAlign: "center",
+                    display: "flex",
+                    borderRadius: "20px",
+                    boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+                    color: "#aaa",
+                  }}
+                >
+                  <div
+                    id="case-type-empty-card-details"
+                    className={styles.cardDetails}
+                  >
+                    <TbMoodSad className={styles.icon} />
+                    <h2
+                      id="case-type-empty-card-titles"
+                      className={styles.textTitle}
+                    >
+                      No hay nada para mostrar...
+                    </h2>
+                    <p
+                      id="case-type-empty-card-body"
+                      className={styles.textTitle}
+                    >
+                      Por favor recarga la pagina
+                    </p>
+                  </div>
+                </Card>
+              </>
+            )}
           </>
         )}
       </Row>
@@ -167,15 +208,22 @@ const CaseTypeOptionComponent: React.FC = () => {
       <CustomModalNoContent
         key={"custom-modal-confirm-concept-type-report"}
         widthCustomModalNoContent="30%"
-        openCustomModalState={isModalVisible}
+        openCustomModalState={isModalVisibleConfirmation}
         closableCustomModal={true}
         maskClosableCustomModal={false}
-        handleCancelCustomModal={() => setIsModalVisible(false)}
+        handleCancelCustomModal={() => setIsModalVisibleConfirmation(false)}
         contentCustomModal={
           <div
             className="content-modal-confirm-concept-type-report"
             style={{
-              paddingBlock: "13px",
+              display: "flex",
+              flexFlow: "column wrap",
+              textAlign: "center",
+              alignItems: "center",
+              alignContent: "center",
+              justifyContent: "center",
+              marginBlock: "9px",
+              marginInline: "3px",
             }}
           >
             <Space
@@ -200,7 +248,6 @@ const CaseTypeOptionComponent: React.FC = () => {
               >
                 ¿Te quedó claro con el concepto de este tipo de reporte?
               </h4>
-
               <h4
                 className="subtitle-modal-case-type-name"
                 style={{ ...subtitleStyleCss, color: "#015E90" }}
