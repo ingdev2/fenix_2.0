@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 
 import { Space } from "antd";
@@ -12,10 +14,12 @@ const OptionsCaseAssignmentReviewButton: React.FC<{
   handleCLickCancelCase: () => void;
   handleClickAssignResearch: () => void;
   handleClickReturnCaseToValidator: () => void;
+  reportResearcherAssignment: ReportResearcherAssignment | undefined;
 }> = ({
   handleCLickCancelCase,
   handleClickAssignResearch,
   handleClickReturnCaseToValidator,
+  reportResearcherAssignment,
 }) => {
   return (
     <>
@@ -36,24 +40,6 @@ const OptionsCaseAssignmentReviewButton: React.FC<{
           }}
         />
 
-        <div className="assign-research-button">
-          <CustomButton
-            idCustomButton="assign-analyst-button"
-            typeCustomButton="primary"
-            sizeCustomButton="small"
-            iconPositionCustomButton={"end"}
-            onClickCustomButton={handleClickAssignResearch}
-            titleCustomButton="Asignar investigador"
-            iconCustomButton={<FaUserAlt />}
-            styleCustomButton={{
-              background: "#015E90",
-              color: "#fff",
-              fontSize: "12px",
-              borderRadius: "16px",
-            }}
-          />
-        </div>
-
         <div className="return-case-button">
           <CustomButton
             idCustomButton="return-case-button"
@@ -71,6 +57,27 @@ const OptionsCaseAssignmentReviewButton: React.FC<{
             }}
           />
         </div>
+
+        {Array.isArray(reportResearcherAssignment) &&
+          reportResearcherAssignment.length === 0 && (
+            <div className="assign-research-button">
+              <CustomButton
+                idCustomButton="assign-analyst-button"
+                typeCustomButton="primary"
+                sizeCustomButton="small"
+                iconPositionCustomButton={"end"}
+                onClickCustomButton={handleClickAssignResearch}
+                titleCustomButton="Asignar investigador"
+                iconCustomButton={<FaUserAlt />}
+                styleCustomButton={{
+                  background: "#015E90",
+                  color: "#fff",
+                  fontSize: "12px",
+                  borderRadius: "16px",
+                }}
+              />
+            </div>
+          )}
       </Space>
     </>
   );

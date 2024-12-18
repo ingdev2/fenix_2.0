@@ -40,6 +40,26 @@ export class ReportResearchersAssignmentController {
     return this.researchersService.findOneAssignedResearch(id);
   }
 
+  @Get('findAssignedResearcherByIdNumberAnalyst/:IdNumberAnalyst')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
+  findAssignedResearcherByIdNumberAnalyst(
+    @Param('IdNumberAnalyst') IdNumberAnalyst: string,
+  ) {
+    return this.researchersService.findAssignedResearcherByIdNumberAnalyst(
+      IdNumberAnalyst,
+    );
+  }
+
+  @Get('/summaryReportsAsignedByIdNumberResearcher/:idNumberResearcher/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
+  async summaryReportsAsignedByIdNumberResearcher(
+    @Param('idNumberResearcher') idNumberResearcher: string,
+  ) {
+    return await this.researchersService.summaryReportsAsignedByIdNumberResearcher(
+      idNumberResearcher,
+    );
+  }
+
   @Get('/summaryReportsMyAssignedCases/')
   @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   async summaryReportsMyAssignedCases(

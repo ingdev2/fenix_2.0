@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import { useParams, useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
@@ -162,7 +162,7 @@ const CaseAssignmentReviewContent = () => {
 
       const returnCaseToValidatorResponse: any = await returnCaseToValidator({
         idCaseValidate: reportValidateByIdData?.id!,
-        idAnalyst: idNumberUserSessionState,
+        idAnalyst: idNumberUserSessionState.toString(),
       });
 
       let isReturnCaseError = returnCaseToValidatorResponse.error;
@@ -279,6 +279,9 @@ const CaseAssignmentReviewContent = () => {
           handleClickAssignResearch={() => setIsModalAssignResearch(true)}
           handleClickReturnCaseToValidator={() =>
             setIsModalConfirmReturnCaseToValidator(true)
+          }
+          reportResearcherAssignment={
+            reportValidateByIdData?.reportResearcherAssignment
           }
         />
       </div>

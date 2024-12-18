@@ -199,7 +199,7 @@ export class SynergyService {
     }
 
     const synergy = await this.synergyRepository.findOne({
-      where: { id, syn_status: false },
+      where: { id },
       relations: {
         caseReportValidate: true,
       },
@@ -285,20 +285,17 @@ export class SynergyService {
       );
     }
 
-    const resolutionSynergy = await this.synergyRepository.update(
-      synergy.id,
-      {
-        syn_analystidnumber: resolutionSynergyDto.syn_analystidnumber,
-        syn_patientcontent: resolutionSynergyDto.syn_patientcontent,
-        syn_possiblefaults: resolutionSynergyDto.syn_possiblefaults,
-        syn_consequences: resolutionSynergyDto.syn_consequences,
-        syn_clinicalmanagement: resolutionSynergyDto.syn_clinicalmanagement,
-        syn_whomwasnotified: resolutionSynergyDto.syn_whomwasnotified,
+    const resolutionSynergy = await this.synergyRepository.update(synergy.id, {
+      syn_analystidnumber: resolutionSynergyDto.syn_analystidnumber,
+      syn_patientcontent: resolutionSynergyDto.syn_patientcontent,
+      syn_possiblefaults: resolutionSynergyDto.syn_possiblefaults,
+      syn_consequences: resolutionSynergyDto.syn_consequences,
+      syn_clinicalmanagement: resolutionSynergyDto.syn_clinicalmanagement,
+      syn_whomwasnotified: resolutionSynergyDto.syn_whomwasnotified,
 
-        syn_resolutiondate: dayjs().format('YYYY-MM-DD'),
-        syn_status: true,
-      },
-    );
+      syn_resolutiondate: dayjs().format('YYYY-MM-DD'),
+      syn_status: true,
+    });
 
     if (resolutionSynergy.affected === 0) {
       throw new HttpException(

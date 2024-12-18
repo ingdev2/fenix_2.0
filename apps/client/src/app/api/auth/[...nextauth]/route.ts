@@ -43,7 +43,6 @@ const handler = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async jwt({ token, user, account }) {
-      console.log("token", token);
       if (account && user && token) {
         return {
           ...token,

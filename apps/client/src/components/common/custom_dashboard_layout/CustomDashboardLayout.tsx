@@ -231,7 +231,7 @@ const CustomDashboardLayout: React.FC<{
           }}
         >
           {customLayoutFooter ||
-            `Clínica Bonnadona © ${new Date().getFullYear()}`}
+            `Clínica Bonnadona © ${new Date().getFullYear()} 💙`}
         </Footer>
       </Layout>
     </Layout>

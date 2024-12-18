@@ -20,7 +20,6 @@ interface TableColumnProps {
   eventData: Events[] | undefined;
   priorityData: Priority[] | undefined;
   movementReportData: MovementReport[] | undefined;
-  handleClickSeeMore: any;
 }
 
 const TableColumnsTeamResearchers = ({
@@ -28,7 +27,6 @@ const TableColumnsTeamResearchers = ({
   caseTypeData,
   priorityData,
   movementReportData,
-  handleClickSeeMore,
 }: TableColumnProps) => [
   {
     title: "Estado",

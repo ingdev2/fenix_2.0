@@ -28,6 +28,19 @@ export const reportResearcherAssignmentApi = createApi({
   refetchOnReconnect: true,
 
   endpoints: (builder) => ({
+    getReportsAssignedByIdNumberResearcher: builder.query<any, string>({
+      query: (idNumberResearcher) =>
+        `summaryReportsAsignedByIdNumberResearcher/${idNumberResearcher}/`,
+    }),
+
+    getAssignedResearchersByIdNumberAnalyst: builder.query<
+      ReportResearcherAssignment[],
+      string
+    >({
+      query: (IdNumberAnalyst) =>
+        `findAssignedResearcherByIdNumberAnalyst/${IdNumberAnalyst}/`,
+    }),
+
     assignResearcher: builder.mutation<
       any,
       {
@@ -49,4 +62,8 @@ export const reportResearcherAssignmentApi = createApi({
   }),
 });
 
-export const {useAssignResearcherMutation} = reportResearcherAssignmentApi;
+export const {
+  useGetReportsAssignedByIdNumberResearcherQuery,
+  useGetAssignedResearchersByIdNumberAnalystQuery,
+  useAssignResearcherMutation,
+} = reportResearcherAssignmentApi;

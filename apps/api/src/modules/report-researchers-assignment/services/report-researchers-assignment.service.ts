@@ -194,11 +194,6 @@ export class ResearchersService {
       );
     }
 
-    // const movementReportFound =
-    //   await this.movementReportService.findOneMovementReportByName(
-    //     movementReport.ASSIGNMENT_RESEARCHER,
-    //   );
-
     const movementReportFound = await this.movementReportRepository.findOne({
       where: {
         mov_r_name: MovementReportEnum.ASSIGNMENT_RESEARCHER,
@@ -257,6 +252,83 @@ export class ResearchersService {
       `¡El investigador se asignó correctamente!`,
       HttpStatus.CREATED,
     );
+  }
+
+  async findAssignedResearcherByIdNumberAnalyst(IdNumberAnalyst: string) {
+    if (!IdNumberAnalyst) {
+      throw new HttpException(
+        'El identificador del analista es requerido.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const researchersFound = await this.researcherRepository.find({
+      where: {
+        res_useranalyst_id: IdNumberAnalyst,
+        res_status: true,
+        res_isreturned: false,
+      },
+    });
+
+    if (!researchersFound) {
+      throw new HttpException(
+        'No se encontró los investigadores asignados por el analista.',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return researchersFound;
+  }
+
+  async summaryReportsAsignedByIdNumberResearcher(idNumberResearcher: string) {
+    if (!idNumberResearcher) {
+      throw new HttpException(
+        'El identificador del investigador es requerido.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const CASE_VALIDATED = false;
+    const CASE_ACTIVE_STATUS = true;
+    const ASIGNED_RESEARCHER_STATUS = true;
+    const IS_CASE_RESEARCHER_RETURNED = false;
+
+    const query = this.caseReportValidateRepository
+      .createQueryBuilder('crv')
+      .innerJoinAndSelect('crv.reportResearcherAssignment', 'res')
+      .leftJoinAndSelect('crv.caseType', 'caseType')
+      .leftJoinAndSelect('crv.event', 'event')
+      .leftJoinAndSelect('crv.priority', 'priority')
+      .leftJoinAndSelect(
+        'crv.reportAnalystAssignment',
+        'reportAnalystAssignment',
+      )
+      // .leftJoinAndSelect(
+      //   'crv.clinicalResearchCaseReportValidate',
+      //   'clinicalResearchCaseReportValidate',
+      // )
+      .where('crv.val_cr_validated = :validated', { validated: CASE_VALIDATED })
+      .andWhere('crv.val_cr_status = :status', { status: CASE_ACTIVE_STATUS })
+      .andWhere('res.res_userresearch_id = :idNumberResearcher', {
+        idNumberResearcher,
+      })
+      .andWhere('res.res_status = :researcherStatusBool', {
+        researcherStatusBool: ASIGNED_RESEARCHER_STATUS,
+      })
+      .andWhere('res.res_isreturned = :isCaseResearcherReturnedBool', {
+        isCaseResearcherReturnedBool: IS_CASE_RESEARCHER_RETURNED,
+      })
+      .orderBy('res.createdAt', 'DESC');
+
+    const caseReportsValidate = await query.getMany();
+
+    if (caseReportsValidate.length === 0) {
+      throw new HttpException(
+        'No hay reportes para mostrar.',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return caseReportsValidate;
   }
 
   async summaryReportsMyAssignedCases(
@@ -483,11 +555,6 @@ export class ResearchersService {
         HttpStatus.NOT_FOUND,
       );
     }
-
-    // const movementReportFound =
-    //   await this.movementReportService.findOneMovementReportByName(
-    //     movementReport.REASSIGNMENT_RESEARCHER,
-    //   );
 
     const movementReportFound = await this.movementReportRepository.findOne({
       where: {
