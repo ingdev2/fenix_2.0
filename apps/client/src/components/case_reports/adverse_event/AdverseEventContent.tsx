@@ -235,7 +235,10 @@ const AdverseEventContent = () => {
 
   useEffect(() => {
     if (userVerifyData) {
-      setIdentificationUserLocalState(userVerifyData.id_number || "");
+      console.log("userVerifyData", userVerifyData);
+      setIdentificationUserLocalState(
+        userVerifyData.id_number!.toString() || ""
+      );
       setFullNameUserLocalState(
         `${userVerifyData.name || ""} ${userVerifyData.last_name || ""}`
       );

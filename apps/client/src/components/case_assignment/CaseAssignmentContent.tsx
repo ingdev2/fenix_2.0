@@ -35,7 +35,7 @@ const CaseAssignmentContent = () => {
     isLoading: reportForAssignCasesByIdAnalystLoading,
     error: reportForAssignCasesByIdAnalystError,
     refetch: reportForAssignCasesByIdAnalystRefetch,
-  } = useGetReportsForAssignCasesQuery(idNumberUserSessionState, {
+  } = useGetReportsForAssignCasesQuery(idNumberUserSessionState.toString(), {
     skip: !idNumberUserSessionState,
   });
 

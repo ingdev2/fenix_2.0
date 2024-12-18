@@ -119,7 +119,7 @@ const ContentAssignAnalyst: React.FC<{ onCloseModal: () => void }> = ({
   const handleClickSubmit = async () => {
     try {
       const assignAnalystResponse: any = await assignAnalyst({
-        idValidator: idNumberUserSessionState,
+        idValidator: idNumberUserSessionState.toString(),
         idNumberAnalist: selectedAnalystIdNumberLocalState,
         newAnalystAssigned: {
           ana_validatedcase_id_fk: caseReportValidateIdState,
@@ -145,7 +145,7 @@ const ContentAssignAnalyst: React.FC<{ onCloseModal: () => void }> = ({
 
       if (isElevatedCaseToSynergyState) {
         const createSynergyResponse: any = await createSynergy({
-          idValidator: idNumberUserSessionState,
+          idValidator: idNumberUserSessionState.toString(),
           newSynergy: {
             syn_validatedcase_id_fk: caseReportValidateIdState,
             syn_analystidnumber: selectedAnalystIdNumberLocalState,
@@ -273,7 +273,9 @@ const ContentAssignAnalyst: React.FC<{ onCloseModal: () => void }> = ({
                       }}
                       onClick={() => {
                         setSelectedAnalystLocalState(item);
-                        setSelectedAnalystIdNumberLocalState(item.id_number!);
+                        setSelectedAnalystIdNumberLocalState(
+                          item.id_number!.toString()
+                        );
                         setSelectedPositionNameLocalState(
                           item.collaborator_position!
                         );

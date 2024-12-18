@@ -73,7 +73,7 @@ const ContentAssignResearcher: React.FC<{
   const handleClickSubmit = async () => {
     try {
       const assignResearcherResponse: any = await assignResearcher({
-        idNumberAnalist: idNumberUserSessionState,
+        idNumberAnalist: idNumberUserSessionState.toString(),
         idNumberResearcher: selectedResearcherIdNumberLocalState,
         newResearcherAssigned: {
           res_validatedcase_id_fk: caseValidateId,
@@ -196,7 +196,7 @@ const ContentAssignResearcher: React.FC<{
                       onClick={() => {
                         setSelectedResearcherLocalState(item);
                         setSelectedResearcherIdNumberLocalState(
-                          item.id_number!
+                          item.id_number!.toString()
                         );
                         setSelectedPositionNameLocalState(
                           item.collaborator_position!

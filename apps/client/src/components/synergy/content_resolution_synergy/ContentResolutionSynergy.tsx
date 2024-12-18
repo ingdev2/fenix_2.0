@@ -125,7 +125,7 @@ const ContentResolutionSynergy: React.FC<{
     try {
       const response: any = await resolutionSynergyData({
         id: idSynergyState,
-        idValidator: idNumberUserSessionState,
+        idValidator: idNumberUserSessionState.toString(),
         resolutionSynergy: {
           syn_analystidnumber: idNumberResponsibleSynergyState,
           syn_patientcontent: patientContentLocalState,

@@ -4,6 +4,7 @@ interface IUserActiveBHub {
   last_name: string;
   user_id_type: number;
   id_number: number;
+  collaborator_position: string;
   user_gender: number;
   birthdate: string;
   principal_email: string;

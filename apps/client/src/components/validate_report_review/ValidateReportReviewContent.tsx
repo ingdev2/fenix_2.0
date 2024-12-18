@@ -848,7 +848,7 @@ const ValidateReportReviewContent: React.FC = () => {
       setIsSubmittinCancellationCase(true);
       const cancelResponse: any = await cancelCaseReportValidate({
         id: caseReportValidateIdState,
-        idUser: idNumberUserSessionState,
+        idUser: idNumberUserSessionState.toString(),
       });
 
       let isCancelError = cancelResponse.error;
@@ -867,7 +867,7 @@ const ValidateReportReviewContent: React.FC = () => {
 
       if (isCancelSuccess) {
         await createObservationCancellationCase({
-          idUser: idNumberUserSessionState,
+          idUser: idNumberUserSessionState.toString(),
           idCaseValidate: caseReportValidateIdState,
           newReasonCancellationCase: {
             cac_o_reasoncancellation_id_fk: reasonCancellationCaseId,
@@ -984,7 +984,7 @@ const ValidateReportReviewContent: React.FC = () => {
       }
 
       const response: any = await createCaseReportValidate({
-        idValidator: idNumberUserSessionState,
+        idValidator: idNumberUserSessionState.toString(),
         reportId: caseReportValidateIdState,
         newReportValidate,
       });

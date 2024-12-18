@@ -214,7 +214,9 @@ const RiskContent = () => {
 
   useEffect(() => {
     if (userVerifyData) {
-      setIdentificationUserLocalState(userVerifyData.id_number || "");
+      setIdentificationUserLocalState(
+        userVerifyData.id_number!.toString() || ""
+      );
       setFullNameUserLocalState(
         `${userVerifyData.name || ""} ${userVerifyData.last_name || ""}`
       );
