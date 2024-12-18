@@ -29,13 +29,11 @@ export const reportAnalystAssignmentApi = createApi({
 
   endpoints: (builder) => ({
     getInfoAnalystByCodePosition: builder.query<Analyst, number>({
-      query: (Id) =>
-        `findInfoAnalystByCode/${Id}/`,
+      query: (Id) => `findInfoAnalystByCode/${Id}/`,
     }),
 
     getReportsForAssignCases: builder.query<any, string>({
-      query: (idAnalyst) =>
-        `summaryReportsForAssignCases/${idAnalyst}/`,
+      query: (idAnalyst) => `summaryReportsForAssignCases/${idAnalyst}/`,
     }),
 
     assignAnalyst: builder.mutation<
@@ -52,6 +50,19 @@ export const reportAnalystAssignmentApi = createApi({
         body: newAnalystAssigned,
       }),
     }),
+
+    returnCaseToValidator: builder.mutation<
+      any,
+      {
+        idAnalyst: string;
+        idCaseValidate: string;
+      }
+    >({
+      query: ({ idAnalyst, idCaseValidate }) => ({
+        url: `returnCaseToValidator/${idAnalyst}/${idCaseValidate}/`,
+        method: "PATCH",
+      }),
+    }),
   }),
 });
 
@@ -59,4 +70,5 @@ export const {
   useGetInfoAnalystByCodePositionQuery,
   useGetReportsForAssignCasesQuery,
   useAssignAnalystMutation,
+  useReturnCaseToValidatorMutation,
 } = reportAnalystAssignmentApi;

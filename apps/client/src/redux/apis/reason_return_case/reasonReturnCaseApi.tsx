@@ -36,6 +36,10 @@ export const reasonReturnCaseApi = createApi({
       query: (Id) => `findReasonReturnCase/${Id}`,
     }),
 
+    getReasonReturnCaseByRoleId: builder.query<ReasonReturnCase[], number>({
+      query: (roleId) => `findReasonReturnCasebyRoleId/${roleId}`,
+    }),
+
     createReasonReturnCase: builder.mutation<any, Partial<ReasonReturnCase>>({
       query: (newReasonReturnCase) => ({
         url: "createReasonReturnCase/",
@@ -68,6 +72,7 @@ export const reasonReturnCaseApi = createApi({
 export const {
   useGetAllReasonReturnCasesQuery,
   useGetReasonReturnCaseByIdQuery,
+  useGetReasonReturnCaseByRoleIdQuery,
   useCreateReasonReturnCaseMutation,
   useUpdateReasonReturnCaseMutation,
   useDeleteReasonReturnCaseMutation,

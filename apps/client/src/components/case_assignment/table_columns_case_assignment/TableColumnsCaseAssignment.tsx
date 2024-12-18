@@ -1,7 +1,8 @@
-import { Button, Space, Tag } from "antd";
+import { Button, Space } from "antd";
 import { EyeOutlined } from "@ant-design/icons";
 
 import { customTagCaseTypes } from "@/components/common/custom_tags/CustomTagsCaseType";
+import { calculateRemainingDays } from "@/helpers/calculate_remaining_days/calculate_remaining_days";
 
 const fillingNumberKey: keyof CaseReportValidate = "val_cr_filingnumber";
 const eventNameKey: keyof CaseReportValidate = "val_cr_event_id_fk";
@@ -104,32 +105,11 @@ const TableColumnsCaseAssignment = ({
     render: (item: ReportAnalystAssignment[]) => {
       const analystAssignment = item?.[0];
       if (analystAssignment?.createdAt) {
-        const createdDate = new Date(analystAssignment.createdAt);
-        const currentDate = new Date();
-
-        createdDate.setHours(0, 0, 0, 0);
-        currentDate.setHours(0, 0, 0, 0);
-
-        const timeDiff = currentDate.getTime() - createdDate.getTime();
-        const daysElapsed = Math.floor(timeDiff / (1000 * 3600 * 24));
-        const daysRemaining = analystAssignment.ana_days - daysElapsed;
-
-        let color = "#002140";
-        if (daysRemaining > analystAssignment.ana_days / 2) {
-          color = "#1D8348";
-        } else if (daysRemaining > 0) {
-          color = "#FD7E14";
-        } else {
-          color = "#8C1111";
-        }
-
-        return (
-          <p style={{ color }}>
-            {daysRemaining >= 0
-              ? `${daysRemaining} días restantes`
-              : `${Math.abs(daysRemaining)} días vencidos`}
-          </p>
+        const { text, color } = calculateRemainingDays(
+          analystAssignment.createdAt,
+          analystAssignment.ana_days
         );
+        return <p style={{ color }}>{text}</p>;
       }
       return <p>{"No asignado"}</p>;
     },
@@ -143,32 +123,11 @@ const TableColumnsCaseAssignment = ({
     render: (item: ReportResearcherAssignment[]) => {
       const researcherAssignment = item?.[0];
       if (researcherAssignment?.createdAt) {
-        const createdDate = new Date(researcherAssignment.createdAt);
-        const currentDate = new Date();
-
-        createdDate.setHours(0, 0, 0, 0);
-        currentDate.setHours(0, 0, 0, 0);
-
-        const timeDiff = currentDate.getTime() - createdDate.getTime();
-        const daysElapsed = Math.floor(timeDiff / (1000 * 3600 * 24));
-        const daysRemaining = researcherAssignment.res_days - daysElapsed;
-
-        let color = "black";
-        if (daysRemaining > researcherAssignment.res_days / 2) {
-          color = "green";
-        } else if (daysRemaining > 0) {
-          color = "orange";
-        } else {
-          color = "red";
-        }
-
-        return (
-          <p style={{ color }}>
-            {daysRemaining >= 0
-              ? `${daysRemaining} días restantes`
-              : `${Math.abs(daysRemaining)} días vencidos`}
-          </p>
+        const { text, color } = calculateRemainingDays(
+          researcherAssignment.createdAt,
+          researcherAssignment.res_days
         );
+        return <p style={{ color }}>{text}</p>;
       }
       return <p>{"No asignado"}</p>;
     },

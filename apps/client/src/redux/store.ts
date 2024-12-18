@@ -90,11 +90,12 @@ import { deviceApi } from "./apis/device/deviceApi";
 import { documentTypeApi } from "./apis/document-type/documentTypeApi";
 import { positionApi } from "./apis/position/positionApi";
 import { reportAnalystAssignmentApi } from "./apis/report_analyst_assignment/reportAnalystAssignmentApi";
+import { reportResearcherAssignmentApi } from "./apis/report_researcher_assignment/reportResearcherAssignmentApi";
 import { verifyActiveUserApi } from "./apis/users_b_hub/verifyActiveUserApi";
 import { synergyApi } from "./apis/synergy/synergyApi";
 import { observationCancellationCaseApi } from "./apis/observation_cancellation_case/observationCancellationCaseApi";
 import { reasonCancellationCaseApi } from "./apis/reason_cancellation_case/reasonCancellationCaseApi";
-import { reportResearcherAssignmentApi } from "./apis/report_researcher_assignment/reportResearcherAssignmentApi";
+import { observationReturnCaseApi } from "./apis/observation_return_case/observationReturnCaseApi";
 
 const persistConfig = {
   key: "root",
@@ -136,14 +137,12 @@ const rootReducer = combineReducers({
   log: logReducer,
   medicineCaseReport: medicineCaseReportReducer,
   movementReport: movementReportReducer,
-  observationReturnCase: observationReturnCaseReducer,
   origin: originReducer,
   position: positionReducer,
   priority: priorityReducer,
   protocol: protocolReducer,
-  reasonReturnCase: reasonReturnCaseReducer,
   reportAnalistAssignment: reportAnalistAssignmentReducer,
-  reportResearcherAssignment: reportResearcherAssignmentReducer,
+  reportResearchAssignment: reportResearcherAssignmentReducer,
   researchInstrument: researchInstrumentReducer,
   riskFactor: riskFactorReducer,
   riskLevel: riskLevelReducer,
@@ -164,6 +163,8 @@ const rootReducer = combineReducers({
   modal: modalReducer,
   userSession: userSessionReducer,
   synergy: synergyReducer,
+  observationReturnCase: observationReturnCaseReducer,
+  reasonReturnCase: reasonReturnCaseReducer,
   observationCancellationCase: observationCancellationCaseReducer,
   reasonCancellationCase: reasonCancellationCaseReducer,
 
@@ -189,7 +190,6 @@ const rootReducer = combineReducers({
   [serviceApi.reducerPath]: serviceApi.reducer,
   [subOriginApi.reducerPath]: subOriginApi.reducer,
   [priorityApi.reducerPath]: priorityApi.reducer,
-  [reasonReturnCaseApi.reducerPath]: reasonReturnCaseApi.reducer,
   [eventTypeApi.reducerPath]: eventTypeApi.reducer,
   [eventApi.reducerPath]: eventApi.reducer,
   [compressionConceptReportApi.reducerPath]:
@@ -203,8 +203,12 @@ const rootReducer = combineReducers({
   [documentTypeApi.reducerPath]: documentTypeApi.reducer,
   [positionApi.reducerPath]: positionApi.reducer,
   [reportAnalystAssignmentApi.reducerPath]: reportAnalystAssignmentApi.reducer,
+  [reportResearcherAssignmentApi.reducerPath]:
+    reportResearcherAssignmentApi.reducer,
   [verifyActiveUserApi.reducerPath]: verifyActiveUserApi.reducer,
   [synergyApi.reducerPath]: synergyApi.reducer,
+  [observationReturnCaseApi.reducerPath]: observationReturnCaseApi.reducer,
+  [reasonReturnCaseApi.reducerPath]: reasonReturnCaseApi.reducer,
   [observationCancellationCaseApi.reducerPath]:
     observationCancellationCaseApi.reducer,
   [reasonCancellationCaseApi.reducerPath]: reasonCancellationCaseApi.reducer,
@@ -241,7 +245,6 @@ export const store = configureStore({
       serviceApi.middleware,
       subOriginApi.middleware,
       priorityApi.middleware,
-      reasonReturnCaseApi.middleware,
       eventTypeApi.middleware,
       eventApi.middleware,
       compressionConceptReportApi.middleware,
@@ -254,8 +257,11 @@ export const store = configureStore({
       documentTypeApi.middleware,
       positionApi.middleware,
       reportAnalystAssignmentApi.middleware,
+      reportResearcherAssignmentApi.middleware,
       verifyActiveUserApi.middleware,
       synergyApi.middleware,
+      observationReturnCaseApi.middleware,
+      reasonReturnCaseApi.middleware,
       observationCancellationCaseApi.middleware,
       reasonCancellationCaseApi.middleware,
     ]),

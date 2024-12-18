@@ -32,6 +32,10 @@ export const roleApi = createApi({
       query: () => "listRoles",
     }),
 
+    getRoleByName: builder.query<Role, string>({
+      query: (RoleName) => `findRoleByName/${RoleName}`,
+    }),
+
     createRole: builder.mutation({
       query: (newRole) => ({
         url: "createRole/",
@@ -40,7 +44,10 @@ export const roleApi = createApi({
       }),
     }),
 
-    updateRole: builder.mutation<any, { id: number; updateRole: Partial<Role> }>({
+    updateRole: builder.mutation<
+      any,
+      { id: number; updateRole: Partial<Role> }
+    >({
       query: ({ id, updateRole }) => ({
         url: `updateRole/${id}/`,
         method: "PATCH",
@@ -60,6 +67,7 @@ export const roleApi = createApi({
 
 export const {
   useGetAllRolesQuery,
+  useGetRoleByNameQuery,
   useCreateRoleMutation,
   useUpdateRoleMutation,
   useDeleteRoleMutation,

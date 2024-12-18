@@ -24,7 +24,9 @@ export class ReasonReturnCaseController {
 
   @Post('/createReasonReturnCase/')
   @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
-  createReasonReturnCase(@Body() createReasonReturnCaseDto: CreateReasonReturnCaseDto) {
+  createReasonReturnCase(
+    @Body() createReasonReturnCaseDto: CreateReasonReturnCaseDto,
+  ) {
     return this.reasonReturnCaseService.createReasonReturnCase(
       createReasonReturnCaseDto,
     );
@@ -40,6 +42,12 @@ export class ReasonReturnCaseController {
   @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findReasonReturnCase(@Param('id') id: number) {
     return this.reasonReturnCaseService.findOneReasonReturnCase(id);
+  }
+
+  @Get('/findReasonReturnCasebyRoleId/:roleid/')
+  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
+  findReasonReturnCasebyRoleId(@Param('roleid') roleid: number) {
+    return this.reasonReturnCaseService.findOneReasonReturnCaseByRoleId(roleid);
   }
 
   @Patch('/updateReasonReturnCase/:id/')

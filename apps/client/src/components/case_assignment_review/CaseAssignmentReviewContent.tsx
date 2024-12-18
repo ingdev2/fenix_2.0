@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useParams, useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
@@ -34,6 +34,15 @@ import {
   setSuccessFullMessage,
 } from "@/redux/features/common/modal/modalSlice";
 import ContentMessageSuccessfully from "../shared/content_message_successfully/ContentAssignedAnalystSuccessfully";
+import ContentConfirmReturnCaseToValidator from "./content_confirm_return_case_to_validator/ContentConfirmReturnCaseToValidator";
+import {
+  useGetAllReasonReturnCasesQuery,
+  useGetReasonReturnCaseByRoleIdQuery,
+} from "@/redux/apis/reason_return_case/reasonReturnCaseApi";
+import { useGetRoleByNameQuery } from "@/redux/apis/role/roleApi";
+import { UserRolesEnum } from "@/utils/enums/user_roles.enum";
+import { useCreateObservationReturnCaseMutation } from "@/redux/apis/observation_return_case/observationReturnCaseApi";
+import { useReturnCaseToValidatorMutation } from "@/redux/apis/report_analyst_assignment/reportAnalystAssignmentApi";
 
 const CaseAssignmentReviewContent = () => {
   const dispatch = useDispatch();
@@ -54,13 +63,29 @@ const CaseAssignmentReviewContent = () => {
   const [isModalAssignResearch, setIsModalAssignResearch] = useState(false);
   const [isModalConfirmCancelCase, setIsModalConfirmCancelCase] =
     useState(false);
+  const [
+    isModalConfirmReturnCaseToValidator,
+    setIsModalConfirmReturnCaseToValidator,
+  ] = useState(false);
 
   const [observationCancellationCase, setObservationCancellationCase] =
     useState("");
   const [reasonCancellationCaseId, setReasonCancellationCaseId] = useState(0);
+  const [
+    observationReturnToValidatorCase,
+    setObservationReturnToValidatorCase,
+  ] = useState("");
+  const [reasonReturnCaseToValidatorId, setReasonReturnCaseToValidatorId] =
+    useState(0);
 
-  const [isSubmittinCancellationCase, setIsSubmittinCancellationCase] =
+  const [isSubmittingCancellationCase, setIsSubmittingCancellationCase] =
     useState(false);
+  const [
+    isSubmittingReturnCaseToValidatorCase,
+    setIsSubmittingReturnCaseToValidatorCase,
+  ] = useState(false);
+
+  let caseValidateId = routerParams?.id;
 
   const {
     data: reportValidateByIdData,
@@ -68,16 +93,16 @@ const CaseAssignmentReviewContent = () => {
     isLoading: reportValidateByIdDataLoading,
     error: reportValidateByIdDataError,
     refetch: reportValidateByIdDataRefetch,
-  } = useGetReportValidateByIdQuery(routerParams?.id || "", {
-    skip: !routerParams?.id,
+  } = useGetReportValidateByIdQuery(caseValidateId || "", {
+    skip: !caseValidateId,
   });
 
   const {
     data: reportOriginalByIdData,
-    isFetching: reportOriginalByIdDataFetching,
-    isLoading: reportOriginalByIdDataLoading,
-    error: reportOriginalByIdDataError,
-    refetch: reportOriginalByIdDataRefetch,
+    isFetching: reportOriginalByIdFetching,
+    isLoading: reportOriginalByIdLoading,
+    error: reportOriginalByIdError,
+    refetch: reportOriginalByIdRefetch,
   } = useGetReportOriginalByIdQuery(
     reportValidateByIdData?.val_cr_originalcase_id_fk!,
     {
@@ -87,11 +112,29 @@ const CaseAssignmentReviewContent = () => {
 
   const {
     data: allReasonCancellationData,
-    isFetching: allReasonCancellationDataFetching,
-    isLoading: allReasonCancellationDataLoading,
+    isFetching: allReasonCancellationFetching,
+    isLoading: allReasonCancellationLoading,
     error: allReasonCancellationDataError,
     refetch: allReasonCancellationDataRefetch,
   } = useGetAllReasonCancellationCasesQuery(null);
+
+  const {
+    data: roleByNameData,
+    isFetching: roleByNameFetching,
+    isLoading: roleByNameLoading,
+    error: roleByNameDataError,
+    refetch: roleByNameDataRefetch,
+  } = useGetRoleByNameQuery(UserRolesEnum.ANALYST);
+
+  const {
+    data: allReasonReturnCaseByRoleIdData,
+    isFetching: allReasonReturnCaseByRoleIdFetching,
+    isLoading: allReasonReturnCaseByRoleIdLoading,
+    error: allReasonReturnCaseByRoleIdError,
+    refetch: allReasonReturnCaseByRoleIdRefetch,
+  } = useGetReasonReturnCaseByRoleIdQuery(roleByNameData?.id!, {
+    skip: !roleByNameData?.id,
+  });
 
   const [
     cancelCaseReportValidate,
@@ -103,14 +146,73 @@ const CaseAssignmentReviewContent = () => {
     { isLoading: createObservationCancellationCaseLoading },
   ] = useCreateObservationCancellationCaseMutation();
 
-  const handleClickReturnCaseToValidator = () => {};
+  const [
+    returnCaseToValidator,
+    { isLoading: returnCaseToValidatorDataLoading },
+  ] = useReturnCaseToValidatorMutation();
+
+  const [
+    createObservationReturnCase,
+    { isLoading: createObservationReturnCaseLoading },
+  ] = useCreateObservationReturnCaseMutation();
+
+  const handleClickReturnCaseToValidator = async () => {
+    try {
+      setIsSubmittingReturnCaseToValidatorCase(true);
+
+      const returnCaseToValidatorResponse: any = await returnCaseToValidator({
+        idCaseValidate: reportValidateByIdData?.id!,
+        idAnalyst: idNumberUserSessionState,
+      });
+
+      let isReturnCaseError = returnCaseToValidatorResponse.error;
+      let isReturnCaseSuccess = returnCaseToValidatorResponse.data;
+
+      if (isReturnCaseError) {
+        const errorMessage = isReturnCaseError?.data.message;
+        dispatch(
+          setShowMessage({
+            type: "error",
+            content: errorMessage,
+          })
+        );
+        return;
+      }
+
+      if (isReturnCaseSuccess) {
+        await createObservationReturnCase({
+          idUser: idNumberUserSessionState.toString(),
+          idCaseValidate: reportValidateByIdData?.id!,
+          newReasonReturnCase: {
+            rec_o_reasonreturn_id_fk: reasonReturnCaseToValidatorId,
+            rec_o_observation: observationReturnToValidatorCase,
+          },
+        });
+
+        const successMessage = isReturnCaseSuccess?.message;
+        dispatch(
+          setShowMessage({
+            type: "success",
+            content: successMessage,
+          })
+        );
+
+        router.push(`/case_assignment`);
+      }
+    } catch (error) {
+      dispatch(setShowMessage({ type: "error", content: "ERROR INTERNO" }));
+      console.error("Error al enviar los datos", error);
+    } finally {
+      setIsSubmittingReturnCaseToValidatorCase(false);
+    }
+  };
 
   const handleCLickCancelCase = async () => {
     try {
-      setIsSubmittinCancellationCase(true);
+      setIsSubmittingCancellationCase(true);
       const cancelResponse: any = await cancelCaseReportValidate({
         id: reportValidateByIdData?.id!,
-        idUser: idNumberUserSessionState,
+        idUser: idNumberUserSessionState.toString(),
       });
 
       let isCancelError = cancelResponse.error;
@@ -129,7 +231,7 @@ const CaseAssignmentReviewContent = () => {
 
       if (isCancelSuccess) {
         await createObservationCancellationCase({
-          idUser: idNumberUserSessionState,
+          idUser: idNumberUserSessionState.toString(),
           idCaseValidate: reportValidateByIdData?.id!,
           newReasonCancellationCase: {
             cac_o_reasoncancellation_id_fk: reasonCancellationCaseId,
@@ -149,9 +251,9 @@ const CaseAssignmentReviewContent = () => {
       }
     } catch (error) {
       dispatch(setShowMessage({ type: "error", content: "ERROR INTERNO" }));
-      console.error("Error al enviar el formulario", error);
+      console.error("Error al enviar los datos", error);
     } finally {
-      setIsSubmittinCancellationCase(false);
+      setIsSubmittingCancellationCase(false);
     }
   };
 
@@ -175,7 +277,9 @@ const CaseAssignmentReviewContent = () => {
         <OptionsCaseAssignmentReviewButton
           handleCLickCancelCase={() => setIsModalConfirmCancelCase(true)}
           handleClickAssignResearch={() => setIsModalAssignResearch(true)}
-          handleClickReturnCaseToValidator={handleClickReturnCaseToValidator}
+          handleClickReturnCaseToValidator={() =>
+            setIsModalConfirmReturnCaseToValidator(true)
+          }
         />
       </div>
 
@@ -343,11 +447,42 @@ const CaseAssignmentReviewContent = () => {
             allReasonCancellationData={allReasonCancellationData}
             onCloseModal={() => setIsModalConfirmCancelCase(false)}
             handleCLickCancelCase={handleCLickCancelCase}
-            isSubmittinCancellationCase={isSubmittinCancellationCase}
-            allReasonCancellationDataFetching={
-              allReasonCancellationDataFetching
+            isSubmittinCancellationCase={isSubmittingCancellationCase}
+            allReasonCancellationDataFetching={allReasonCancellationFetching}
+            allReasonCancellationDataLoading={allReasonCancellationLoading}
+          />
+        }
+      />
+
+      <CustomModalNoContent
+        key={"custom-modal-confirm-return-case-to-validator"}
+        widthCustomModalNoContent="25%"
+        openCustomModalState={isModalConfirmReturnCaseToValidator}
+        closableCustomModal={true}
+        maskClosableCustomModal={false}
+        handleCancelCustomModal={() =>
+          setIsModalConfirmReturnCaseToValidator(false)
+        }
+        contentCustomModal={
+          <ContentConfirmReturnCaseToValidator
+            observationReturnToValidatorCase={observationReturnToValidatorCase}
+            setObservationReturnToValidatorCase={
+              setObservationReturnToValidatorCase
             }
-            allReasonCancellationDataLoading={allReasonCancellationDataLoading}
+            reasonReturnCaseToValidatorId={reasonReturnCaseToValidatorId}
+            setReasonReturnCaseToValidatorId={setReasonReturnCaseToValidatorId}
+            isSubmittingReturnToValidatorCase={
+              isSubmittingReturnCaseToValidatorCase
+            }
+            allReasonReturnCaseByRoleIdData={allReasonReturnCaseByRoleIdData}
+            allReasonReturnCaseByRoleIdLoading={
+              allReasonReturnCaseByRoleIdLoading
+            }
+            allReasonReturnCaseByRoleIdFetching={
+              allReasonReturnCaseByRoleIdFetching
+            }
+            onCloseModal={() => setIsModalConfirmReturnCaseToValidator(false)}
+            handleClickReturnCaseToValidator={handleClickReturnCaseToValidator}
           />
         }
       />

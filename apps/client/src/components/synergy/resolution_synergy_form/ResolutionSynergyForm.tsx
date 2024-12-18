@@ -74,6 +74,7 @@ const ResolutionSynergyForm: React.FC<{
               id="patient-content"
               className="patient-content"
               name="patient-content"
+              tooltip="Quien es el paciente, antecedentes, edad, comorbilidad entre otros datos de importancia que tengan relevancia con el caso, ejemplo: Fecha de procedimiento"
               style={{
                 width: "100%",
                 marginTop: 0,
@@ -93,7 +94,7 @@ const ResolutionSynergyForm: React.FC<{
                 size="small"
                 disabled={!managinSynergyFormData}
                 style={{ width: "100%", textTransform: "uppercase" }}
-                placeholder="Quien es el paciente, antecedentes, edad, comorbilidad entre otros datos de importancia que tengan relevancia con el caso, ejemplo: Fecha de procedimiento"
+                placeholder="Escribe..."
               />
             </Form.Item>
           </Col>
@@ -104,6 +105,7 @@ const ResolutionSynergyForm: React.FC<{
               id="possible-faults"
               className="possible-faults"
               name="possible-faults"
+              tooltip="causas preliminares que dieron origen al caso"
               style={{
                 width: "100%",
                 marginTop: 0,
@@ -123,7 +125,7 @@ const ResolutionSynergyForm: React.FC<{
                 size="small"
                 disabled={!managinSynergyFormData}
                 style={{ width: "100%", textTransform: "uppercase" }}
-                placeholder="causas preliminares que dieron origen al caso"
+                placeholder="Escribe..."
               />
             </Form.Item>
           </Col>
@@ -134,6 +136,7 @@ const ResolutionSynergyForm: React.FC<{
               id="consequences"
               className="consequences"
               name="consequences"
+              tooltip="Impacto en el paciente"
               style={{
                 width: "100%",
                 marginTop: 0,
@@ -153,7 +156,7 @@ const ResolutionSynergyForm: React.FC<{
                 size="small"
                 disabled={!managinSynergyFormData}
                 style={{ width: "100%", textTransform: "uppercase" }}
-                placeholder="Impacto en el paciente"
+                placeholder="Escribe..."
               />
             </Form.Item>
           </Col>
@@ -164,6 +167,7 @@ const ResolutionSynergyForm: React.FC<{
               id="clinical-management"
               className="clinical-management"
               name="clinical-management"
+              tooltip="Que le están haciendo actualmente y como está la familia y si hay molestias de parte de ellos"
               style={{
                 width: "100%",
                 marginTop: 0,
@@ -183,7 +187,7 @@ const ResolutionSynergyForm: React.FC<{
                 size="small"
                 disabled={!managinSynergyFormData}
                 style={{ width: "100%", textTransform: "uppercase" }}
-                placeholder="Que le están haciendo actualmente y como está la familia y si hay molestias de parte de ellos"
+                placeholder="Escribe..."
               />
             </Form.Item>
           </Col>
@@ -194,6 +198,7 @@ const ResolutionSynergyForm: React.FC<{
               id="whom-was-notified"
               className="whom-was-notified"
               name="whom-was-notified"
+              tooltip="Evaluar que el personal clínico se le haya notificado por mensaje y al jefe de la especialidad"
               style={{
                 width: "100%",
                 marginTop: 0,
@@ -213,7 +218,7 @@ const ResolutionSynergyForm: React.FC<{
                 size="small"
                 disabled={!managinSynergyFormData}
                 style={{ width: "100%", textTransform: "uppercase" }}
-                placeholder="Evaluar que el personal clínico se le haya notificado por mensaje y al jefe de la especialidad"
+                placeholder="Escribe..."
               />
             </Form.Item>
           </Col>
@@ -258,7 +263,6 @@ const ResolutionSynergyForm: React.FC<{
               </Col>
             </Row>
           )}
-          
         </Row>
       </Form>
     </div>

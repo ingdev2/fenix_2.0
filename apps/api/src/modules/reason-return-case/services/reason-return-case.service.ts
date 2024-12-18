@@ -74,7 +74,7 @@ export class ReasonReturnCaseService {
     });
 
     if (reasonReturnCases.length === 0) {
-      return new HttpException(
+      throw new HttpException(
         'No se encontró la lista de motivos de devolución.',
         HttpStatus.NOT_FOUND,
       );
@@ -84,7 +84,7 @@ export class ReasonReturnCaseService {
 
   async findOneReasonReturnCase(id: number) {
     if (!id) {
-      return new HttpException(
+      throw new HttpException(
         'El identificador del motivo de devolución es requerido.',
         HttpStatus.BAD_REQUEST,
       );
@@ -96,7 +96,7 @@ export class ReasonReturnCaseService {
     });
 
     if (!reasonReturnCase) {
-      return new HttpException(
+      throw new HttpException(
         'No se encontró el motivo de devolución.',
         HttpStatus.NOT_FOUND,
       );
@@ -104,12 +104,35 @@ export class ReasonReturnCaseService {
     return reasonReturnCase;
   }
 
+  async findOneReasonReturnCaseByRoleId(roleid: number) {
+    if (!roleid) {
+      throw new HttpException(
+        'El identificador del rol es requerido.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const reasonReturnCaseByRoleFound =
+      await this.reasonReturnCaseRepository.find({
+        where: { rec_r_role_id_fk: roleid, rec_r_status: true },
+        relations: { role: true },
+      });
+
+    if (!reasonReturnCaseByRoleFound) {
+      throw new HttpException(
+        'No se encontró los motivos de devolución.',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return reasonReturnCaseByRoleFound;
+  }
+
   async updateReasonReturnCase(
     id: number,
     updateReasonReturnCaseDto: UpdateReasonReturnCaseDto,
   ) {
     if (!updateReasonReturnCaseDto) {
-      return new HttpException(
+      throw new HttpException(
         'Los datos para actualizar el motivo de devolución son requeridos.',
         HttpStatus.BAD_REQUEST,
       );
@@ -140,8 +163,8 @@ export class ReasonReturnCaseService {
     if (!reasonFound) {
       throw new HttpException(
         `Razón devolución de caso no encontrado, favor recargar.`,
-        HttpStatus.NOT_FOUND
-      )
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     const result = await this.reasonReturnCaseRepository.softDelete(id);

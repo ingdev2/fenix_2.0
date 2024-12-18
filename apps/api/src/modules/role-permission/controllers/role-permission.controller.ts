@@ -38,10 +38,10 @@ export class RolePermissionController {
     return this.roleService.findOneRole(id);
   }
 
-  @Get('/findRoleByName/')
+  @Get('/findRoleByName/:roleName')
   @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
-  findRoleByName(@Body() createRoleDto: CreateRolePermissionDto) {
-    return this.roleService.findRoleByName(createRoleDto);
+  findRoleByName(@Param('roleName') roleName: string) {
+    return this.roleService.findRoleByName(roleName);
   }
 
   @Patch('/updateRole/:id/')

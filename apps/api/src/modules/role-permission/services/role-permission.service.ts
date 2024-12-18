@@ -18,7 +18,7 @@ export class RolePermissionService {
 
   async createRole(createRoleDto: CreateRolePermissionDto) {
     if (!createRoleDto || !createRoleDto.role_name) {
-      return new HttpException(
+      throw new HttpException(
         'El nombre del rol es requerido.',
         HttpStatus.BAD_REQUEST,
       );
@@ -32,7 +32,7 @@ export class RolePermissionService {
     });
 
     if (findRole) {
-      return new HttpException(
+      throw new HttpException(
         'El rol ya existe.',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
@@ -57,7 +57,7 @@ export class RolePermissionService {
     });
 
     if (roles.length === 0) {
-      return new HttpException(
+      throw new HttpException(
         'No se encontró la lista de roles',
         HttpStatus.NOT_FOUND,
       );
@@ -67,7 +67,7 @@ export class RolePermissionService {
 
   async findOneRole(id: number) {
     if (!id) {
-      return new HttpException(
+      throw new HttpException(
         'El identificador del rol es requerido.',
         HttpStatus.BAD_REQUEST,
       );
@@ -78,31 +78,32 @@ export class RolePermissionService {
     });
 
     if (!role) {
-      return new HttpException('No se encontró el rol', HttpStatus.NOT_FOUND);
+      throw new HttpException('No se encontró el rol', HttpStatus.NOT_FOUND);
     }
 
     return role;
   }
 
-  async findRoleByName(createRoleDto: CreateRolePermissionDto) {
-    if (!createRoleDto.role_name) {
-      return new HttpException(
-        'El nombre del tipo de caso es requerido.',
+  async findRoleByName(roleName: string) {
+    if (!roleName) {
+      throw new HttpException(
+        'El nombre del rol es requerido.',
         HttpStatus.BAD_REQUEST,
       );
     }
-    const roleName = await this.roleRepository.findOne({
-      where: { role_name: createRoleDto.role_name, role_status: true },
+
+    const roleNameFound = await this.roleRepository.findOne({
+      where: { role_name: roleName, role_status: true },
     });
 
-    if (!roleName) {
-      return new HttpException(
+    if (!roleNameFound) {
+      throw new HttpException(
         'No se encontró el nombre del rol',
         HttpStatus.NOT_FOUND,
       );
     }
 
-    return roleName;
+    return roleNameFound;
   }
 
   async updateRole(id: number, updateRoleDto: UpdateRolePermissionDto) {
@@ -130,12 +131,12 @@ export class RolePermissionService {
 
   async deleteRole(id: number) {
     const roleFound = await this.roleRepository.findOneBy({ id });
-    
+
     if (!roleFound) {
       return new HttpException(
         `Rol no encontrado, favor recargar.`,
-        HttpStatus.NOT_FOUND
-      )
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     const result = await this.roleRepository.softDelete(id);

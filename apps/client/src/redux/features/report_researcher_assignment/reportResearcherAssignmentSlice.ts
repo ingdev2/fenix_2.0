@@ -4,6 +4,8 @@ const initialState: ReportResearcherAssignment = {
   id: 0,
   res_validatedcase_id_fk: "",
   res_useranalyst_id: "",
+  res_positionname: "",
+  res_justifications: "",
   res_userresearch_id: "",
   res_days: 0,
   res_isreturned: true,
@@ -25,6 +27,12 @@ export const reportResearcherAssignmentSlice = createSlice({
     },
     setUserAnalystIdReportResearcherAssignment: (state, action) => {
       state.res_useranalyst_id = action.payload;
+    },
+    setPositionNameReportResearcherAssignment: (state, action) => {
+      state.res_positionname = action.payload;
+    },
+    setJustifiactionsReportResearcherAssignment: (state, action) => {
+      state.res_justifications = action.payload;
     },
     setUserResearchIdReportResearcherAssignment: (state, action) => {
       state.res_userresearch_id = action.payload;
@@ -51,6 +59,8 @@ export const reportResearcherAssignmentSlice = createSlice({
       state.id = 0;
       state.res_validatedcase_id_fk = "";
       state.res_useranalyst_id = "";
+      state.res_justifications = "";
+      state.res_userresearch_id = "";
       state.res_userresearch_id = "";
       state.res_days = 0;
       state.res_isreturned = false;
@@ -66,6 +76,8 @@ export const {
   setIdReportResearcherAssignment,
   setValidateCaseIdFk,
   setUserAnalystIdReportResearcherAssignment,
+  setJustifiactionsReportResearcherAssignment,
+  setPositionNameReportResearcherAssignment,
   setUserResearchIdReportResearcherAssignment,
   setDaysReportResearcherAssignment,
   setIsReturnedReportResearcherAssignment,
