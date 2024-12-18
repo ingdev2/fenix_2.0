@@ -46,6 +46,11 @@ const CustomTableFiltersAndSorting: React.FC<{
   loading: boolean;
   customButton?: React.ReactNode;
   customTag?: React.ReactNode;
+  enableRowSelection?: boolean;
+  onSelectionChange?: (selection: {
+    selectedRowKeys: React.Key[];
+    selectedRows: any[];
+  }) => void;
 }> = ({
   dataCustomTable,
   columnsCustomTable,
@@ -53,6 +58,8 @@ const CustomTableFiltersAndSorting: React.FC<{
   loading,
   customButton,
   customTag,
+  enableRowSelection = false,
+  onSelectionChange,
 }) => {
   const [filteredInfo, setFilteredInfo] = useState<Filters>({});
   const [sortedInfo, setSortedInfo] = useState<Sorts>({});
@@ -60,6 +67,8 @@ const CustomTableFiltersAndSorting: React.FC<{
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef<InputRef>(null);
+
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   const handleChange: OnChange = (pagination, filters, sorter) => {
     setFilteredInfo(filters);
@@ -94,6 +103,32 @@ const CustomTableFiltersAndSorting: React.FC<{
     setSortedInfo({});
     handleReset(clearFilters);
   };
+
+  // Manejador de selección de filas
+  const onSelectChange = (
+    newSelectedRowKeys: React.Key[],
+    selectedRows: any[]
+  ) => {
+    setSelectedRowKeys(newSelectedRowKeys);
+    if (onSelectionChange) {
+      onSelectionChange({
+        selectedRowKeys: newSelectedRowKeys,
+        selectedRows,
+      });
+    }
+  };
+
+  const rowSelection = enableRowSelection
+    ? {
+        selectedRowKeys,
+        onChange: onSelectChange,
+        selections: [
+          Table.SELECTION_ALL,
+          Table.SELECTION_INVERT,
+          Table.SELECTION_NONE,
+        ],
+      }
+    : undefined;
 
   const getColumnSearchProps = (dataIndex: string): TableColumnType<any> => ({
     filterDropdown: ({
@@ -365,6 +400,7 @@ const CustomTableFiltersAndSorting: React.FC<{
           rowKey={(record) => record.id}
           size={"small"}
           loading={loading}
+          rowSelection={rowSelection}
           locale={{
             emptyText: loading ? (
               <Skeleton active />
