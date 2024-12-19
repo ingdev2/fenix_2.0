@@ -11,13 +11,13 @@ export enum ItemNames {
 
   ITEM_ANALYSIS = "Análisis",
   SUB_CASE_ASSIGNMENT = "Asignación de casos",
-  SUB_MY_CASE = "Mis casos",
+  SUB_MY_CASES = "Mis casos",
   SUB_INFORMATION = "Informes",
 
   ITEM_FOLLOW_UPS = "Seguimientos",
 
   ITEM_ACTION_PLANS = "Planes de acción",
-  SUB_PLANS_CREATED = "Planes Creados",
+  SUB_CREATED_PLANS = "Planes Creados",
   SUB_MONITORING = "Monitoreo",
 
   ITEM_RISK = "Riesgo",
@@ -27,16 +27,16 @@ export enum ItemNames {
   SUB_RISK_INFORMATION = "Informe",
 
   ITEM_SP_PROGRAM = "Programa de SP",
-  SUB_STRATEGIES = "Estrategias",
-  SUB_SP_INFORMATION = "Informe",
+  SUB_PATIENT_SECURITY_STRATEGIES = "Estrategias",
+  SUB_PATIENT_SECURITY_INFORMATION = "Informe",
   SUB_SANCTIONS_FRAMEWORK = "Marco de sanciones",
 
-  ITEM_CLOSING_CYCLE = "Cierre de ciclo",
+  ITEM_CYCLE_CLOSURE = "Cierre de ciclo",
   ITEM_INDICATORS = "Indicadores",
 
   ITEM_CONFIGURATION = "Configuración",
-  SUB_EVENT_TYPE = "Tipos de Suceso",
-  SUB_EVENT = "Sucesos",
+  SUB_EVENT_TYPES = "Tipos de Suceso",
+  SUB_EVENTS = "Sucesos",
   SUB_CASE_TYPES = "Tipos de caso",
   SUB_RISK_TYPES = "Tipos de riesgo",
   SUB_SEVERITY_CLASIFICATIONS = "Clasificaciones de severidad",
@@ -47,7 +47,7 @@ export enum ItemNames {
   SUB_SUB_ORIGINS = "Sub Origenes",
   SUB_RISK_LEVELS = "Niveles de riesgo",
   SUB_CASE_CHARACTERIZATION = "Caracterización de caso",
-  SUB_ROLE = "Roles",
+  SUB_ROLES = "Roles",
   SUB_RESEARCH_INSTRUMENTS = "Instrumentos de investigación",
   SUB_DEVICE_TYPES = "Tipos de dispositivo",
   SUB_DAMAGE_TYPES = "Tipos de daño",
@@ -60,7 +60,7 @@ export enum ItemNames {
   SUB_UNSAFE_ACTIONS = "Acciones inseguras",
   SUB_RETURN_REASONS_CASE = "Razones de devolución de casos",
   SUB_MOVEMENTS = "Movimientos",
-  SUB_ONCOLOGICAL_CATEGORY = "Categoría oncológica",
+  SUB_TREATMENT_CATEGORY = "Categoría de tratamiento",
 }
 
 export enum ItemKeys {
@@ -125,5 +125,5 @@ export enum ItemKeys {
   SUB_UNSAFE_ACTIONS_KEY = "configuration/unsafe_action",
   SUB_RETURN_REASONS_CASE_KEY = "configuration/reason_return_case",
   SUB_MOVEMENTS_KEY = "configuration/movement_report",
-  SUB_ONCOLOGICAL_CATEGORY_KEY = "configuration/oncology_category",
+  SUB_TREATMENT_CATEGORY_KEY = "configuration/oncology_category",
 }

@@ -9,10 +9,12 @@ import AdverseEventContent from "@/components/case_reports/adverse_event/Adverse
 
 import useAuthValidation from "@/utils/hooks/use_auth_validation";
 import { useRoleValidation } from "@/utils/hooks/use_role_validation";
+import { usePermissionsAppAndModuleValidationInPage } from "@/utils/hooks/use_permissions_app_and_module_validation_in_page";
+import { RolesEnum } from "@/utils/enums/roles/roles.enum";
+import { ApplicationsEnum } from "@/utils/enums/permissions/applications/applications.enum";
+import { ApplicationModulesEnum } from "@/utils/enums/permissions/application_modules/application_modules.enum";
 
 import { setIdNumberUserSession } from "@/redux/features/user_session/userSessionSlice";
-
-import { RolesEnum } from "@/utils/enums/roles/roles.enum";
 
 const AdverseEventReportPage = () => {
   const { data: session, status } = useSession();
@@ -23,10 +25,10 @@ const AdverseEventReportPage = () => {
   const allowedRoles = [RolesEnum.COLLABORATOR];
   useRoleValidation(allowedRoles);
 
-  // usePermissionsAppAndModuleValidation({
-  //   allowedApplications: [ApplicationsEnum.FÉNIX],
-  //   allowedModules: [ApplicationModulesEnum.FÉNIX_CLINICAL_CONDITION_MANAGEMENT],
-  // });
+  usePermissionsAppAndModuleValidationInPage({
+    allowedApplications: [ApplicationsEnum.FÉNIX],
+    allowedModules: [ApplicationModulesEnum.FENIX_CREATE_REPORT],
+  });
 
   const idNumberUserSessionState = useAppSelector(
     (state) => state.userSession.id_number
