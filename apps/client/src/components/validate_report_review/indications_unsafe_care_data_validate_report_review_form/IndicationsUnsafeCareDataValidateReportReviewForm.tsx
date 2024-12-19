@@ -351,7 +351,6 @@ const IndicationsUnsafeCareDataValidateReportReviewForm: React.FC<{
               id="devices-name"
               className="devices-name"
               name="devices-name"
-
               style={{ width: "80%", marginTop: "-10px" }}
             >
               <Select
@@ -384,6 +383,7 @@ const IndicationsUnsafeCareDataValidateReportReviewForm: React.FC<{
                 dataSource={selectedDevicesLocalState}
                 renderItem={(device) => (
                   <List.Item
+                    key={device.deviceCode}
                     actions={[
                       <CustomButton
                         classNameCustomButton="delete-item-device-button"

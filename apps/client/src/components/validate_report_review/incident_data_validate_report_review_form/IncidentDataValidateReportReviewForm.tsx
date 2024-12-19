@@ -383,6 +383,7 @@ const IncidentDataValidateReportReviewForm: React.FC<{
                 dataSource={selectedMedicinesLocalState}
                 renderItem={(medicine) => (
                   <List.Item
+                    key={medicine.drugCode}
                     actions={[
                       <CustomButton
                         classNameCustomButton="delete-item-medicine-button"

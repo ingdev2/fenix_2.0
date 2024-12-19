@@ -57,7 +57,7 @@ import { DescriptionOtherEnum } from "@/utils/enums/description_other";
 import { MdOutlineDescription } from "react-icons/md";
 import { useGetUserActiveByIdNumberQuery } from "@/redux/apis/users_b_hub/verifyActiveUserApi";
 
-const indicationsUnsafeCareContent = () => {
+const IndicationsUnsafeCareContent = () => {
   const [originIdLocalState, setOriginIdLocalState] = useState(0);
   const [subOriginIdLocalState, setSubOriginIdLocalState] = useState(0);
   const [reportingServiceIdLocalState, setReportingServiceIdLocalState] =
@@ -1253,6 +1253,7 @@ const indicationsUnsafeCareContent = () => {
                     dataSource={selectedDevicesLocalState}
                     renderItem={(device) => (
                       <List.Item
+                        key={device.deviceCode}
                         actions={[
                           <CustomButton
                             classNameCustomButton="delete-item-device-button"
@@ -1415,4 +1416,4 @@ const indicationsUnsafeCareContent = () => {
   );
 };
 
-export default indicationsUnsafeCareContent;
+export default IndicationsUnsafeCareContent;

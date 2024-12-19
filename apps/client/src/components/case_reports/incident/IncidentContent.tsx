@@ -604,7 +604,7 @@ const IncidentContent = () => {
                 style={{ width: "100%" }}
               >
                 {Array.isArray(allOriginsData) &&
-                  allOriginsData?.map((item: any) => (
+                  allOriginsData?.map((item: Origin) => (
                     <Select.Option key={item.id} value={item.id}>
                       {item.orig_name}
                     </Select.Option>
@@ -647,7 +647,7 @@ const IncidentContent = () => {
                 style={{ width: "100%" }}
               >
                 {Array.isArray(allSubOriginsByOriginIdData) &&
-                  allSubOriginsByOriginIdData?.map((item: any) => (
+                  allSubOriginsByOriginIdData?.map((item: SubOrigin) => (
                     <Select.Option key={item.id} value={item.id}>
                       {item.sub_o_name}
                     </Select.Option>
@@ -783,7 +783,7 @@ const IncidentContent = () => {
                   style={{ width: "100%" }}
                 >
                   {Array.isArray(allServicesData) &&
-                    allServicesData?.map((item: any) => (
+                    allServicesData?.map((item: Service) => (
                       <Select.Option key={item.id} value={item.id}>
                         {item.serv_name}
                       </Select.Option>
@@ -835,7 +835,7 @@ const IncidentContent = () => {
                   style={{ width: "100%" }}
                 >
                   {Array.isArray(allServicesData) &&
-                    allServicesData?.map((item: any) => (
+                    allServicesData?.map((item: Service) => (
                       <Select.Option key={item.id} value={item.id}>
                         {item.serv_name}
                       </Select.Option>
@@ -987,7 +987,7 @@ const IncidentContent = () => {
                   style={{ width: "100%" }}
                 >
                   {Array.isArray(allEventTypeByCaseTypeIdData) &&
-                    allEventTypeByCaseTypeIdData?.map((item: any) => (
+                    allEventTypeByCaseTypeIdData?.map((item: EventType) => (
                       <Select.Option key={item.id} value={item.id}>
                         {item.eve_t_name}
                       </Select.Option>
@@ -1043,7 +1043,7 @@ const IncidentContent = () => {
                   style={{ width: "100%" }}
                 >
                   {Array.isArray(allEventsByEventTypeIdData) &&
-                    allEventsByEventTypeIdData?.map((item: any) => (
+                    allEventsByEventTypeIdData?.map((item: Events) => (
                       <Select.Option key={item.id} value={item.id}>
                         {item.eve_name}
                       </Select.Option>
@@ -1138,7 +1138,7 @@ const IncidentContent = () => {
                       value={riskLevelIdLocalState}
                     >
                       {Array.isArray(allRiskLevelData) &&
-                        allRiskLevelData?.map((item: any) => (
+                        allRiskLevelData?.map((item: RiskLevel) => (
                           <Radio key={item.id} value={item.id}>
                             {item.ris_l_name}
                           </Radio>
@@ -1178,25 +1178,28 @@ const IncidentContent = () => {
                       value={severityClasificationIdLocalState}
                     >
                       {Array.isArray(allSeverityClasificationsData) &&
-                        allSeverityClasificationsData?.map((item: any) => (
-                          <Radio
-                            key={item.id}
-                            value={item.id}
-                            style={{ display: "block" }}
-                          >
-                            {item.sev_c_description}
-                            {severityClasificationIdLocalState === item.id && (
-                              <CustomTags
-                                labelCustom={item.sev_c_name}
-                                colorCustom="#002140"
-                                stylesCustom={{
-                                  borderRadius: "30px",
-                                  marginLeft: "15px",
-                                }}
-                              />
-                            )}
-                          </Radio>
-                        ))}
+                        allSeverityClasificationsData?.map(
+                          (item: SeverityClasification) => (
+                            <Radio
+                              key={item.id}
+                              value={item.id}
+                              style={{ display: "block" }}
+                            >
+                              {item.sev_c_description}
+                              {severityClasificationIdLocalState ===
+                                item.id && (
+                                <CustomTags
+                                  labelCustom={item.sev_c_name}
+                                  colorCustom="#002140"
+                                  stylesCustom={{
+                                    borderRadius: "30px",
+                                    marginLeft: "15px",
+                                  }}
+                                />
+                              )}
+                            </Radio>
+                          )
+                        )}
                     </Radio.Group>
                   )}
                 </Form.Item>
@@ -1252,8 +1255,9 @@ const IncidentContent = () => {
                   <List
                     size="small"
                     dataSource={selectedMedicinesLocalState}
-                    renderItem={(medicine) => (
+                    renderItem={(medicine: MedicineExternal) => (
                       <List.Item
+                        key={medicine.drugCode}
                         actions={[
                           <CustomButton
                             classNameCustomButton="delete-item-medicine-button"

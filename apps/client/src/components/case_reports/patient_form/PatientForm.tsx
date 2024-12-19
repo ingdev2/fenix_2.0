@@ -581,10 +581,18 @@ const PatientForm: React.FC<PatientForm> = ({
                 }}
                 style={{ width: "100%" }}
               >
-                <Select.Option value="FA1">FA1</Select.Option>
-                <Select.Option value="FA2">FA2</Select.Option>
-                <Select.Option value="FA3">FA3</Select.Option>
-                <Select.Option value="FA4">FA4</Select.Option>
+                <Select.Option key={"FA1"} value="FA1">
+                  FA1
+                </Select.Option>
+                <Select.Option key={"FA2"} value="FA2">
+                  FA2
+                </Select.Option>
+                <Select.Option key={"FA3"} value="FA3">
+                  FA3
+                </Select.Option>
+                <Select.Option key={"FA4"} value="FA4">
+                  FA4
+                </Select.Option>
               </Select>
             </Form.Item>
           </Col>
