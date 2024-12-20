@@ -20,7 +20,7 @@ import { Auth } from 'src/modules/auth/decorators/auth.decorator';
 export class EventTypeController {
   constructor(private readonly eventTypeService: EventTypeService) {}
 
-  @Post('/createEventType/:userIdPermission')
+  @Post('/createEventType/')
   @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   createEventType(@Body() createEventTypeDto: CreateEventTypeDto) {
     return this.eventTypeService.createEventType(createEventTypeDto);

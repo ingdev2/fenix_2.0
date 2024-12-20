@@ -20,7 +20,7 @@ import { Auth } from 'src/modules/auth/decorators/auth.decorator';
 export class MovementReportController {
   constructor(private readonly movementReportService: MovementReportService) {}
 
-  @Post('/createMovementReport/:userIdPermission')
+  @Post('/createMovementReport/')
   @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   createMovementReport(
     @Body() createMovementReportDto: CreateMovementReportDto,

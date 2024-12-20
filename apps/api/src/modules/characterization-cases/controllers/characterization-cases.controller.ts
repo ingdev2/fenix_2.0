@@ -22,7 +22,7 @@ export class CharacterizationCasesController {
     private readonly characterizationCasesService: CharacterizationCasesService,
   ) {}
 
-  @Post('/createCharacterizationCase/:userIdPermission')
+  @Post('/createCharacterizationCase/')
   @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   create(@Body() createCharacterizationCaseDto: CreateCharacterizationCaseDto) {
     return this.characterizationCasesService.createCharacterization(

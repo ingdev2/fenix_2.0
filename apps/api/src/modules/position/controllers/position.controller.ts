@@ -20,7 +20,7 @@ import { Auth } from 'src/modules/auth/decorators/auth.decorator';
 export class PositionController {
   constructor(private readonly positionService: PositionService) {}
 
-  @Post('/createPosition/:userIdPermission')
+  @Post('/createPosition/')
   @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   createPosition(@Body() createPositionDto: CreatePositionDto) {
     return this.positionService.createPosition(createPositionDto);

@@ -21,7 +21,7 @@ import { Auth } from 'src/modules/auth/decorators/auth.decorator';
 export class DocumentTypeController {
   constructor(private readonly documentTypeService: DocumentTypeService) {}
 
-  @Post('/createDocumentType/:userIdPermission')
+  @Post('/createDocumentType/')
   @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   createDocumentType(@Body() createDocumentTypeDto: CreateDocumentTypeDto) {
     return this.documentTypeService.createDocumentType(createDocumentTypeDto);
