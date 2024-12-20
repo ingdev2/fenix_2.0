@@ -54,7 +54,7 @@ const TableColumnsValidateReport = ({
       a.val_cr_filingnumber.length - b.val_cr_filingnumber.length,
   },
   {
-    title: "Fecha",
+    title: "Fecha ocurrencia",
     dataIndex: "val_cr_dateofcase",
     key: "val_cr_dateofcase",
     width: 100,
