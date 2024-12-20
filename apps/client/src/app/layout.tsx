@@ -9,6 +9,7 @@ import es_ES from "antd/locale/es_ES";
 import { Providers } from "@/redux/providers";
 import SessionAuthProvider from "@/context/SessionAuthProvider";
 import "./globals.css";
+import CustomMessageState from "@/components/common/custom_messages/CustomMessageState";
 
 const nunito = Nunito({ subsets: ["latin"], weight: ["400", "700"] });
 
@@ -29,6 +30,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
             <AntdRegistry>
               <SessionAuthProvider>
                 <ConfigProvider theme={themeConfig} locale={es_ES}>
+                  <CustomMessageState />
                   {children}
                 </ConfigProvider>
               </SessionAuthProvider>
