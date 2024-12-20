@@ -5,6 +5,9 @@ import { EyeOutlined } from "@ant-design/icons";
 import { customTagCaseTypes } from "@/components/common/custom_tags/CustomTagsCaseType";
 import { FaAngleDoubleUp } from "react-icons/fa";
 
+const fillingNumberKey: keyof CaseReportValidate = "val_cr_filingnumber";
+const dateOfCaseKey: keyof CaseReportValidate = "val_cr_dateofcase";
+const ddocumentPatientKey: keyof CaseReportValidate = "val_cr_documentpatient";
 const eventNameKey: keyof CaseReportValidate = "val_cr_event_id_fk";
 const CaseTypeNameKey: keyof CaseReportValidate = "val_cr_casetype_id_fk";
 const PriorityNameKey: keyof CaseReportValidate = "val_cr_priority_id_fk";
@@ -45,8 +48,8 @@ const TableColumnsSummaryReports = ({
   },
   {
     title: "Código",
-    dataIndex: "val_cr_filingnumber",
-    key: "val_cr_filingnumber",
+    dataIndex: fillingNumberKey,
+    key: fillingNumberKey,
     width: 100,
     ellipsis: true,
     searchable: true,
@@ -54,17 +57,17 @@ const TableColumnsSummaryReports = ({
       a.val_cr_filingnumber.length - b.val_cr_filingnumber.length,
   },
   {
-    title: "Fecha",
-    dataIndex: "val_cr_dateofcase",
-    key: "val_cr_dateofcase",
+    title: "Fecha ocurrencia",
+    dataIndex: dateOfCaseKey,
+    key: dateOfCaseKey,
     width: 100,
     ellipsis: true,
     searchable: true,
   },
   {
     title: "Documento",
-    dataIndex: "val_cr_documentpatient",
-    key: "val_cr_documentpatient",
+    dataIndex: ddocumentPatientKey,
+    key: ddocumentPatientKey,
     width: 120,
     ellipsis: true,
     searchable: true,
