@@ -472,7 +472,7 @@ export class CaseReportValidateService {
         event: true,
         priority: true,
         movementReport: true,
-        synergy: true
+        synergy: true,
       },
       // withDeleted: true,
       order: {
@@ -724,13 +724,10 @@ export class CaseReportValidateService {
     });
 
     if (caseReportValidate.length === 0) {
-      throw new HttpException(
-        'No se encontró el reporte.',
-        HttpStatus.NOT_FOUND,
-      );
+      return [];
+    } else {
+      return caseReportValidate;
     }
-
-    return caseReportValidate;
   }
 
   async cancelReportValidate(id: string, clientIp: string, idUser: string) {

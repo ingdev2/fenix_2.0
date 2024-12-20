@@ -7,8 +7,8 @@ import { useAppDispatch, useAppSelector } from "@/redux/hook";
 
 import { Button, Col, Row } from "antd";
 import CustomDashboardLayout from "@/components/common/custom_dashboard_layout/CustomDashboardLayout";
-import ReportSearchEngineComponent from "@/components/dashboard/report_search_engine/ReportSearchEngineComponent";
-import StatisticsComponent from "@/components/dashboard/Statistics/StatisticsComponent";
+import ReportSearchEngineComponent from "@/components/dashboard/report_search_engine/ReportSearchEngineContent";
+import StatisticsContent from "@/components/dashboard/Statistics/StatisticsContent";
 import { FileAddOutlined } from "@ant-design/icons";
 
 import useAuthValidation from "@/utils/hooks/use_auth_validation";
@@ -99,7 +99,7 @@ const DashboardPage: React.FC = () => {
                 span={24}
                 style={{ display: "flex", justifyContent: "center" }}
               >
-                <StatisticsComponent />
+                <StatisticsContent />
               </Col>
             </Row>
           </div>

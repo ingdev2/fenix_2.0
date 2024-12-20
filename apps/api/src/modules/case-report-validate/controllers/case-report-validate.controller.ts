@@ -93,7 +93,7 @@ export class CaseReportValidateController {
   }
 
   @Get('/findReportValidateByConsecutive/:consecutive')
-  @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
+  // @Auth(RolesEnum.SUPER_ADMIN, RolesEnum.ADMIN, RolesEnum.COLLABORATOR)
   findReportValidateByConsecutive(@Param('consecutive') consecutive: string) {
     return this.caseReportValidateService.findOneReportValidateByConsecutive(
       consecutive,

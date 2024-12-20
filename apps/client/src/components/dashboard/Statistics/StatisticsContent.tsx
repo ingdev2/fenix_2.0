@@ -4,8 +4,8 @@ import React from "react";
 
 import { Card } from "antd";
 
-const StatisticsComponent: React.FC = () => {
+const StatisticsContent: React.FC = () => {
   return <Card style={{ width: "100%" }}></Card>;
 };
 
-export default StatisticsComponent;
+export default StatisticsContent;
